@@ -1,4 +1,6 @@
 rootProject.name = "vdi-handler-server"
 
-include(":components")
+include(":components:script-execution")
+include(":components:workspaces")
+
 include(":service")
