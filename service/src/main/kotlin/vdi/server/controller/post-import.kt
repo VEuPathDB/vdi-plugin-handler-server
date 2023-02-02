@@ -36,7 +36,6 @@ suspend fun ApplicationCall.handlePostImport() {
     // Validate the details JSON
     details.validate()
 
-    // create workspace
     // create input & output directories
     // unpack input tar into input directory
     // delete input tar file
