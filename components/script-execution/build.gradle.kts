@@ -3,5 +3,9 @@ plugins {
 }
 
 kotlin {
-  this.jvmToolchain(18)
+  jvmToolchain(18)
+}
+
+dependencies {
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 }
