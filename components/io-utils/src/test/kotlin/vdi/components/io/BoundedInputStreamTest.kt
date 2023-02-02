@@ -1,4 +1,4 @@
-package vdi.util
+package vdi.components.io
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName

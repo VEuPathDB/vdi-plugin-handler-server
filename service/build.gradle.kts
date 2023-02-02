@@ -1,6 +1,6 @@
 plugins {
   id("com.github.johnrengelman.shadow") version "7.1.2"
-  kotlin("jvm") version "1.8.0"
+  kotlin("jvm")
 }
 
 repositories {
@@ -12,6 +12,8 @@ kotlin {
 }
 
 dependencies {
+  implementation(project(":components:io-utils"))
+
   implementation("io.ktor:ktor-server-core-jvm:2.2.2")
   implementation("io.ktor:ktor-server-netty-jvm:2.2.2")
   implementation("io.ktor:ktor-server-metrics-micrometer:2.2.2")

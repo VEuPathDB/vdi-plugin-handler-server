@@ -1,4 +1,4 @@
-package vdi.util
+package vdi.components.io
 
 import java.io.OutputStream
 

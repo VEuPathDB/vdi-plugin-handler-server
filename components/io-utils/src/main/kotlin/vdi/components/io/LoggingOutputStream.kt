@@ -1,4 +1,4 @@
-package vdi.util
+package vdi.components.io
 
 import org.slf4j.Logger
 import java.io.OutputStream
