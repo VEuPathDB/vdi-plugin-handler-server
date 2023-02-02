@@ -12,7 +12,9 @@ kotlin {
 }
 
 dependencies {
+  implementation(project(":components:http-errors"))
   implementation(project(":components:io-utils"))
+  implementation(project(":components:json"))
 
   implementation("io.ktor:ktor-server-core-jvm:2.2.2")
   implementation("io.ktor:ktor-server-netty-jvm:2.2.2")

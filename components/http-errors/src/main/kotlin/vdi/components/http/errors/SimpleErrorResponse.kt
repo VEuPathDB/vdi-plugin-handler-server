@@ -1,9 +1,8 @@
-package vdi.server.model
+package vdi.components.http.errors
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import vdi.Const
 
 data class SimpleErrorResponse(
-  @JsonProperty(Const.FieldName.Message)
+  @JsonProperty("message")
   val message: String
 )

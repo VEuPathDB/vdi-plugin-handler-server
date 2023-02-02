@@ -1,4 +1,4 @@
-package vdi.util
+package vdi.components.json
 
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module

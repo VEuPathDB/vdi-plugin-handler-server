@@ -10,7 +10,7 @@ import vdi.server.controller.handlePostImport
 import vdi.server.controller.handlePostInstallData
 import vdi.server.controller.handlePostInstallMeta
 import vdi.server.controller.handlePostUninstall
-import vdi.server.middleware.withExceptionMapping
+import vdi.components.http.errors.withExceptionMapping
 
 
 fun Application.configureRouting() {

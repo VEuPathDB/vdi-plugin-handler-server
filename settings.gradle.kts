@@ -1,6 +1,10 @@
 rootProject.name = "vdi-handler-server"
 
-include(":components:io-utils")
-include(":components:script-execution")
+include(
+  ":components:http-errors",
+  ":components:io-utils",
+  ":components:json",
+  ":components:script-execution"
+)
 
 include(":service")
