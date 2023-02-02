@@ -1,0 +1,370 @@
+#%RAML 1.0
+
+title: VEuPathDB Dataset Handler Server
+version: 1.0.0
+mediaType: application/json
+description: |
+  HTTP API for the VDI Handler Plugin Server.
+  
+  The VDI Handler Plugin Server is a small HTTP server that collects, organizes,
+  and wraps calls to VDI import and install scripts, allowing them to be
+  executed via HTTP calls.
+  
+  Every endpoint declared as part of this API is backed by a shell or system
+  call to a "plugin" script being hosted in the same container as this util
+  server.
+
+/import:
+  displayName: Import Actions
+
+  post:
+    displayName: Perform Import Processing
+    description: |
+      Perform dataset validation and any pre-installation transformation that
+      needs to be done.
+      
+      The output of this endpoint is a tarball containing the processing result
+      files that are ready to be imported into the VDI Dataset Store (MinIO at
+      the time of this writing)
+    body:
+      multipart/form-data:
+        type: object
+        additionalProperties: false
+        properties:
+          details:
+            type: object
+            additionalProperties: false
+            properties:
+              vdiID:
+                displayName: Dataset ID
+                type: VDI-ID
+                required: true
+              type:
+                displayName: Type Info
+                type: object
+                additionalProperties: false
+                properties:
+                  name:
+                    type: string
+                    required: true
+                  version:
+                    type: string
+                    required: true
+                required: true
+              projects:
+                displayName: Target Projects
+                type: ProjectID[]
+                required: true
+                minItems: 1
+              owner:
+                displayName: Dataset Owner ID
+                type: string
+                required: true
+                minLength: 1
+              name:
+                displayName: Dataset Name
+                type: string
+                required: true
+                minLength: 1
+              summary:
+                displayName: Dataset Summary
+                type: string
+                required: false
+              description:
+                displayName: Dataset Description
+                type: string
+                required: false
+              dependencies:
+                displayName: Dataset Dependencies
+                type: array
+                items:
+                  type: object
+                  additionalProperties: false
+                  properties:
+                    resourceIdentifier:
+                      type: string
+                      required: true
+                    resourceVersion:
+                      type: string
+                      required: true
+                    resourceDisplayName:
+                      type: string
+                      required: true
+          payload:
+            type: file
+            required: true
+    responses:
+      200:
+        description: |
+          Success
+          
+          Server has successfully processed the dataset for import and is
+          returning the result.
+        body:
+          application/octet-stream:
+            type: file
+      400:
+        description: |
+          Malformed Request
+          
+          The request body was malformed in a way that prevented the server from
+          parsing it.
+        body:
+          application/json:
+            type: SimpleError
+      418:
+        description: |
+          Validation Failure
+          
+          The posted dataset failed the import process validation step.
+        body:
+          application/json:
+            type: object
+            additionalProperties: false
+            properties:
+              messages:
+                type: array
+                items:
+                  type: string
+      420:
+        description: |
+          Transformation Failure
+          
+          The posted dataset could not be transformed into an installable form.
+        body:
+          application/json:
+            type: SimpleError
+      500:
+        description: |
+          Internal Server Error
+          
+          Congratulations!  You found a bug!
+        body:
+          application/json:
+            type: Error500
+
+/install:
+  displayName: Install Actions
+  /meta:
+    displayName: Metadata Installation Actions
+    post:
+      displayName: Install Dataset Metadata
+      body:
+        application/json:
+          type: InstallMetaRequest
+      responses:
+        204:
+        400:
+          description: |
+            Malformed Request
+            
+            The request body was malformed in a way that prevented the server from
+            parsing it.
+          body:
+            application/json:
+              type: SimpleError
+        500:
+          description: |
+            Internal Server Error
+            
+            Congratulations!  You found a bug!
+          body:
+            application/json:
+              type: Error500
+
+  /data:
+    displayName: Data Installation Actions
+    post:
+      displayName: Install Dataset Data
+      body:
+        multipart/form-data:
+          type: object
+          additionalProperties: false
+          properties:
+            vdi-id:
+              type: VDI-ID
+              required: true
+            payload:
+              type: file
+              required: true
+      responses:
+        204:
+        400:
+          description: |
+            Malformed Request
+            
+            The request body was malformed in a way that prevented the server from
+            parsing it.
+          body:
+            application/json:
+              type: SimpleError
+        500:
+          description: |
+            Internal Server Error
+            
+            Congratulations!  You found a bug!
+          body:
+            application/json:
+              type: Error500
+
+/uninstall:
+  displayName: Uninstall Actions
+  post:
+    displayName: Uninstall Dataset
+    body:
+      application/json:
+        type: UninstallDataRequest
+    responses:
+      204:
+      400:
+        description: |
+          Malformed Request
+          
+          The request body was malformed in a way that prevented the server from
+          parsing it.
+        body:
+          application/json:
+            type: SimpleError
+      500:
+        description: |
+          Internal Server Error
+          
+          Congratulations!  You found a bug!
+        body:
+          application/json:
+            type: Error500
+
+types:
+  VDI-ID:
+    displayName: VDI ID
+    description: Unique VDI Dataset identifier string.
+    type: string
+    minLength: 32
+    maxLength: 32
+    pattern: ^[0-9a-fA-F]{32}$
+    example: 78609580dba2787a5cf677d6f334a707
+
+  User-ID:
+    displayName: VEuPathDB User ID
+    description: Unique user identifier
+    type: integer
+    format: int64
+    minimum: 1
+    maximum: 9223372036854775807
+    example: 204435
+
+  ProjectID:
+    displayName: Project ID
+    description: |
+      Name or ID of a target VEuPathDB project.
+
+      Valid project IDs are:
+
+      - AmoebaDB
+      - CryptoDB
+      - FungiDB
+      - GiardiaDB
+      - HostDB
+      - MicrosporidiaDB
+      - PiroplasmaDB
+      - PlasmoDB
+      - ToxoDB
+      - TrichDB
+      - TriTrypDB
+      - VectorBase
+      - VEuPathDB
+    type: string
+    example: PlasmoDB
+
+  InstallMetaRequest:
+    type: object
+    additionalProperties: false
+    properties:
+      vdiID:
+        type: VDI-ID
+        required: true
+      meta:
+        type: DatasetMeta
+        required: true
+
+  UninstallDataRequest:
+    type: object
+    additionalProperties: false
+    properties:
+      vdiID:
+        type: VDI-ID
+        required: true
+
+  DatasetMeta:
+    type: object
+    additionalProperties: false
+    properties:
+      type:
+        type: DatasetMetaType
+        required: true
+      projects:
+        type: ProjectID[]
+        required: true
+        minItems: 1
+      owner:
+        type: User-ID
+        required: true
+      name:
+        type: string
+        required: true
+      summary:
+        type: string
+        required: true
+      description:
+        type: string
+        required: true
+      dependencies:
+        type: DatasetMetaDependency[]
+        required: true
+
+  DatasetMetaType:
+    type: object
+    additionalProperties: false
+    properties:
+      name:
+        type: string
+        required: true
+      version:
+        type: string
+        required: true
+
+  DatasetMetaDependency:
+    type: object
+    additionalProperties: false
+    properties:
+      resourceIdentifier:
+        type: any
+        required: true
+      resourceVersion:
+        type: any
+        required: true
+      resourceDisplayName:
+        type: any
+        required: true
+
+  SimpleError:
+    type: object
+    additionalProperties: false
+    properties:
+      message:
+        type: string
+        required: true
+
+  Error500:
+    type: object
+    additionalProperties: false
+    properties:
+      status:
+        type: string
+        enum:
+        - failed-plugin
+        - failed-server
+        required: true
+      message:
+        type: string
+        required: true

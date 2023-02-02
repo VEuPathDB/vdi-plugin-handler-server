@@ -1,0 +1,70 @@
+= VDI Plugin Handler Server
+
+The VDI Plugin Handler Server is an HTTP server internal to the VDI Service
+stack that accepts requests from the primary VDI service and calls out to the
+appropriate VDI plugin scripts to handle those requests.
+
+== Usage
+
+=== Configuration
+
+Configuration of the server is done via the environment with a series of
+required and optional environment variables.
+
+==== Static Environment Variables
+
+[%header,cols="2,1,7"]
+|===
+| Variable | Default | Description
+
+m| SERVER_PORT
+m| 80
+| Port the HTTP service will listen on for incoming connections.
+|===
+
+
+==== Database Connection Environment Variables
+
+While the handler service itself does not connect to any databases, the scripts
+that it calls may.  For these cases, the handler service will pass the database
+connection details for the target database to the handler script via the call
+time environment of that script.
+
+Additionally, these database connections are variable, thus the environment
+variables are not a static set of vars, but instead a static prefix with
+wildcard matching on the suffix.  Environment variables with the same suffix
+will be grouped together as a single bundle of vars.
+
+.Wildcard Environment Variable Prefixes
+[%header,cols="2m,6"]
+|===
+| Variable Prefix | Description
+
+| DB_CONNECTION_NAME_*
+| Name of the connection for the group of environment variables.
+
+| DB_CONNECTION_LDAP_*
+| LDAP query string for the connection.
+
+| DB_CONNECTION_USER_*
+| Database connection username.
+
+| DB_CONNECTION_PASS_*
+| Database connection password.
+|===
+
+.Environment Bundles
+====
+[source, bash]
+----
+DB_CONNECTION_NAME_PLASMO_DB=PlasmoDB
+DB_CONNECTION_LDAP_PLASMO_DB=someLDAPQuery
+DB_CONNECTION_USER_PLASMO_DB=someUsername
+DB_CONNECTION_PASS_PLASMO_DB=somePassword
+
+DB_CONNECTION_NAME_TOXO_DB=ToxoDB
+DB_CONNECTION_NAME_TOXO_DB=someLDAPQuery
+DB_CONNECTION_USER_TOXO_DB=someUsername
+DB_CONNECTION_PASS_TOXO_DB=somePassword
+----
+====
