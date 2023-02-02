@@ -1,17 +1,22 @@
 package vdi.util
 
 import java.io.File
-import java.util.UUID
+import java.nio.file.Path
+import java.util.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createDirectory
+import kotlin.io.path.deleteRecursively
+import kotlin.io.path.exists
 
 
-fun makeTempDirectory() : File {
-  var tmpDir: File
+fun makeTempDirectory(): Path {
+  var tmpDir: Path
 
   while (true) {
     val uuid = UUID.randomUUID().toString()
-    tmpDir = File("/tmp/$uuid")
+    tmpDir = Path.of("tmp", uuid)
 
     if (tmpDir.exists())
       continue
@@ -19,13 +24,13 @@ fun makeTempDirectory() : File {
       break
   }
 
-  tmpDir.mkdir()
+  tmpDir.createDirectory()
 
   return tmpDir
 }
 
-@OptIn(ExperimentalContracts::class)
-inline fun withTempDirectory(fn: (tempDir: File) -> Unit) {
+@OptIn(ExperimentalContracts::class, ExperimentalPathApi::class)
+inline fun withTempDirectory(fn: (tempDir: Path) -> Unit) {
   contract { callsInPlace(fn, kotlin.contracts.InvocationKind.EXACTLY_ONCE) }
 
   val tempDir = makeTempDirectory()
