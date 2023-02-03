@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="DatabaseConfigurationMap" tests="5" skipped="0" failures="0" errors="0" timestamp="2023-02-03T16:51:24" hostname="PiddlePants" time="0.018">
+  <properties/>
+  <testcase name="Success Case" classname="vdi.conf.TestDatabaseConfigurationMap" time="0.014"/>
+  <testcase name="Fails when group name is missing" classname="vdi.conf.TestDatabaseConfigurationMap" time="0.001"/>
+  <testcase name="Fails when group ldap is missing" classname="vdi.conf.TestDatabaseConfigurationMap" time="0.001"/>
+  <testcase name="Fails when group user name is missing" classname="vdi.conf.TestDatabaseConfigurationMap" time="0.0"/>
+  <testcase name="Fails when group password is missing" classname="vdi.conf.TestDatabaseConfigurationMap" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

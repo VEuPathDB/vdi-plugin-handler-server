@@ -1,0 +1,8 @@
+build/
+.idea/
+.gradle/
+gradle/
+
+example.env
+api.raml
+readme.adoc

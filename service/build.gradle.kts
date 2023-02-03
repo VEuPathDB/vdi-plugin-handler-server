@@ -86,20 +86,3 @@ tasks.create("generate-raml-docs") {
     }
   }
 }
-
-tasks.create("docker-build") {
-  doLast {
-    with(
-      ProcessBuilder("docker", "build", "-t", "veupathdb/vdi-handler-server:latest", ".")
-        .directory(projectDir)
-        .start()
-    ) {
-      inputStream.transferTo(System.out)
-      errorStream.transferTo(System.err)
-
-      if (waitFor() != 0) {
-        throw RuntimeException("docker build failed")
-      }
-    }
-  }
-}

@@ -3,7 +3,7 @@ package vdi.server
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
-import vdi.util.toJSONString
+import vdi.components.json.toJSONString
 
 suspend inline fun ApplicationCall.respondJSON400(body: Any) =
   respondJSON(body, StatusBadRequest)
