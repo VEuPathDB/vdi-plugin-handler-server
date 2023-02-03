@@ -1,6 +1,6 @@
 package vdi.components.script
 
-import java.io.File
+import java.nio.file.Path
 
 /**
  * Script Executor
@@ -56,10 +56,10 @@ interface ScriptExecutor {
    */
   suspend fun <T> executeScript(
     command: String,
-    workDir: File,
+    workDir: Path,
     arguments: Array<String> = emptyArray(),
     environment: Map<String, String> = emptyMap(),
-    fn: ScriptProcess.() -> T
+    fn: suspend ScriptProcess.() -> T
   ): T
 }
 
