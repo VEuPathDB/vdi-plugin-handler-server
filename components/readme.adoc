@@ -1,0 +1,16 @@
+= VDI Handler Components
+
+This directory contains component libraries that the VDI Plugin Handler Service
+depends on.
+
+`http-errors`:: A middleware layer for KTOR that defines exceptions similar to
+Jax-RS' `WebApplicationException` types and maps those exception types to HTTP
+error responses.
+
+`io-utils`:: Various IO classes that wrap `InputStream` or `OutputStream`
+instances to provide some custom functionality.
+
+`json`:: JSON utilities.
+
+`script-execution`:: Wrappers for Java's `Process` and `ProcessBuilder` types
+that are interface based and thus can be mocked for unit testing purposes.
