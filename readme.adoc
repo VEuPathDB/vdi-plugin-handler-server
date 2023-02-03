@@ -17,6 +17,12 @@ appropriate VDI <<Plugin Scripts>> to handle those requests.
 
 == Usage
 
+This repository defines a project that is not intended to be used or executed
+directly.  Instead, the output artifact of this repository is a Docker image
+that is to be extended to add the implementation <<Plugin Scripts>>.  An example
+of this setup is provided and may be copied from the repo
+link:https://github.com/VEuPathDB/vdi-example-plugin[vdi-example-plugin].
+
 === Configuration
 
 Configuration of the server is done via the environment with a series of
@@ -119,12 +125,6 @@ DB_CONNECTION_USER_TOXO_DB=someUsername
 DB_CONNECTION_PASS_TOXO_DB=somePassword
 ----
 ====
-
-== HTTP API
-
-link:https://veupathdb.github.io/vdi-plugin-handler-server/http-api.html[API Documentation]
-
-TODO
 
 == Plugin Scripts
 
@@ -419,3 +419,9 @@ Handler Server itself.
 0    - Success
 1+   - Failure due to unxpected/undefined error.
 ----
+
+== HTTP API
+
+link:https://veupathdb.github.io/vdi-plugin-handler-server/http-api.html[API Documentation]
+
+TODO
