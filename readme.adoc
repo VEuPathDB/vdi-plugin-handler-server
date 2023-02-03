@@ -1,4 +1,16 @@
 = VDI Plugin Handler Server
+:toc: left
+:toclevels: 3
+:icons: font
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
 
 The VDI Plugin Handler Server is an HTTP server internal to the VDI Service
 stack that accepts requests from the primary VDI service and calls out to the
@@ -27,38 +39,38 @@ required and optional environment variables.
 
 | IMPORT_SCRIPT_PATH
 | /opt/veupathdb/import
-| Path to the <<import script>>.
+| Path to the <<Import Script>>.
 
 | IMPORT_SCRIPT_MAX_DURATION
 | 1h
-| Maximum duration that the <<import script>> is allowed to run before being
+| Maximum duration that the <<Import Script>> is allowed to run before being
 forcibly killed.
 
 | INSTALL_DATA_SCRIPT_PATH
 | /opt/veupathdb/install-data
-| Path to the <<install-data script>>.
+| Path to the <<Install-Data Script>>.
 
 | INSTALL_DATA_SCRIPT_MAX_DURATION
 | 1h
-| Maximum duration that the <<install-data script>> is allowed to run before
+| Maximum duration that the <<Install-Data Script>> is allowed to run before
 being forcibly killed.
 
 | INSTALL_META_SCRIPT_PATH
 | /opt/veupathdb/install-meta
-| Path to the <<install-meta script>>.
+| Path to the <<Install-Meta Script>>.
 
 | INSTALL_META_SCRIPT_MAX_DURATION
 | 1h
-| Maximum duration that the <<install-meta script>> is allowed to run before
+| Maximum duration that the <<Install-Meta Script>> is allowed to run before
 being forcibly killed.
 
 | UNINSTALL_SCRIPT_PATH
 | /opt/veupathdb/uninstall
-| Path to the <<uninstall script>>
+| Path to the <<Uninstall Script>>
 
 | UNINSTALL_SCRIPT_MAX_DURATION
 | 1h
-| Maximum duration that the <<uninstall script>> is allowed to run before being
+| Maximum duration that the <<Uninstall Script>> is allowed to run before being
 forcibly killed.
 |===
 
@@ -108,3 +120,126 @@ DB_CONNECTION_USER_TOXO_DB=someUsername
 DB_CONNECTION_PASS_TOXO_DB=somePassword
 ----
 ====
+
+== Plugin Scripts
+
+=== Import Script
+
+The import script is the first phase of handling of an uploaded VDI dataset.
+This script is responsible for performing the initial validation of the raw
+input, and optionally transformation of that input into a form suitable for
+installation into target VEuPathDB sites.
+
+The import script will be handed a collection of submitted dataset files, and is
+expected to perform its processing, producing one or more output files which
+will be used as the final form of the data to be installed into the target
+VEuPathDB sites.
+
+==== Inputs
+
+===== CLI
+
+As inputs the import script will be passed 2 CLI parameters, an input directory
+path and an output directory path.
+
+[source, shell-session]
+----
+$ import /path/to/inputs /path/to/outputs
+----
+
+The input directory path will point to a temp directory that is populated with
+the raw input files that will exist for the duration of the execution of the
+import script.  After the import script has exited, the input directory will be
+deleted.
+
+[TIP]
+--
+The Import Script will never be called with an empty input directory.  If an
+uploaded archive contains no files, the VDI Plugin Handler Server will return
+an error response without calling the Import Script.
+--
+
+The output directory path will point to a temp directory that is to be populated
+by the import script.  The output files placed into the output directory will be
+consumed by the VDI Plugin Handler Server.  After the import script has exited,
+the contents of the output directory will be collected, then the directory will
+be deleted.
+
+==== Outputs
+
+As output, the script will be expected to write "installable" files to the
+output directory handed to the import script on execution.
+
+After the script execution has been completed, the files the import script
+places in the output directory will be consumed by the VDI Plugin Handler Server
+and will become the VDI dataset bundle that is installed into the target
+VEuPathDB sites.
+
+[IMPORTANT]
+--
+On successful completion (exit code `0`) the Import Script _must_ produce at
+least one installable output file.  If the Import Script does not produce any
+output files, the VDI Plugin Handler Server will return a `500` error for the
+execution of the import.
+--
+
+===== Reserved File Names
+
+The import script may produce any files it needs, provided they are not named
+with one of the following reserved file names.
+
+`meta.json`:: This file name is reserved for the dataset's metadata file which
+is produced by the VDI Plugin Handler Server itself after the import script has
+completed execution.
++
+If the import script _does_ produce a file named `meta.json`, the handler server
+will throw an exception.
+
+`manifest.json`:: This file name is reserved for the dataset's manifest file
+which is produced by the VDI Plugin Handler Server itself after the import
+script has completed execution.
++
+If the import script _does_ produce a file named `manifest.json`, the handler
+server will throw an exception.
+
+`warnings.json`:: This file name is reserved for the dataset's validation
+warning messages file which is produced by the VDI Plugin Handler Server itself
+after the import script has completed execution.
++
+If the import script _does_ produce a file named `warnings.json`, the handler
+server will throw an exception.
+
+==== Logging
+
+The import script is expected to log messages to 2 separate channels with
+specific meaning assigned to each, `STDOUT` and `STDERR`.
+
+`STDOUT` is expected to be used solely to emit validation warnings and errors.
+All messages written to this channel will be surfaced to the submitter of the
+VDI dataset being processed.
+
+`STDERR` is expected to be used to emit general script log output.  All messages
+written to this channel will be passed through to the standard logging of the
+VDI Plugin Handler Server.
+
+==== Exit Codes
+
+The import script is expected to conform to the following specification of
+process exit codes.  Each exit code has an assigned meaning and is used to
+determine how the VDI Plugin Handler Server process should proceed after the
+script exits.
+
+.Exit Codes
+[source]
+----
+0   - Successful exit
+1   - Failure due to validation errors
+2   - Failure due to transformation errors
+3+  - Failure due to unexpected/undefined error
+----
+
+=== Install-Meta Script
+
+=== Install-Data Script
+
+=== Uninstall Script
