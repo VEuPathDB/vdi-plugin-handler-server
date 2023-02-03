@@ -147,6 +147,13 @@ VEuPathDB sites.
 As inputs the import script will be passed two CLI positional arguments, an
 input directory path and an output directory path.
 
+.Structure
+[source, shell-session]
+----
+$ import {path-to-inputs} {path-to-outputs}
+----
+
+.Example
 [source, shell-session]
 ----
 $ import /path/to/inputs /path/to/outputs
@@ -249,6 +256,8 @@ script exits.
 
 === Install-Meta Script
 
+TODO: Describe me!
+
 ==== Inputs
 
 ===== CLI
@@ -271,7 +280,6 @@ $ import-meta d002dcac1aff37435c355f8deb16ee17 /some/path/to/meta.json
 
 The `meta.json` file will exist for the duration of the script's execution.
 
-
 ===== Environment
 
 [%header, cols="2m,8"]
@@ -286,12 +294,15 @@ The `meta.json` file will exist for the duration of the script's execution.
 
 ==== Outputs
 
-This script should not produce any outputs.
+This script is not expected to produce any outputs.
 
 ==== Logging
 
 This script is expected to log only to `STDERR`, messages logged to `STDOUT`
 will be disregarded.
+
+Messages logged to `STDERR` will be recorded in the logs of the VDI Plugin
+Handler Server itself.
 
 ==== Exit Codes
 
@@ -303,9 +314,30 @@ will be disregarded.
 
 === Install-Data Script
 
+TODO: Describe me!
+
 ==== Inputs
 
 ===== CLI
+
+The Install-Data Script will be passed two positional CLI arguments on
+execution, the ID of the dataset to be installed, and a path to a temporary
+directory containing the contents of the dataset to be installed.
+
+.Structure
+[source, shell-session]
+----
+$ install-data {vdi-id} {path-to-dataset-files}
+----
+
+.Example
+[source, shell-session]
+----
+$ install-data bfcb312a5875ae38536a64e60055c74e /path/to/dataset/files
+----
+
+The input directory is temporary and will be removed as soon as the script
+completes its execution.
 
 ===== Environment
 
@@ -321,8 +353,15 @@ will be disregarded.
 
 ==== Outputs
 
+This script is not expected to produce any outputs.
+
 ==== Logging
 
+This script is expected to log only to `STDERR`, messages logged to `STDOUT`
+will be disregarded.
+
+Messages logged to `STDERR` will be recorded in the logs of the VDI Plugin
+Handler Server itself.
 ==== Exit Codes
 
 [source]
@@ -333,6 +372,8 @@ will be disregarded.
 
 === Uninstall Script
 
+TODO: Describe me!
+
 ==== Inputs
 
 ===== CLI
@@ -351,8 +392,15 @@ will be disregarded.
 
 ==== Outputs
 
+This script is not expected to produce any outputs.
+
 ==== Logging
 
+This script is expected to log only to `STDERR`, messages logged to `STDOUT`
+will be disregarded.
+
+Messages logged to `STDERR` will be recorded in the logs of the VDI Plugin
+Handler Server itself.
 ==== Exit Codes
 
 [source]
