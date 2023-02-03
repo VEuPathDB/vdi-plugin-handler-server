@@ -121,6 +121,12 @@ DB_CONNECTION_PASS_TOXO_DB=somePassword
 ----
 ====
 
+== HTTP API
+
+link:https://veupathdb.github.io/vdi-plugin-handler-server/http-api.html[API Documentation]
+
+TODO
+
 == Plugin Scripts
 
 === Import Script
