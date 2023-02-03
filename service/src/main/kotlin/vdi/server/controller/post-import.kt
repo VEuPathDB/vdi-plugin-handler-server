@@ -30,10 +30,12 @@ suspend fun ApplicationCall.handlePostImport() {
     val details: ImportDetails
     val payload: Path
 
+    // Parse the body.
     parseMultipartBody(workspace, { details = it }, { payload = it })
 
-    // validate details json
-    // create workspace
+    // Validate the details JSON
+    details.validate()
+
     // create input & output directories
     // unpack input tar into input directory
     // delete input tar file
@@ -149,4 +151,46 @@ private fun PartData.handlePayload(workspace: Path, payloadCB: (Path) -> Unit) {
   }
 
   payloadCB(payload)
+}
+
+/**
+ * Validates the posted details about a dataset being import processed.
+ */
+private fun ImportDetails.validate() {
+  if (vdiID.length != 32)
+    throw BadRequestException("invalid vdiID value.")
+
+  for (c in vdiID)
+    when (c) {
+      in '0' .. '9',
+      in 'A' .. 'F',
+      in 'a' .. 'f' -> { /* do nothing */ }
+      else          -> throw BadRequestException("invalid vdiID value.")
+    }
+
+  if (type.name.isBlank())
+    throw BadRequestException("type.name cannot be blank")
+  if (type.version.isBlank())
+    throw BadRequestException("type.version cannot be blank")
+
+  if (projects.isEmpty())
+    throw BadRequestException("projects cannot be empty")
+  for (project in projects)
+    if (project.isBlank())
+      throw BadRequestException("projects cannot contain a blank string")
+
+  if (owner.isBlank())
+    throw BadRequestException("owner cannot be blank")
+
+  if (name.isBlank())
+    throw BadRequestException("name cannot be blank")
+
+  for (dependency in dependencies) {
+    if (dependency.resourceIdentifier.isBlank())
+      throw BadRequestException("dependency.resourceIdentifier cannot be blank")
+    if (dependency.resourceVersion.isBlank())
+      throw BadRequestException("dependency.resourceVersion cannot be blank")
+    if (dependency.resourceDisplayName.isBlank())
+      throw BadRequestException("dependency.resourceDisplayName cannot be blank")
+  }
 }
