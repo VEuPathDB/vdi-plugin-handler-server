@@ -15,6 +15,12 @@ The VDI Plugin Handler Server is an HTTP server internal to the VDI Service
 stack that accepts requests from the primary VDI service and calls out to the
 appropriate VDI <<Plugin Scripts>> to handle those requests.
 
+.Helpful Links
+--
+* https://github.com/VEuPathDB/vdi-plugin-examples[VDI Plugin Examples]
+* https://veupathdb.github.io/vdi-plugin-handler-server/http-api.html[HTTP API Documentation]
+--
+
 == Usage
 
 This repository defines a project that is not intended to be used or executed
