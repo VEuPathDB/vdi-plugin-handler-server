@@ -13,13 +13,53 @@ required and optional environment variables.
 
 ==== Static Environment Variables
 
-[%header,cols="2,1,7"]
+[%header,cols="3m,3m,4"]
 |===
 | Variable | Default | Description
 
-m| SERVER_PORT
-m| 80
+| SERVER_PORT
+| 80
 | Port the HTTP service will listen on for incoming connections.
+
+| SERVER_HOST
+| 0.0.0.0
+| Host IP the server will bind to on start up.
+
+| IMPORT_SCRIPT_PATH
+| /opt/veupathdb/import
+| Path to the <<import script>>.
+
+| IMPORT_SCRIPT_MAX_DURATION
+| 1h
+| Maximum duration that the <<import script>> is allowed to run before being
+forcibly killed.
+
+| INSTALL_DATA_SCRIPT_PATH
+| /opt/veupathdb/install-data
+| Path to the <<install-data script>>.
+
+| INSTALL_DATA_SCRIPT_MAX_DURATION
+| 1h
+| Maximum duration that the <<install-data script>> is allowed to run before
+being forcibly killed.
+
+| INSTALL_META_SCRIPT_PATH
+| /opt/veupathdb/install-meta
+| Path to the <<install-meta script>>.
+
+| INSTALL_META_SCRIPT_MAX_DURATION
+| 1h
+| Maximum duration that the <<install-meta script>> is allowed to run before
+being forcibly killed.
+
+| UNINSTALL_SCRIPT_PATH
+| /opt/veupathdb/uninstall
+| Path to the <<uninstall script>>
+
+| UNINSTALL_SCRIPT_MAX_DURATION
+| 1h
+| Maximum duration that the <<uninstall script>> is allowed to run before being
+forcibly killed.
 |===
 
 
