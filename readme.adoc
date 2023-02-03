@@ -128,6 +128,17 @@ TODO
 
 == Plugin Scripts
 
+The VDI Plugin Handler Server wraps 4 plugin "scripts" that may be written in
+any language, however must be callable via a CLI call aligning with the API as
+defined below.
+
+The 4 plugin scripts are:
+
+. The <<Import Script>>
+. The <<Install-Meta Script>>
+. The <<Install-Data Script>>
+. The <<Uninstall Script>>
+
 === Import Script
 
 The import script is the first phase of handling of an uploaded VDI dataset.
