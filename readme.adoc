@@ -13,7 +13,7 @@ endif::[]
 
 The VDI Plugin Handler Server is an HTTP server internal to the VDI Service
 stack that accepts requests from the primary VDI service and calls out to the
-appropriate VDI plugin scripts to handle those requests.
+appropriate VDI <<Plugin Scripts>> to handle those requests.
 
 == Usage
 
