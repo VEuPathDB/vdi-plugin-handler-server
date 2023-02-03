@@ -251,6 +251,16 @@ script exits.
 
 ===== Environment
 
+[%header, cols="2m,8"]
+|===
+| Variable | Description
+| DB_HOST  | Database connection hostname.
+| DB_PORT  | Database connection port.
+| DB_NAME  | Target database name.
+| DB_USER  | Database credentials username.
+| DB_PASS  | Database credentials password.
+|===
+
 ==== Outputs
 
 ==== Logging
@@ -265,6 +275,16 @@ script exits.
 
 ===== Environment
 
+[%header, cols="2m,8"]
+|===
+| Variable | Description
+| DB_HOST  | Database connection hostname.
+| DB_PORT  | Database connection port.
+| DB_NAME  | Target database name.
+| DB_USER  | Database credentials username.
+| DB_PASS  | Database credentials password.
+|===
+
 ==== Outputs
 
 ==== Logging
@@ -278,6 +298,16 @@ script exits.
 ===== CLI
 
 ===== Environment
+
+[%header, cols="2m,8"]
+|===
+| Variable | Description
+| DB_HOST  | Database connection hostname.
+| DB_PORT  | Database connection port.
+| DB_NAME  | Target database name.
+| DB_USER  | Database credentials username.
+| DB_PASS  | Database credentials password.
+|===
 
 ==== Outputs
 
