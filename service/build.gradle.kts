@@ -8,13 +8,14 @@ repositories {
 }
 
 kotlin {
-  this.jvmToolchain(18)
+  jvmToolchain(18)
 }
 
 dependencies {
   implementation(project(":components:http-errors"))
   implementation(project(":components:io-utils"))
   implementation(project(":components:json"))
+  implementation(project(":components:script-execution"))
 
   implementation("io.ktor:ktor-server-core-jvm:2.2.2")
   implementation("io.ktor:ktor-server-netty-jvm:2.2.2")
@@ -61,7 +62,7 @@ tasks.shadowJar {
 
 tasks.create("generate-raml-docs") {
   doLast {
-    val outputFile = file("api.html")
+    val outputFile = rootDir.resolve("docs/http-api.html")
     outputFile.delete()
     outputFile.createNewFile()
 

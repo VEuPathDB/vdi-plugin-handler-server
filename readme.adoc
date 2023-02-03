@@ -1,8 +1,19 @@
 = VDI Plugin Handler Server
+:toc: left
+:icons: font
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
 
 The VDI Plugin Handler Server is an HTTP server internal to the VDI Service
 stack that accepts requests from the primary VDI service and calls out to the
-appropriate VDI plugin scripts to handle those requests.
+appropriate VDI <<Plugin Scripts>> to handle those requests.
 
 == Usage
 
@@ -13,13 +24,53 @@ required and optional environment variables.
 
 ==== Static Environment Variables
 
-[%header,cols="2,1,7"]
+[%header,cols="3m,3m,4"]
 |===
 | Variable | Default | Description
 
-m| SERVER_PORT
-m| 80
+| SERVER_PORT
+| 80
 | Port the HTTP service will listen on for incoming connections.
+
+| SERVER_HOST
+| 0.0.0.0
+| Host IP the server will bind to on start up.
+
+| IMPORT_SCRIPT_PATH
+| /opt/veupathdb/import
+| Path to the <<Import Script>>.
+
+| IMPORT_SCRIPT_MAX_DURATION
+| 1h
+| Maximum duration that the <<Import Script>> is allowed to run before being
+forcibly killed.
+
+| INSTALL_DATA_SCRIPT_PATH
+| /opt/veupathdb/install-data
+| Path to the <<Install-Data Script>>.
+
+| INSTALL_DATA_SCRIPT_MAX_DURATION
+| 1h
+| Maximum duration that the <<Install-Data Script>> is allowed to run before
+being forcibly killed.
+
+| INSTALL_META_SCRIPT_PATH
+| /opt/veupathdb/install-meta
+| Path to the <<Install-Meta Script>>.
+
+| INSTALL_META_SCRIPT_MAX_DURATION
+| 1h
+| Maximum duration that the <<Install-Meta Script>> is allowed to run before
+being forcibly killed.
+
+| UNINSTALL_SCRIPT_PATH
+| /opt/veupathdb/uninstall
+| Path to the <<Uninstall Script>>
+
+| UNINSTALL_SCRIPT_MAX_DURATION
+| 1h
+| Maximum duration that the <<Uninstall Script>> is allowed to run before being
+forcibly killed.
 |===
 
 
@@ -68,3 +119,292 @@ DB_CONNECTION_USER_TOXO_DB=someUsername
 DB_CONNECTION_PASS_TOXO_DB=somePassword
 ----
 ====
+
+== HTTP API
+
+link:https://veupathdb.github.io/vdi-plugin-handler-server/http-api.html[API Documentation]
+
+TODO
+
+== Plugin Scripts
+
+=== Import Script
+
+The import script is the first phase of handling of an uploaded VDI dataset.
+This script is responsible for performing the initial validation of the raw
+input, and optionally transformation of that input into a form suitable for
+installation into target VEuPathDB sites.
+
+The import script will be handed a collection of submitted dataset files, and is
+expected to perform its processing, producing one or more output files which
+will be used as the final form of the data to be installed into the target
+VEuPathDB sites.
+
+==== Inputs
+
+===== CLI
+
+As inputs the import script will be passed two CLI positional arguments, an
+input directory path and an output directory path.
+
+.Structure
+[source, shell-session]
+----
+$ import {path-to-inputs} {path-to-outputs}
+----
+
+.Example
+[source, shell-session]
+----
+$ import /path/to/inputs /path/to/outputs
+----
+
+The input directory path will point to a temp directory that is populated with
+the raw input files that will exist for the duration of the execution of the
+import script.  After the import script has exited, the input directory will be
+deleted.
+
+[TIP]
+--
+The Import Script will never be called with an empty input directory.  If an
+uploaded archive contains no files, the VDI Plugin Handler Server will return
+an error response without calling the Import Script.
+--
+
+The output directory path will point to a temp directory that is to be populated
+by the import script.  The output files placed into the output directory will be
+consumed by the VDI Plugin Handler Server.  After the import script has exited,
+the contents of the output directory will be collected, then the directory will
+be deleted.
+
+===== Environment
+
+This script does not take any parameters on the environment.
+
+==== Outputs
+
+As output, the script will be expected to write "installable" files to the
+output directory handed to the import script on execution.
+
+After the script execution has been completed, the files the import script
+places in the output directory will be consumed by the VDI Plugin Handler Server
+and will become the VDI dataset bundle that is installed into the target
+VEuPathDB sites.
+
+[IMPORTANT]
+--
+On successful completion (exit code `0`) the Import Script _must_ produce at
+least one installable output file.  If the Import Script does not produce any
+output files, the VDI Plugin Handler Server will return a `500` error for the
+execution of the import.
+--
+
+===== Reserved File Names
+
+The import script may produce any files it needs, provided they are not named
+with one of the following reserved file names.
+
+`meta.json`:: This file name is reserved for the dataset's metadata file which
+is produced by the VDI Plugin Handler Server itself after the import script has
+completed execution.
++
+If the import script _does_ produce a file named `meta.json`, the handler server
+will throw an exception.
+
+`manifest.json`:: This file name is reserved for the dataset's manifest file
+which is produced by the VDI Plugin Handler Server itself after the import
+script has completed execution.
++
+If the import script _does_ produce a file named `manifest.json`, the handler
+server will throw an exception.
+
+`warnings.json`:: This file name is reserved for the dataset's validation
+warning messages file which is produced by the VDI Plugin Handler Server itself
+after the import script has completed execution.
++
+If the import script _does_ produce a file named `warnings.json`, the handler
+server will throw an exception.
+
+==== Logging
+
+The import script is expected to log messages to 2 separate channels with
+specific meaning assigned to each, `STDOUT` and `STDERR`.
+
+`STDOUT` is expected to be used solely to emit validation warnings and errors.
+All messages written to this channel will be surfaced to the submitter of the
+VDI dataset being processed.
+
+`STDERR` is expected to be used to emit general script log output.  All messages
+written to this channel will be passed through to the standard logging of the
+VDI Plugin Handler Server.
+
+==== Exit Codes
+
+The import script is expected to conform to the following specification of
+process exit codes.  Each exit code has an assigned meaning and is used to
+determine how the VDI Plugin Handler Server process should proceed after the
+script exits.
+
+.Exit Codes
+[source]
+----
+0   - Successful exit
+1   - Failure due to validation errors
+2   - Failure due to transformation errors
+3+  - Failure due to unexpected/undefined error
+----
+
+=== Install-Meta Script
+
+TODO: Describe me!
+
+==== Inputs
+
+===== CLI
+
+The Install-Meta Script will be passed two positional CLI arguments on
+execution, the ID of the dataset, and the path to a
+<<Dataset Metadata,`meta.json`>> file.
+
+.Structure
+[source, shell-session]
+----
+$ import-meta {vdi-id} {path-to-meta-json}
+----
+
+.Example
+[source, shell-session]
+----
+$ import-meta d002dcac1aff37435c355f8deb16ee17 /some/path/to/meta.json
+----
+
+The `meta.json` file will exist for the duration of the script's execution.
+
+===== Environment
+
+[%header, cols="2m,8"]
+|===
+| Variable | Description
+| DB_HOST  | Database connection hostname.
+| DB_PORT  | Database connection port.
+| DB_NAME  | Target database name.
+| DB_USER  | Database credentials username.
+| DB_PASS  | Database credentials password.
+|===
+
+==== Outputs
+
+This script is not expected to produce any outputs.
+
+==== Logging
+
+This script is expected to log only to `STDERR`, messages logged to `STDOUT`
+will be disregarded.
+
+Messages logged to `STDERR` will be recorded in the logs of the VDI Plugin
+Handler Server itself.
+
+==== Exit Codes
+
+[source]
+----
+0    - Success
+1+   - Failure due to unxpected/undefined error.
+----
+
+=== Install-Data Script
+
+TODO: Describe me!
+
+==== Inputs
+
+===== CLI
+
+The Install-Data Script will be passed two positional CLI arguments on
+execution, the ID of the dataset to be installed, and a path to a temporary
+directory containing the contents of the dataset to be installed.
+
+.Structure
+[source, shell-session]
+----
+$ install-data {vdi-id} {path-to-dataset-files}
+----
+
+.Example
+[source, shell-session]
+----
+$ install-data bfcb312a5875ae38536a64e60055c74e /path/to/dataset/files
+----
+
+The input directory is temporary and will be removed as soon as the script
+completes its execution.
+
+===== Environment
+
+[%header, cols="2m,8"]
+|===
+| Variable | Description
+| DB_HOST  | Database connection hostname.
+| DB_PORT  | Database connection port.
+| DB_NAME  | Target database name.
+| DB_USER  | Database credentials username.
+| DB_PASS  | Database credentials password.
+|===
+
+==== Outputs
+
+This script is not expected to produce any outputs.
+
+==== Logging
+
+This script is expected to log only to `STDERR`, messages logged to `STDOUT`
+will be disregarded.
+
+Messages logged to `STDERR` will be recorded in the logs of the VDI Plugin
+Handler Server itself.
+==== Exit Codes
+
+[source]
+----
+0    - Success
+1+   - Failure due to unxpected/undefined error.
+----
+
+=== Uninstall Script
+
+TODO: Describe me!
+
+==== Inputs
+
+===== CLI
+
+===== Environment
+
+[%header, cols="2m,8"]
+|===
+| Variable | Description
+| DB_HOST  | Database connection hostname.
+| DB_PORT  | Database connection port.
+| DB_NAME  | Target database name.
+| DB_USER  | Database credentials username.
+| DB_PASS  | Database credentials password.
+|===
+
+==== Outputs
+
+This script is not expected to produce any outputs.
+
+==== Logging
+
+This script is expected to log only to `STDERR`, messages logged to `STDOUT`
+will be disregarded.
+
+Messages logged to `STDERR` will be recorded in the logs of the VDI Plugin
+Handler Server itself.
+==== Exit Codes
+
+[source]
+----
+0    - Success
+1+   - Failure due to unxpected/undefined error.
+----
