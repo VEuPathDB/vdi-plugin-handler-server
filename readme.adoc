@@ -21,7 +21,7 @@ This repository defines a project that is not intended to be used or executed
 directly.  Instead, the output artifact of this repository is a Docker image
 that is to be extended to add the implementation <<Plugin Scripts>>.  An example
 of this setup is provided and may be copied from the repo
-link:https://github.com/VEuPathDB/vdi-example-plugin[vdi-example-plugin].
+link:https://github.com/VEuPathDB/vdi-plugin-examples[VDI Plugin Examples].
 
 === Configuration
 
