@@ -7,7 +7,7 @@ kotlin {
 }
 
 dependencies {
-  implementation("org.slf4j:slf4j-api:2.0.6")
+  implementation("org.slf4j:slf4j-api:1.7.36")
 
   testImplementation(kotlin("test"))
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
