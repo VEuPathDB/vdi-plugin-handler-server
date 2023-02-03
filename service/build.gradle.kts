@@ -21,6 +21,7 @@ dependencies {
   implementation("io.ktor:ktor-server-netty-jvm:2.2.2")
   implementation("io.ktor:ktor-server-metrics-micrometer:2.2.2")
 
+  implementation("org.slf4j:slf4j-api:1.7.36")
   implementation("org.apache.logging.log4j:log4j-core:2.19.0")
   implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.19.0")
   implementation("org.apache.logging.log4j:log4j-iostreams:2.19.0")
