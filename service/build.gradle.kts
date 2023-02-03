@@ -62,7 +62,7 @@ tasks.shadowJar {
 
 tasks.create("generate-raml-docs") {
   doLast {
-    val outputFile = file("api.html")
+    val outputFile = rootDir.resolve("docs/http-api.html")
     outputFile.delete()
     outputFile.createNewFile()
 
