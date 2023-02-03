@@ -144,8 +144,8 @@ VEuPathDB sites.
 
 ===== CLI
 
-As inputs the import script will be passed 2 CLI parameters, an input directory
-path and an output directory path.
+As inputs the import script will be passed two CLI positional arguments, an
+input directory path and an output directory path.
 
 [source, shell-session]
 ----
@@ -169,6 +169,10 @@ by the import script.  The output files placed into the output directory will be
 consumed by the VDI Plugin Handler Server.  After the import script has exited,
 the contents of the output directory will be collected, then the directory will
 be deleted.
+
+===== Environment
+
+This script does not take any parameters on the environment.
 
 ==== Outputs
 
@@ -249,6 +253,25 @@ script exits.
 
 ===== CLI
 
+The Install-Meta Script will be passed two positional CLI arguments on
+execution, the ID of the dataset, and the path to a
+<<Dataset Metadata,`meta.json`>> file.
+
+.Structure
+[source, shell-session]
+----
+$ import-meta {vdi-id} {path-to-meta-json}
+----
+
+.Example
+[source, shell-session]
+----
+$ import-meta d002dcac1aff37435c355f8deb16ee17 /some/path/to/meta.json
+----
+
+The `meta.json` file will exist for the duration of the script's execution.
+
+
 ===== Environment
 
 [%header, cols="2m,8"]
@@ -263,9 +286,20 @@ script exits.
 
 ==== Outputs
 
+This script should not produce any outputs.
+
 ==== Logging
 
+This script is expected to log only to `STDERR`, messages logged to `STDOUT`
+will be disregarded.
+
 ==== Exit Codes
+
+[source]
+----
+0    - Success
+1+   - Failure due to unxpected/undefined error.
+----
 
 === Install-Data Script
 
@@ -291,6 +325,12 @@ script exits.
 
 ==== Exit Codes
 
+[source]
+----
+0    - Success
+1+   - Failure due to unxpected/undefined error.
+----
+
 === Uninstall Script
 
 ==== Inputs
@@ -314,3 +354,9 @@ script exits.
 ==== Logging
 
 ==== Exit Codes
+
+[source]
+----
+0    - Success
+1+   - Failure due to unxpected/undefined error.
+----
