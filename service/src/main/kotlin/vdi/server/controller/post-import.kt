@@ -1,9 +1,11 @@
 package vdi.server.controller
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.util.*
 import io.ktor.utils.io.jvm.javaio.*
 import java.nio.file.Path
@@ -11,12 +13,19 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.io.path.createFile
+import kotlin.io.path.inputStream
 import kotlin.io.path.outputStream
 import vdi.Const
 import vdi.components.http.errors.BadRequestException
+import vdi.components.http.errors.SimpleErrorResponse
 import vdi.components.io.BoundedInputStream
 import vdi.components.json.JSON
 import vdi.server.model.ImportDetails
+import vdi.server.model.WarningsListResponse
+import vdi.server.respondJSON400
+import vdi.server.respondJSON418
+import vdi.server.respondJSON420
+import vdi.service.ImportProcessor
 import vdi.util.withTempDirectory
 
 private const val IMPORT_PAYLOAD_FILE_NAME = "import.tar.gz"
@@ -36,20 +45,19 @@ suspend fun ApplicationCall.handlePostImport() {
     // Validate the details JSON
     details.validate()
 
-    // create input & output directories
-    // unpack input tar into input directory
-    // delete input tar file
-    // record list of input files
-    // call import script
-    // handle import script exit code
-    // delete input directory
-    // record list of output files
-    // write manifest file to output directory
-    // write meta file to output directory
-    // write warnings file to output directory
-    // pack output directory contents into a tar.gz
-    // pass up tar.gz
-    // delete workspace
+    try {
+      val outFile = ImportProcessor(workspace, payload, details).processImport()
+
+      respondOutputStream(ContentType.Application.OctetStream, HttpStatusCode.OK) {
+        outFile.inputStream().use { it.transferTo(this) }
+      }
+    } catch (e: ImportProcessor.ValidationError) {
+      respondJSON418(WarningsListResponse(e.warnings))
+    } catch (e: ImportProcessor.TransformationError) {
+      respondJSON420(WarningsListResponse(e.warnings))
+    } catch (e: ImportProcessor.EmptyInputError) {
+      respondJSON400(SimpleErrorResponse(e.message!!))
+    }
   }
 }
 

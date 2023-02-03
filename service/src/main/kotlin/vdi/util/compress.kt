@@ -17,7 +17,7 @@ import kotlin.io.path.*
  * @param overwrite Whether this function should overwrite any existing file at
  * the path [into].
  */
-fun List<Path>.packAsTarGZ(into: Path, overwrite: Boolean = false) {
+fun Collection<Path>.packAsTarGZ(into: Path, overwrite: Boolean = false) {
   if (into.exists() && !overwrite)
     throw IllegalStateException("unable to pack new archive $into as file already exists and overwrite is set to false")
 

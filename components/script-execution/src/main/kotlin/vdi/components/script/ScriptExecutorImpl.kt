@@ -1,19 +1,19 @@
 package vdi.components.script
 
-import java.io.File
+import java.nio.file.Path
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class ScriptExecutorImpl : ScriptExecutor {
   override suspend fun <T> executeScript(
     command:     String,
-    workDir:     File,
+    workDir:     Path,
     arguments:   Array<String>,
     environment: Map<String, String>,
-    fn:          ScriptProcess.() -> T,
+    fn:          suspend ScriptProcess.() -> T,
   ): T = withContext(Dispatchers.IO) {
     val rawProcess = ProcessBuilder(command, *arguments).apply {
-      directory(workDir)
+      directory(workDir.toFile())
       environment().clear()
       environment().putAll(environment)
     }.start()
