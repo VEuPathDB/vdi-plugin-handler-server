@@ -1,6 +1,5 @@
 = VDI Plugin Handler Server
 :toc: left
-:toclevels: 3
 :icons: font
 
 ifdef::env-github[]
@@ -246,6 +245,42 @@ script exits.
 
 === Install-Meta Script
 
+==== Inputs
+
+===== CLI
+
+===== Environment
+
+==== Outputs
+
+==== Logging
+
+==== Exit Codes
+
 === Install-Data Script
 
+==== Inputs
+
+===== CLI
+
+===== Environment
+
+==== Outputs
+
+==== Logging
+
+==== Exit Codes
+
 === Uninstall Script
+
+==== Inputs
+
+===== CLI
+
+===== Environment
+
+==== Outputs
+
+==== Logging
+
+==== Exit Codes
