@@ -181,8 +181,16 @@ description: |
           type: object
           additionalProperties: false
           properties:
-            vdi-id:
-              type: VDI-ID
+            details:
+              type: object
+              additionalProperties: false
+              properties:
+                vdiID:
+                  type: VDI-ID
+                  required: true
+                projectID:
+                  type: ProjectID
+                  required: true
               required: true
             payload:
               type: file
