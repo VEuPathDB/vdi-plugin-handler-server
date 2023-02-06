@@ -7,6 +7,7 @@ kotlin {
 }
 
 dependencies {
+  implementation("org.slf4j:slf4j-api:1.7.36")
   implementation(project(":components:common"))
   implementation("com.unboundid:unboundid-ldapsdk:6.0.7")
 }
