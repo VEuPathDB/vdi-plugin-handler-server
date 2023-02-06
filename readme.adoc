@@ -36,54 +36,105 @@ required and optional environment variables.
 
 ==== Static Environment Variables
 
-[%header,cols="3m,3m,4"]
+[%header,cols="1,5m,5m"]
 |===
-| Variable | Default | Description
+| Required | Variable | Default
 
+3+h| HTTP Server Settings
+
+|
 | SERVER_PORT
 | 80
-| Port the HTTP service will listen on for incoming connections.
 
+|
 | SERVER_HOST
 | 0.0.0.0
-| Host IP the server will bind to on start up.
 
+3+h| Service Settings
+
+| :heavy-check-mark:
+| LDAP_SERVER
+|
+
+| :heavy-check-mark:
+| ORACLE_BASE_DN
+|
+
+3+h| Script Settings
+
+|
 | IMPORT_SCRIPT_PATH
 | /opt/veupathdb/import
-| Path to the <<Import Script>>.
 
+|
 | IMPORT_SCRIPT_MAX_DURATION
 | 1h
-| Maximum duration that the <<Import Script>> is allowed to run before being
-forcibly killed.
 
+|
 | INSTALL_DATA_SCRIPT_PATH
 | /opt/veupathdb/install-data
-| Path to the <<Install-Data Script>>.
 
+|
 | INSTALL_DATA_SCRIPT_MAX_DURATION
 | 1h
-| Maximum duration that the <<Install-Data Script>> is allowed to run before
-being forcibly killed.
 
+
+|
 | INSTALL_META_SCRIPT_PATH
 | /opt/veupathdb/install-meta
-| Path to the <<Install-Meta Script>>.
 
+|
 | INSTALL_META_SCRIPT_MAX_DURATION
 | 1h
-| Maximum duration that the <<Install-Meta Script>> is allowed to run before
-being forcibly killed.
 
+|
 | UNINSTALL_SCRIPT_PATH
 | /opt/veupathdb/uninstall
-| Path to the <<Uninstall Script>>
 
+|
 | UNINSTALL_SCRIPT_MAX_DURATION
 | 1h
-| Maximum duration that the <<Uninstall Script>> is allowed to run before being
-forcibly killed.
 |===
+
+`SERVER_PORT`:: Port the HTTP service will listen on for incoming connections.
+
+`SERVER_HOST`:: Host IP the server will bind to on start up.
+
+`LDAP_SERVER`:: Comma separated list of LDAP servers the service will use when
+resolving LDAP records for specific database details.
++
+The service will attempt to use the LDAP servers in order and will only proceed
+to try the next server in the comma separated list if it fails to connect to the
+previous server item.
++
+.Example
+[source]
+----
+LDAP_SERVER=my.ldap.server:389,my.other.server:389
+----
+
+
+`ORACLE_BASE_DN`::
+
+`IMPORT_SCRIPT_PATH`:: Path to the <<Import Script>>.
+
+`IMPORT_SCRIPT_MAX_DURATION`:: Maximum duration that the <<Import Script>> is
+allowed to run before being forcibly killed.
+
+`INSTALL_DATA_SCRIPT_PATH`:: Path to the <<Install-Data Script>>.
+
+`INSTALL_DATA_SCRIPT_MAX_DURATION`:: Maximum duration that the
+<<Install-Data Script>> is allowed to run before being forcibly killed.
+
+`INSTALL_META_SCRIPT_PATH`:: Path to the <<Install-Meta Script>>.
+
+`INSTALL_META_SCRIPT_MAX_DURATION`:: Maximum duration that the
+<<Install-Meta Script>> is allowed to run before being forcibly killed.
+
+`UNINSTALL_SCRIPT_PATH`:: Path to the <<Uninstall Script>>
+
+`UNINSTALL_SCRIPT_MAX_DURATION`:: Maximum duration that the <<Uninstall Script>>
+is allowed to run before being forcibly killed.
 
 
 ==== Database Connection Environment Variables
