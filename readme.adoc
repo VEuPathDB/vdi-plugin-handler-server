@@ -52,11 +52,11 @@ required and optional environment variables.
 
 3+h| Service Settings
 
-| :heavy-check-mark:
+| ✔
 | LDAP_SERVER
 |
 
-| :heavy-check-mark:
+| ✔
 | ORACLE_BASE_DN
 |
 
