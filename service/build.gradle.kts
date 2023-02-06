@@ -12,9 +12,11 @@ kotlin {
 }
 
 dependencies {
+  implementation(project(":components:common"))
   implementation(project(":components:http-errors"))
   implementation(project(":components:io-utils"))
   implementation(project(":components:json"))
+  implementation(project(":components:ldap-lookup"))
   implementation(project(":components:script-execution"))
 
   implementation("io.ktor:ktor-server-core-jvm:2.2.2")

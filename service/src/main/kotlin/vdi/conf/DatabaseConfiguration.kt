@@ -1,6 +1,6 @@
 package vdi.conf
 
-import vdi.util.SecretString
+import vdi.components.common.SecretString
 
 /**
  * Database Configuration

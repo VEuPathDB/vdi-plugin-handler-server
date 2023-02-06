@@ -1,4 +1,4 @@
-package vdi.util
+package vdi.components.common
 
 /**
  * Represents a string containing a "secret" which should not be printed in

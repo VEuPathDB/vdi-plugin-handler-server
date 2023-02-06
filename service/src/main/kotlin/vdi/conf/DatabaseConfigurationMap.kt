@@ -1,6 +1,6 @@
 package vdi.conf
 
-import vdi.util.SecretString
+import vdi.components.common.SecretString
 
 private const val DB_NAME_PREFIX = "DB_CONNECTION_NAME_"
 private const val DB_LDAP_PREFIX = "DB_CONNECTION_LDAP_"

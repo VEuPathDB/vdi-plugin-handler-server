@@ -60,7 +60,7 @@ required and optional environment variables.
 | ORACLE_BASE_DN
 |
 
-3+h| Script Settings
+3+h| Plugin Script Settings
 
 |
 | IMPORT_SCRIPT_PATH
@@ -114,7 +114,7 @@ LDAP_SERVER=my.ldap.server:389,my.other.server:389
 ----
 
 
-`ORACLE_BASE_DN`::
+`ORACLE_BASE_DN`:: Base portion of the distinguished name LDAP search.
 
 `IMPORT_SCRIPT_PATH`:: Path to the <<Import Script>>.
 
