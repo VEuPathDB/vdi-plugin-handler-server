@@ -13,13 +13,20 @@ import vdi.util.setupLDAP
 fun main() {
   val log = LoggerFactory.getLogger("main")
 
+  log.debug("loading configuration")
   val config = Configuration()
+
+  log.debug("validating configuration")
   config.validate()
+
   config.printToLogs(log)
 
+  log.debug("connecting to LDAP")
   val ldap = setupLDAP(config.service)
+
   val exec = ScriptExecutorImpl()
 
+  log.debug("starting embedded server")
   embeddedServer(
     Netty,
     port = config.server.port.toInt(),

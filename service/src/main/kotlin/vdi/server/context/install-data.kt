@@ -11,7 +11,6 @@ import java.nio.file.Path
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
-import vdi.consts.Const
 import vdi.components.http.errors.BadRequestException
 import vdi.components.io.BoundedInputStream
 import vdi.components.json.JSON
@@ -56,18 +55,18 @@ private suspend fun ApplicationCall.parseMultipartBody(
 
   receiveMultipart().forEachPart { part ->
     when (part.name) {
-      Const.FieldName.Details -> {
+      FieldName.Details -> {
         if (details)
-          throw BadRequestException("part \"${Const.FieldName.Details}\" was specified more than once in the request body")
+          throw BadRequestException("part \"${FieldName.Details}\" was specified more than once in the request body")
 
         part.parseInstallDetails(detailsCB)
         part.dispose()
         details = true
       }
 
-      Const.FieldName.Payload -> {
+      FieldName.Payload -> {
         if (payload)
-          throw BadRequestException("part \"${Const.FieldName.Payload}\" was specified more than once in the request body")
+          throw BadRequestException("part \"${FieldName.Payload}\" was specified more than once in the request body")
 
         part.handlePayload(workspace, payloadCB)
         part.dispose()
@@ -81,8 +80,8 @@ private suspend fun ApplicationCall.parseMultipartBody(
     }
   }
 
-  details || throw BadRequestException("missing required part \"${Const.FieldName.Details}\"")
-  payload || throw BadRequestException("missing required part \"${Const.FieldName.Payload}\"")
+  details || throw BadRequestException("missing required part \"${FieldName.Details}\"")
+  payload || throw BadRequestException("missing required part \"${FieldName.Payload}\"")
 }
 
 private fun PartData.parseInstallDetails(detailsCB: (InstallDetails) -> Unit) {
