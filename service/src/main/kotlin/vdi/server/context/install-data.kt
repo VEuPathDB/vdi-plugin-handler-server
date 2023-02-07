@@ -14,6 +14,7 @@ import kotlin.contracts.contract
 import vdi.components.http.errors.BadRequestException
 import vdi.components.io.BoundedInputStream
 import vdi.components.json.JSON
+import vdi.consts.FieldName
 import vdi.server.model.InstallDetails
 import vdi.util.withTempDirectory
 
