@@ -1,5 +1,6 @@
 package vdi.conf
 
+import vdi.components.common.EnvironmentAccessor
 import vdi.components.common.SecretString
 
 private const val DB_NAME_PREFIX = "DB_CONNECTION_NAME_"
@@ -59,13 +60,13 @@ private const val DB_ENV_VAR_INIT_CAPACITY = 12
  *
  * @param environment Map of environment variable names to values.
  */
-class DatabaseConfigurationMap(environment: Map<String, String> = System.getenv())
+class DatabaseConfigurationMap(environment: EnvironmentAccessor)
 : Map<String, DatabaseConfiguration>
 {
   private val raw: Map<String, DatabaseConfiguration>
 
   init {
-    raw = parseDatabaseConfigs(environment)
+    raw = parseDatabaseConfigs(environment.rawEnvironment())
   }
 
   override val entries: Set<Map.Entry<String, DatabaseConfiguration>>

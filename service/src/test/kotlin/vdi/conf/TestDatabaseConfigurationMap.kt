@@ -1,18 +1,28 @@
 package vdi.conf
 
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.mockito.Mockito
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import vdi.components.common.EnvironmentAccessor
 
 @DisplayName("DatabaseConfigurationMap")
 class TestDatabaseConfigurationMap {
 
+  private lateinit var mockEnv: EnvironmentAccessor
+
+  @BeforeEach
+  fun setup() {
+    mockEnv = Mockito.mock(EnvironmentAccessor::class.java)
+  }
+
   @Test
   @DisplayName("Success Case")
   fun t1() {
-    val input = mutableMapOf(
+    val input = mapOf(
       "DB_CONNECTION_NAME_PLASMO_DB" to "PlasmoDB",
       "DB_CONNECTION_LDAP_PLASMO_DB" to "foo",
       "DB_CONNECTION_USER_PLASMO_DB" to "bar",
@@ -24,7 +34,9 @@ class TestDatabaseConfigurationMap {
       "DB_CONNECTION_PASS_TOXO_DB" to "dong",
     )
 
-    val output = DatabaseConfigurationMap(input)
+    Mockito.`when`(mockEnv.rawEnvironment()).thenReturn(input)
+
+    val output = DatabaseConfigurationMap(mockEnv)
 
     assertEquals(2, output.size)
     assertTrue("PlasmoDB" in output)
@@ -44,13 +56,15 @@ class TestDatabaseConfigurationMap {
   @Test
   @DisplayName("Fails when group name is missing")
   fun t2() {
-    val input = mutableMapOf(
+    val input = mapOf(
       "DB_CONNECTION_LDAP_PLASMO_DB" to "foo",
       "DB_CONNECTION_USER_PLASMO_DB" to "bar",
       "DB_CONNECTION_PASS_PLASMO_DB" to "fizz",
     )
 
-    assertThrows<RuntimeException> { DatabaseConfigurationMap(input) }
+    Mockito.`when`(mockEnv.rawEnvironment()).thenReturn(input)
+
+    assertThrows<RuntimeException> { DatabaseConfigurationMap(mockEnv) }
   }
 
   @Test
@@ -62,31 +76,37 @@ class TestDatabaseConfigurationMap {
       "DB_CONNECTION_PASS_PLASMO_DB" to "fizz",
     )
 
-    assertThrows<RuntimeException> { DatabaseConfigurationMap(input) }
+    Mockito.`when`(mockEnv.rawEnvironment()).thenReturn(input)
+
+    assertThrows<RuntimeException> { DatabaseConfigurationMap(mockEnv) }
   }
 
   @Test
   @DisplayName("Fails when group user name is missing")
   fun t4() {
-    val input = mutableMapOf(
+    val input = mapOf(
       "DB_CONNECTION_NAME_PLASMO_DB" to "PlasmoDB",
       "DB_CONNECTION_LDAP_PLASMO_DB" to "foo",
       "DB_CONNECTION_PASS_PLASMO_DB" to "fizz",
     )
 
-    assertThrows<RuntimeException> { DatabaseConfigurationMap(input) }
+    Mockito.`when`(mockEnv.rawEnvironment()).thenReturn(input)
+
+    assertThrows<RuntimeException> { DatabaseConfigurationMap(mockEnv) }
   }
 
   @Test
   @DisplayName("Fails when group password is missing")
   fun t5() {
-    val input = mutableMapOf(
+    val input = mapOf(
       "DB_CONNECTION_NAME_PLASMO_DB" to "PlasmoDB",
       "DB_CONNECTION_LDAP_PLASMO_DB" to "foo",
       "DB_CONNECTION_USER_PLASMO_DB" to "bar",
     )
 
-    assertThrows<RuntimeException> { DatabaseConfigurationMap(input) }
+    Mockito.`when`(mockEnv.rawEnvironment()).thenReturn(input)
+
+    assertThrows<RuntimeException> { DatabaseConfigurationMap(mockEnv) }
   }
 
   // TODO: Move this test to the validate unit tests

@@ -1,5 +1,7 @@
 package vdi.conf
 
+import vdi.components.common.Env
+
 /**
  * VDI Handler Service Root Configuration
  *
@@ -14,16 +16,16 @@ object Configuration {
   /**
    * HTTP server specific configuration values.
    */
-  val ServerConfiguration = ServerConfiguration()
+  val ServerConfiguration = ServerConfiguration(Env)
 
   /**
    * Handler service functionality configuration values.
    */
-  val ServiceConfiguration = ServiceConfiguration()
+  val ServiceConfiguration = ServiceConfiguration(Env)
 
   /**
    * Database connection configuration values.
    */
-  val DatabaseConfigurations = DatabaseConfigurationMap()
+  val DatabaseConfigurations = DatabaseConfigurationMap(Env)
 }
 

@@ -2,6 +2,7 @@ package vdi.conf
 
 import vdi.Const
 import kotlin.time.Duration
+import vdi.components.common.EnvironmentAccessor
 
 /**
  * Service Specific Configuration Options
@@ -22,15 +23,15 @@ data class ServiceConfiguration(
   val uninstallScriptPath: String,
   val uninstallScriptMaxSeconds: Long,
 ) {
-  constructor(env: Map<String, String> = System.getenv()) : this(
-    env[Const.EnvKey.ImportScriptPath] ?: Const.ConfigDefault.ImportScriptPath,
-    (env[Const.EnvKey.ImportScriptMaxDuration] ?: Const.ConfigDefault.ImportScriptMaxDuration).toDurSeconds(),
-    env[Const.EnvKey.DataInstallScriptPath] ?: Const.ConfigDefault.DataInstallScriptPath,
-    (env[Const.EnvKey.DataInstallScriptMaxDuration] ?: Const.ConfigDefault.DataInstallScriptMaxDuration).toDurSeconds(),
-    env[Const.EnvKey.MetaInstallScriptPath] ?: Const.ConfigDefault.MetaInstallScriptPath,
-    (env[Const.EnvKey.MetaInstallScriptMaxDuration] ?: Const.ConfigDefault.MetaInstallScriptMaxDuration).toDurSeconds(),
-    env[Const.EnvKey.UninstallScriptPath] ?: Const.ConfigDefault.UninstallScriptPath,
-    (env[Const.EnvKey.UninstallScriptMaxDuration] ?: Const.ConfigDefault.UninstallScriptMaxDuration).toDurSeconds()
+  constructor(env: EnvironmentAccessor) : this(
+    env.optional(Const.EnvKey.ImportScriptPath) ?: Const.ConfigDefault.ImportScriptPath,
+    (env.optional(Const.EnvKey.ImportScriptMaxDuration) ?: Const.ConfigDefault.ImportScriptMaxDuration).toDurSeconds(),
+    env.optional(Const.EnvKey.DataInstallScriptPath) ?: Const.ConfigDefault.DataInstallScriptPath,
+    (env.optional(Const.EnvKey.DataInstallScriptMaxDuration) ?: Const.ConfigDefault.DataInstallScriptMaxDuration).toDurSeconds(),
+    env.optional(Const.EnvKey.MetaInstallScriptPath) ?: Const.ConfigDefault.MetaInstallScriptPath,
+    (env.optional(Const.EnvKey.MetaInstallScriptMaxDuration) ?: Const.ConfigDefault.MetaInstallScriptMaxDuration).toDurSeconds(),
+    env.optional(Const.EnvKey.UninstallScriptPath) ?: Const.ConfigDefault.UninstallScriptPath,
+    (env.optional(Const.EnvKey.UninstallScriptMaxDuration) ?: Const.ConfigDefault.UninstallScriptMaxDuration).toDurSeconds()
   )
 }
 
