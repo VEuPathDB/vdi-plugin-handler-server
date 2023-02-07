@@ -7,13 +7,16 @@ import io.ktor.server.routing.*
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import vdi.server.controller.handlePostImport
-import vdi.server.controller.handlePostInstallData
 import vdi.server.controller.handlePostInstallMeta
 import vdi.server.controller.handlePostUninstall
 import vdi.components.http.errors.withExceptionMapping
+import vdi.components.ldap.LDAP
+import vdi.components.script.ScriptExecutorImpl
+import vdi.conf.Configuration
+import vdi.server.controller.PostInstallDataController
 
 
-fun Application.configureRouting() {
+fun Application.configureRouting(ldap: LDAP) {
   val micrometer = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 
   install(MicrometerMetrics) { registry = micrometer }
@@ -34,7 +37,8 @@ fun Application.configureRouting() {
 
       post("/data") {
         withExceptionMapping {
-          call.handlePostInstallData()
+          PostInstallDataController(ldap, ScriptExecutorImpl(), Configuration.DatabaseConfigurations)
+            .handlePostInstallData(call)
         }
       }
     }
