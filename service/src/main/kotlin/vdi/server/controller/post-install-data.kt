@@ -1,6 +1,7 @@
 package vdi.server.controller
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -33,15 +34,26 @@ class PostInstallDataController(
 ) {
 
   suspend fun handlePostInstallData(call: ApplicationCall) {
+    if (call.request.contentType() != ContentType.MultiPart.FormData)
+      throw BadRequestException("invalid request content type")
+
+    // Create temp directory
     withTempDirectory { workspace ->
       val details: InstallDetails
       val payload: Path
 
+      // Parse the multipart post body
       call.parseMultipartBody(workspace, { details = it }, { payload = it })
+
+      // Validate the details
       details.validate()
 
+      // Lookup the database configuration from the environment, failing if no
+      // such entry exists.
       val dbEnvConfig = databases[details.projectID] ?: throw BadRequestException("unrecognized projectID value")
 
+      // Run the install-data service and collect the returned list of
+      // installation warnings.
       val warnings = InstallDataService(workspace, details.vdiID, payload, ldap, executor, dbEnvConfig)
         .processInstall()
 
