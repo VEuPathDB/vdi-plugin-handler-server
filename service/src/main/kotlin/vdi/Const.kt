@@ -38,7 +38,21 @@ object Const {
     const val UninstallScriptMaxDuration   = "1h"
   }
 
-  object EnvKey {
+  object ScriptEnvKey {
+    const val DBHost = "DB_HOST"
+    const val DBPort = "DB_PORT"
+    const val DBName = "DB_NAME"
+    const val DBUser = "DB_USER"
+    const val DBPass = "DB_PASS"
+  }
+
+  /**
+   * Service Configuration Environment Key
+   */
+  object ConfigEnvKey {
+    const val LDAPServer = "LDAP_SERVER"
+    const val OracleBaseDN = "ORACLE_BASE_DN"
+
     const val ImportScriptPath = "IMPORT_SCRIPT_PATH"
     const val ImportScriptMaxDuration = "IMPORT_SCRIPT_MAX_DURATION"
 

@@ -14,7 +14,7 @@ data class ServerConfiguration(
   val host: String
 ) {
   constructor(env: EnvironmentAccessor) : this(
-    port = (env.optional(Const.EnvKey.ServerPort) ?: Const.ConfigDefault.ServerPort).toUShort(),
-    host = env.optional(Const.EnvKey.ServerHost) ?: Const.ConfigDefault.ServerHost,
+    port = (env.optional(Const.ConfigEnvKey.ServerPort) ?: Const.ConfigDefault.ServerPort).toUShort(),
+    host = env.optional(Const.ConfigEnvKey.ServerHost) ?: Const.ConfigDefault.ServerHost,
   )
 }

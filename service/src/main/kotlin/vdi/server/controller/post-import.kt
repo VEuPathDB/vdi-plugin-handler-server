@@ -146,35 +146,14 @@ private fun PartData.parseImportDetails(detailsCB: (ImportDetails) -> Unit) {
  * from the request body.
  */
 private fun PartData.handlePayload(workspace: Path, payloadCB: (Path) -> Unit) {
-  val payload = workspace.resolve(IMPORT_PAYLOAD_FILE_NAME)
-
-  payload.createFile()
-  payload.outputStream().use {
-    when (this) {
-      is PartData.BinaryChannelItem -> provider().toInputStream().transferTo(it)
-      is PartData.BinaryItem        -> provider().asStream().transferTo(it)
-      is PartData.FileItem          -> streamProvider().transferTo(it)
-      is PartData.FormItem          -> value.byteInputStream().transferTo(it)
-    }
-  }
-
-  payloadCB(payload)
+  handlePayload(workspace, IMPORT_PAYLOAD_FILE_NAME, payloadCB)
 }
 
 /**
  * Validates the posted details about a dataset being import processed.
  */
 private fun ImportDetails.validate() {
-  if (vdiID.length != 32)
-    throw BadRequestException("invalid vdiID value.")
-
-  for (c in vdiID)
-    when (c) {
-      in '0' .. '9',
-      in 'A' .. 'F',
-      in 'a' .. 'f' -> { /* do nothing */ }
-      else          -> throw BadRequestException("invalid vdiID value.")
-    }
+  vdiID.validateAsVDIID("vdiID")
 
   if (type.name.isBlank())
     throw BadRequestException("type.name cannot be blank")

@@ -11,6 +11,9 @@ import vdi.components.common.EnvironmentAccessor
  * @since 1.0.0
  */
 data class ServiceConfiguration(
+  val ldapServer: String,
+  val oracleBaseDN: String,
+
   val importScriptPath: String,
   val importScriptMaxSeconds: Long,
 
@@ -24,14 +27,16 @@ data class ServiceConfiguration(
   val uninstallScriptMaxSeconds: Long,
 ) {
   constructor(env: EnvironmentAccessor) : this(
-    env.optional(Const.EnvKey.ImportScriptPath) ?: Const.ConfigDefault.ImportScriptPath,
-    (env.optional(Const.EnvKey.ImportScriptMaxDuration) ?: Const.ConfigDefault.ImportScriptMaxDuration).toDurSeconds(),
-    env.optional(Const.EnvKey.DataInstallScriptPath) ?: Const.ConfigDefault.DataInstallScriptPath,
-    (env.optional(Const.EnvKey.DataInstallScriptMaxDuration) ?: Const.ConfigDefault.DataInstallScriptMaxDuration).toDurSeconds(),
-    env.optional(Const.EnvKey.MetaInstallScriptPath) ?: Const.ConfigDefault.MetaInstallScriptPath,
-    (env.optional(Const.EnvKey.MetaInstallScriptMaxDuration) ?: Const.ConfigDefault.MetaInstallScriptMaxDuration).toDurSeconds(),
-    env.optional(Const.EnvKey.UninstallScriptPath) ?: Const.ConfigDefault.UninstallScriptPath,
-    (env.optional(Const.EnvKey.UninstallScriptMaxDuration) ?: Const.ConfigDefault.UninstallScriptMaxDuration).toDurSeconds()
+    env.require(Const.ConfigEnvKey.LDAPServer),
+    env.require(Const.ConfigEnvKey.OracleBaseDN),
+    env.optional(Const.ConfigEnvKey.ImportScriptPath) ?: Const.ConfigDefault.ImportScriptPath,
+    (env.optional(Const.ConfigEnvKey.ImportScriptMaxDuration) ?: Const.ConfigDefault.ImportScriptMaxDuration).toDurSeconds(),
+    env.optional(Const.ConfigEnvKey.DataInstallScriptPath) ?: Const.ConfigDefault.DataInstallScriptPath,
+    (env.optional(Const.ConfigEnvKey.DataInstallScriptMaxDuration) ?: Const.ConfigDefault.DataInstallScriptMaxDuration).toDurSeconds(),
+    env.optional(Const.ConfigEnvKey.MetaInstallScriptPath) ?: Const.ConfigDefault.MetaInstallScriptPath,
+    (env.optional(Const.ConfigEnvKey.MetaInstallScriptMaxDuration) ?: Const.ConfigDefault.MetaInstallScriptMaxDuration).toDurSeconds(),
+    env.optional(Const.ConfigEnvKey.UninstallScriptPath) ?: Const.ConfigDefault.UninstallScriptPath,
+    (env.optional(Const.ConfigEnvKey.UninstallScriptMaxDuration) ?: Const.ConfigDefault.UninstallScriptMaxDuration).toDurSeconds()
   )
 }
 
