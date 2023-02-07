@@ -4,14 +4,14 @@ import io.ktor.server.application.*
 import vdi.components.http.errors.BadRequestException
 import vdi.components.ldap.LDAP
 import vdi.components.script.ScriptExecutor
-import vdi.conf.Configuration
+import vdi.conf.HandlerConfig
 import vdi.server.context.withInstallDataContext
 import vdi.server.model.InstallDataSuccessResponse
 import vdi.server.respondJSON200
 import vdi.service.InstallDataHandler
 
 suspend fun ApplicationCall.handleInstallDataRequest(
-  config:   Configuration,
+  config:   HandlerConfig,
   ldap:     LDAP,
   executor: ScriptExecutor,
 ) {

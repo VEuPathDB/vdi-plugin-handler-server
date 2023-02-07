@@ -76,7 +76,7 @@ class InstallDataHandler(
 
           else -> {
             log.error("install-data script failed for VDI dataset ID {}", vdiID)
-            throw IllegalStateException("install script failed with unexpected exit code")
+            throw IllegalStateException("install-data script failed with unexpected exit code")
           }
         }
       }

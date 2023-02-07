@@ -3,7 +3,7 @@ package vdi.conf
 import org.slf4j.Logger
 import kotlin.time.Duration.Companion.seconds
 
-fun Configuration.printToLogs(log: Logger) {
+fun HandlerConfig.printToLogs(log: Logger) {
   val sb = StringBuilder(4096)
 
   sb.append("Configuration:\n")

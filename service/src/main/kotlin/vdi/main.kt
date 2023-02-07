@@ -4,7 +4,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import org.slf4j.LoggerFactory
 import vdi.components.script.ScriptExecutorImpl
-import vdi.conf.Configuration
+import vdi.conf.HandlerConfig
 import vdi.conf.printToLogs
 import vdi.conf.validate
 import vdi.server.configureRouting
@@ -14,7 +14,7 @@ fun main() {
   val log = LoggerFactory.getLogger("main")
 
   log.debug("loading configuration")
-  val config = Configuration()
+  val config = HandlerConfig()
 
   log.debug("validating configuration")
   config.validate()

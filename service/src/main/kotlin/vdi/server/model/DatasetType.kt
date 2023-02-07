@@ -1,7 +1,7 @@
 package vdi.server.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import vdi.consts.Const.FieldName
+import vdi.consts.FieldName
 
 data class DatasetType(
   @JsonProperty(FieldName.Name)

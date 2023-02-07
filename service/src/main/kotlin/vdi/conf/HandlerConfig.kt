@@ -11,7 +11,7 @@ import vdi.components.common.Env
  * @author Elizabeth Paige Harper - https://github.com/foxcapades
  * @since 1.0.0
  */
-data class Configuration(
+data class HandlerConfig(
 
   /**
    * HTTP server specific configuration values.
