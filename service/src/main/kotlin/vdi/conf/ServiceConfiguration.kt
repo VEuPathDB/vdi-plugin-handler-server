@@ -1,8 +1,9 @@
 package vdi.conf
 
-import vdi.Const
 import kotlin.time.Duration
 import vdi.components.common.EnvironmentAccessor
+import vdi.consts.ConfigDefault
+import vdi.consts.ConfigEnvKey
 
 /**
  * Service Specific Configuration Options
@@ -14,29 +15,30 @@ data class ServiceConfiguration(
   val ldapServer: String,
   val oracleBaseDN: String,
 
-  val importScriptPath: String,
-  val importScriptMaxSeconds: Long,
-
-  val installDataScriptPath: String,
-  val installDataScriptMaxSeconds: Long,
-
-  val installMetaScriptPath: String,
-  val installMetaScriptMaxSeconds: Long,
-
-  val uninstallScriptPath: String,
-  val uninstallScriptMaxSeconds: Long,
+  val importScript: ScriptConfiguration,
+  val installDataScript: ScriptConfiguration,
+  val installMetaScript: ScriptConfiguration,
+  val uninstallScript: ScriptConfiguration,
 ) {
   constructor(env: EnvironmentAccessor) : this(
-    env.require(Const.ConfigEnvKey.LDAPServer),
-    env.require(Const.ConfigEnvKey.OracleBaseDN),
-    env.optional(Const.ConfigEnvKey.ImportScriptPath) ?: Const.ConfigDefault.ImportScriptPath,
-    (env.optional(Const.ConfigEnvKey.ImportScriptMaxDuration) ?: Const.ConfigDefault.ImportScriptMaxDuration).toDurSeconds(),
-    env.optional(Const.ConfigEnvKey.DataInstallScriptPath) ?: Const.ConfigDefault.DataInstallScriptPath,
-    (env.optional(Const.ConfigEnvKey.DataInstallScriptMaxDuration) ?: Const.ConfigDefault.DataInstallScriptMaxDuration).toDurSeconds(),
-    env.optional(Const.ConfigEnvKey.MetaInstallScriptPath) ?: Const.ConfigDefault.MetaInstallScriptPath,
-    (env.optional(Const.ConfigEnvKey.MetaInstallScriptMaxDuration) ?: Const.ConfigDefault.MetaInstallScriptMaxDuration).toDurSeconds(),
-    env.optional(Const.ConfigEnvKey.UninstallScriptPath) ?: Const.ConfigDefault.UninstallScriptPath,
-    (env.optional(Const.ConfigEnvKey.UninstallScriptMaxDuration) ?: Const.ConfigDefault.UninstallScriptMaxDuration).toDurSeconds()
+    env.require(ConfigEnvKey.LDAPServer),
+    env.require(ConfigEnvKey.OracleBaseDN),
+    ScriptConfiguration(
+      env.optional(ConfigEnvKey.ImportScriptPath) ?: ConfigDefault.ImportScriptPath,
+      (env.optional(ConfigEnvKey.ImportScriptMaxDuration) ?: ConfigDefault.ImportScriptMaxDuration).toDurSeconds()
+    ),
+    ScriptConfiguration(
+      env.optional(ConfigEnvKey.DataInstallScriptPath) ?: ConfigDefault.DataInstallScriptPath,
+      (env.optional(ConfigEnvKey.DataInstallScriptMaxDuration) ?: ConfigDefault.DataInstallScriptMaxDuration).toDurSeconds(),
+    ),
+    ScriptConfiguration(
+      env.optional(ConfigEnvKey.MetaInstallScriptPath) ?: ConfigDefault.MetaInstallScriptPath,
+      (env.optional(ConfigEnvKey.MetaInstallScriptMaxDuration) ?: ConfigDefault.MetaInstallScriptMaxDuration).toDurSeconds(),
+    ),
+    ScriptConfiguration(
+      env.optional(ConfigEnvKey.UninstallScriptPath) ?: ConfigDefault.UninstallScriptPath,
+      (env.optional(ConfigEnvKey.UninstallScriptMaxDuration) ?: ConfigDefault.UninstallScriptMaxDuration).toDurSeconds(),
+    ),
   )
 }
 

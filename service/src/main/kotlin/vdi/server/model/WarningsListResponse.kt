@@ -1,7 +1,7 @@
 package vdi.server.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import vdi.Const
+import vdi.consts.Const
 
 data class WarningsListResponse(
   @JsonProperty(Const.FieldName.Messages)

@@ -1,7 +1,7 @@
 package vdi.server.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import vdi.Const
+import vdi.consts.Const
 
 data class DatasetDependency(
   @JsonProperty(Const.FieldName.ResourceIdentifier)

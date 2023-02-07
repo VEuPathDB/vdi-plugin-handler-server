@@ -11,21 +11,21 @@ import vdi.components.common.Env
  * @author Elizabeth Paige Harper - https://github.com/foxcapades
  * @since 1.0.0
  */
-object Configuration {
+data class Configuration(
 
   /**
    * HTTP server specific configuration values.
    */
-  val ServerConfiguration = ServerConfiguration(Env)
+  val server: ServerConfiguration = ServerConfiguration(Env),
 
   /**
    * Handler service functionality configuration values.
    */
-  val ServiceConfiguration = ServiceConfiguration(Env)
+  val service: ServiceConfiguration = ServiceConfiguration(Env),
 
   /**
    * Database connection configuration values.
    */
-  val DatabaseConfigurations = DatabaseConfigurationMap(Env)
-}
+  val databases: DatabaseConfigurationMap = DatabaseConfigurationMap(Env),
+)
 

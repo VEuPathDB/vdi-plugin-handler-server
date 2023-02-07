@@ -4,12 +4,12 @@ import java.io.File
 
 fun Configuration.validate() {
 
-  validateScript(ServiceConfiguration.importScriptPath)
-  validateScript(ServiceConfiguration.installDataScriptPath)
-  validateScript(ServiceConfiguration.installMetaScriptPath)
-  validateScript(ServiceConfiguration.uninstallScriptPath)
+  validateScript(service.importScript.path)
+  validateScript(service.installDataScript.path)
+  validateScript(service.installMetaScript.path)
+  validateScript(service.uninstallScript.path)
 
-  if (DatabaseConfigurations.isEmpty())
+  if (databases.isEmpty())
     throw RuntimeException("At least one set of database connection details must be provided.")
 }
 

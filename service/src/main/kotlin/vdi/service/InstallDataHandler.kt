@@ -2,31 +2,30 @@ package vdi.service
 
 import org.slf4j.LoggerFactory
 import java.nio.file.Path
-import java.time.Duration
 import kotlin.io.path.createDirectory
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.pathString
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import vdi.Const.ScriptEnvKey
 import vdi.components.io.LineListOutputStream
 import vdi.components.io.LoggingOutputStream
 import vdi.components.ldap.LDAP
-import vdi.components.ldap.OracleNetDesc
 import vdi.components.script.ScriptExecutor
-import vdi.conf.Configuration
 import vdi.conf.DatabaseConfiguration
+import vdi.conf.ScriptConfiguration
+import vdi.consts.ScriptEnvKey
 import vdi.util.unpackAsTarGZ
 
 private const val INSTALL_DIR_NAME = "install"
 
-class InstallDataService(
+class InstallDataHandler(
   private val workspace: Path,
   private val vdiID: String,
   private val payload: Path,
   private val ldap: LDAP,
   private val executor: ScriptExecutor,
   private val dbEnvConfig: DatabaseConfiguration,
+  private val script: ScriptConfiguration,
 ) {
   private val log = LoggerFactory.getLogger(javaClass)
 
@@ -34,7 +33,7 @@ class InstallDataService(
     log.trace("init(workspace={}, vdiID={}, payload={}, ldap={}, executor={}, dbEnvConfig={}", workspace, vdiID, payload, ldap, executor, dbEnvConfig)
   }
 
-  suspend fun processInstall() : List<String> {
+  suspend fun run() : List<String> {
     log.trace("processInstall()")
 
     val dbLdapConfig = ldap.requireSingularOracleNetDesc(dbEnvConfig.ldap.value)
@@ -50,7 +49,7 @@ class InstallDataService(
 
     log.info("executing install-data script for VDI dataset ID {}", vdiID)
     executor.executeScript(
-      Configuration.ServiceConfiguration.installDataScriptPath,
+      script.path,
       workspace,
       arrayOf(vdiID, installDir.pathString),
       mapOf(
@@ -65,7 +64,7 @@ class InstallDataService(
         val job1 = launch { LoggingOutputStream(log).use { scriptStdErr.transferTo(it) } }
         val job2 = launch { LineListOutputStream(warnings).use { scriptStdOut.transferTo(it) } }
 
-        waitFor(Configuration.ServiceConfiguration.installDataScriptMaxSeconds)
+        waitFor(script.maxSeconds)
 
         job1.join()
         job2.join()

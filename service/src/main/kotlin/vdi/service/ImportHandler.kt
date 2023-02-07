@@ -5,13 +5,12 @@ import java.nio.file.Path
 import kotlin.io.path.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import vdi.Const.ExitCode
 import vdi.components.io.LineListOutputStream
 import vdi.components.io.LoggingOutputStream
 import vdi.components.json.JSON
 import vdi.components.script.ScriptExecutor
-import vdi.components.script.ScriptExecutorImpl
-import vdi.conf.Configuration
+import vdi.conf.ScriptConfiguration
+import vdi.consts.ExitCode
 import vdi.server.model.ImportDetails
 import vdi.util.packAsTarGZ
 import vdi.util.unpackAsTarGZ
@@ -23,11 +22,12 @@ private const val META_FILE_NAME        = "meta.json"
 private const val WARNING_FILE_NAME     = "warnings.json"
 private const val OUTPUT_FILE_NAME      = "output.tar.gz"
 
-class ImportProcessor(
+class ImportHandler(
   private val workspace: Path,
   private val inputFile: Path,
   private val details:   ImportDetails,
-  private val executor:  ScriptExecutor = ScriptExecutorImpl()
+  private val executor:  ScriptExecutor,
+  private val script:    ScriptConfiguration,
 ) {
   private val log = LoggerFactory.getLogger("ImportProcessor")
 
@@ -101,7 +101,7 @@ class ImportProcessor(
    */
   private suspend fun executeScript(): Collection<String> {
     return executor.executeScript(
-      Configuration.ServiceConfiguration.importScriptPath,
+      script.path,
       workspace,
       arrayOf(inputDirectory.pathString, outputDirectory.pathString)
     ) {
@@ -111,7 +111,7 @@ class ImportProcessor(
         val j1 = launch { LineListOutputStream(warnings).use { scriptStdOut.transferTo(it) } }
         val j2 = launch { LoggingOutputStream(log).use { scriptStdErr.transferTo(it) } }
 
-        waitFor(Configuration.ServiceConfiguration.importScriptMaxSeconds)
+        waitFor(script.maxSeconds)
 
         j1.join()
         j2.join()

@@ -1,4 +1,4 @@
-package vdi.server.controller
+package vdi.server.context
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.http.*
@@ -12,29 +12,20 @@ import java.nio.file.Path
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
-import kotlin.io.path.createFile
-import kotlin.io.path.inputStream
-import kotlin.io.path.outputStream
-import vdi.Const
+import vdi.consts.Const
 import vdi.components.http.errors.BadRequestException
-import vdi.components.http.errors.SimpleErrorResponse
 import vdi.components.io.BoundedInputStream
 import vdi.components.json.JSON
 import vdi.server.model.ImportDetails
-import vdi.server.model.WarningsListResponse
-import vdi.server.respondJSON400
-import vdi.server.respondJSON418
-import vdi.server.respondJSON420
-import vdi.service.ImportProcessor
 import vdi.util.withTempDirectory
 
 private const val IMPORT_PAYLOAD_FILE_NAME = "import.tar.gz"
 private const val IMPORT_DETAILS_MAX_SIZE  = 16384uL
 
-/**
- * Handles Import `POST` Requests
- */
-suspend fun ApplicationCall.handlePostImport() {
+suspend fun ApplicationCall.withImportContext(fn: suspend (workspace: Path, details: ImportDetails, payload: Path) -> Unit) {
+  if (request.contentType() != ContentType.MultiPart.FormData)
+    throw BadRequestException("invalid request content type")
+
   withTempDirectory { workspace ->
     val details: ImportDetails
     val payload: Path
@@ -45,22 +36,9 @@ suspend fun ApplicationCall.handlePostImport() {
     // Validate the details JSON
     details.validate()
 
-    try {
-      val outFile = ImportProcessor(workspace, payload, details).processImport()
-
-      respondOutputStream(ContentType.Application.OctetStream, HttpStatusCode.OK) {
-        outFile.inputStream().use { it.transferTo(this) }
-      }
-    } catch (e: ImportProcessor.ValidationError) {
-      respondJSON418(WarningsListResponse(e.warnings))
-    } catch (e: ImportProcessor.TransformationError) {
-      respondJSON420(WarningsListResponse(e.warnings))
-    } catch (e: ImportProcessor.EmptyInputError) {
-      respondJSON400(SimpleErrorResponse(e.message!!))
-    }
+    fn(workspace, details, payload)
   }
 }
-
 /**
  * Parses the expected fields out of the `multipart/form-data` POST request
  * body.

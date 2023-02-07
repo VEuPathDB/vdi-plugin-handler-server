@@ -1,6 +1,6 @@
 package vdi.conf
 
-import vdi.Const
+import vdi.consts.Const
 import vdi.components.common.EnvironmentAccessor
 
 /**

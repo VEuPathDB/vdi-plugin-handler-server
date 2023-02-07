@@ -1,4 +1,4 @@
-package vdi.server.controller
+package vdi.server.context
 
 import io.ktor.http.content.*
 import io.ktor.util.*

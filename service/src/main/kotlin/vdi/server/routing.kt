@@ -6,27 +6,24 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
-import vdi.server.controller.handlePostImport
-import vdi.server.controller.handlePostInstallMeta
-import vdi.server.controller.handlePostUninstall
 import vdi.components.http.errors.withExceptionMapping
 import vdi.components.ldap.LDAP
-import vdi.components.script.ScriptExecutorImpl
+import vdi.components.script.ScriptExecutor
 import vdi.conf.Configuration
-import vdi.server.controller.PostInstallDataController
+import vdi.server.controller.*
 
 
-fun Application.configureRouting(ldap: LDAP) {
+fun Application.configureRouting(
+  config:   Configuration,
+  ldap:     LDAP,
+  executor: ScriptExecutor,
+) {
   val micrometer = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
 
   install(MicrometerMetrics) { registry = micrometer }
 
   routing {
-    post("/import") {
-      withExceptionMapping {
-        call.handlePostImport()
-      }
-    }
+    post("/import") { withExceptionMapping { call.handleImportRequest(executor, config.service.importScript) } }
 
     route("/install") {
       post("/meta") {
@@ -35,12 +32,7 @@ fun Application.configureRouting(ldap: LDAP) {
         }
       }
 
-      post("/data") {
-        withExceptionMapping {
-          PostInstallDataController(ldap, ScriptExecutorImpl(), Configuration.DatabaseConfigurations)
-            .handlePostInstallData(call)
-        }
-      }
+      post("/data") { withExceptionMapping { call.handleInstallDataRequest(config, ldap, executor) } }
     }
 
     post("/uninstall") {
