@@ -9,12 +9,12 @@ import io.micrometer.prometheus.PrometheusMeterRegistry
 import vdi.components.http.errors.withExceptionMapping
 import vdi.components.ldap.LDAP
 import vdi.components.script.ScriptExecutor
-import vdi.conf.Configuration
+import vdi.conf.HandlerConfig
 import vdi.server.controller.*
 
 
 fun Application.configureRouting(
-  config:   Configuration,
+  config:   HandlerConfig,
   ldap:     LDAP,
   executor: ScriptExecutor,
 ) {
@@ -26,13 +26,8 @@ fun Application.configureRouting(
     post("/import") { withExceptionMapping { call.handleImportRequest(executor, config.service.importScript) } }
 
     route("/install") {
-      post("/meta") {
-        withExceptionMapping {
-          call.handlePostInstallMeta()
-        }
-      }
-
       post("/data") { withExceptionMapping { call.handleInstallDataRequest(config, ldap, executor) } }
+      post("/meta") { withExceptionMapping { call.handleInstallMetaRequest(config, ldap, executor) } }
     }
 
     post("/uninstall") {
