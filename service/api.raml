@@ -196,7 +196,22 @@ description: |
               type: file
               required: true
       responses:
-        204:
+        200:
+          description: |
+            Success
+            
+            The data installation was processed successfully.
+          body:
+            application/json:
+              type: object
+              additionalProperties: false
+              properties:
+                warnings:
+                  type: array
+                  items:
+                    type: string
+                  required: false
+                  default: []
         400:
           description: |
             Malformed Request
