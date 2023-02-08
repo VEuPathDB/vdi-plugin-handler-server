@@ -76,7 +76,9 @@
         "resourceDisplayName": { "type": "string" }
       },
       "required": [
-
+        "resourceIdentifier",
+        "resourceVersion",
+        "resourceDisplayName"
       ]
     }
   }
