@@ -1,5 +1,6 @@
 = VDI Plugin Handler Server
 :toc: left
+:toclevels: 3
 :icons: font
 
 ifdef::env-github[]
