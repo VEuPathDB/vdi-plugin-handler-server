@@ -1,7 +1,8 @@
 package vdi.conf
 
-import vdi.consts.Const
 import vdi.components.common.EnvironmentAccessor
+import vdi.consts.ConfigDefault
+import vdi.consts.ConfigEnvKey
 
 /**
  * HTTP Server Specific Configuration Options
@@ -14,7 +15,7 @@ data class ServerConfiguration(
   val host: String
 ) {
   constructor(env: EnvironmentAccessor) : this(
-    port = (env.optional(Const.ConfigEnvKey.ServerPort) ?: Const.ConfigDefault.ServerPort).toUShort(),
-    host = env.optional(Const.ConfigEnvKey.ServerHost) ?: Const.ConfigDefault.ServerHost,
+    port = (env.optional(ConfigEnvKey.ServerPort) ?: ConfigDefault.ServerPort).toUShort(),
+    host = env.optional(ConfigEnvKey.ServerHost) ?: ConfigDefault.ServerHost,
   )
 }
