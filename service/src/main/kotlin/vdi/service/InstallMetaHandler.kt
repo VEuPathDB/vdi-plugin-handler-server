@@ -7,12 +7,11 @@ import kotlin.io.path.outputStream
 import kotlin.io.path.pathString
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import vdi.components.common.SecretString
 import vdi.components.io.LoggingOutputStream
 import vdi.components.json.JSON
 import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
-import vdi.consts.ScriptEnvKey
+import vdi.model.DatabaseDetails
 import vdi.server.model.DatasetMeta
 
 private const val META_FILE_NAME = "meta.json"
@@ -56,21 +55,5 @@ class InstallMetaHandler(
         }
       }
     }
-  }
-
-  data class DatabaseDetails(
-    val dbHost: String,
-    val dbPort: UShort,
-    val dbName: String,
-    val dbUser: SecretString,
-    val dbPass: SecretString,
-  ) {
-    fun toEnvMap() = mapOf(
-      ScriptEnvKey.DBHost to dbHost,
-      ScriptEnvKey.DBPort to dbPort.toString(),
-      ScriptEnvKey.DBName to dbName,
-      ScriptEnvKey.DBUser to dbUser.value,
-      ScriptEnvKey.DBPass to dbPass.value,
-    )
   }
 }

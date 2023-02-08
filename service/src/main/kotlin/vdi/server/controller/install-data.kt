@@ -5,6 +5,7 @@ import vdi.components.http.errors.BadRequestException
 import vdi.components.ldap.LDAP
 import vdi.components.script.ScriptExecutor
 import vdi.conf.HandlerConfig
+import vdi.server.context.withDatabaseDetails
 import vdi.server.context.withInstallDataContext
 import vdi.server.model.InstallDataSuccessResponse
 import vdi.server.respondJSON200
@@ -16,15 +17,13 @@ suspend fun ApplicationCall.handleInstallDataRequest(
   executor: ScriptExecutor,
 ) {
   withInstallDataContext { workspace, details, payload ->
-    // Lookup the database configuration from the environment, failing if no
-    // such entry exists.
-    val dbEnvConfig = config.databases[details.projectID] ?: throw BadRequestException("unrecognized projectID value")
+    withDatabaseDetails(config.databases, ldap, details.projectID) { dbDetails ->
+      // Run the install-data service and collect the returned list of
+      // installation warnings.
+      val warnings = InstallDataHandler(workspace, details.vdiID, payload, dbDetails, executor, config.service.installDataScript)
+        .run()
 
-    // Run the install-data service and collect the returned list of
-    // installation warnings.
-    val warnings = InstallDataHandler(workspace, details.vdiID, payload, ldap, executor, dbEnvConfig, config.service.installDataScript)
-      .run()
-
-    respondJSON200(InstallDataSuccessResponse(warnings))
+      respondJSON200(InstallDataSuccessResponse(warnings))
+    }
   }
 }

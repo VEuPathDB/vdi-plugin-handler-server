@@ -5,6 +5,10 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import vdi.components.json.toJSONString
 
+suspend inline fun ApplicationCall.respond204() =
+  respond(StatusNoContent, Unit)
+
+
 suspend inline fun ApplicationCall.respondJSON200(body: Any) =
   respondJSON(body, StatusSuccess)
 
