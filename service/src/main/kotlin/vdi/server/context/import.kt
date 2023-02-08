@@ -13,6 +13,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import vdi.components.http.errors.BadRequestException
+import vdi.components.http.errors.UnsupportedMediaTypeException
 import vdi.components.io.BoundedInputStream
 import vdi.components.json.JSON
 import vdi.consts.FieldName
@@ -24,7 +25,7 @@ private const val IMPORT_DETAILS_MAX_SIZE  = 16384uL
 
 suspend fun ApplicationCall.withImportContext(fn: suspend (workspace: Path, details: ImportDetails, payload: Path) -> Unit) {
   if (request.contentType() != ContentType.MultiPart.FormData)
-    throw BadRequestException("invalid request content type")
+    throw UnsupportedMediaTypeException()
 
   withTempDirectory { workspace ->
     val details: ImportDetails

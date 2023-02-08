@@ -12,6 +12,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import vdi.components.http.errors.BadRequestException
+import vdi.components.http.errors.UnsupportedMediaTypeException
 import vdi.components.io.BoundedInputStream
 import vdi.components.json.JSON
 import vdi.consts.FieldName
@@ -23,7 +24,7 @@ private const val INSTALL_DETAILS_MAX_SIZE = 1024uL
 
 suspend fun ApplicationCall.withInstallDataContext(fn: suspend (workspace: Path, details: InstallDetails, payload: Path) -> Unit) {
   if (request.contentType() != ContentType.MultiPart.FormData)
-    throw BadRequestException("invalid request content type")
+    throw UnsupportedMediaTypeException()
 
   // Create temp directory
   withTempDirectory { workspace ->

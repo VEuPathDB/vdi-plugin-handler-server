@@ -7,6 +7,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import java.nio.file.Path
 import vdi.components.http.errors.BadRequestException
+import vdi.components.http.errors.UnsupportedMediaTypeException
 import vdi.components.io.BoundedInputStream
 import vdi.components.json.JSON
 import vdi.consts.FieldName
@@ -21,7 +22,7 @@ suspend fun ApplicationCall.withInstallMetaContext(
   fn: suspend (workspace: Path, request: InstallMetaRequest) -> Unit
 ) {
   if (request.contentType() != ContentType.Application.Json)
-    throw BadRequestException("invalid request content type")
+    throw UnsupportedMediaTypeException()
 
   val body = try {
     JSON.readValue<InstallMetaRequest>(BoundedInputStream(this.receiveStream(), MAX_INPUT_BYTES))
