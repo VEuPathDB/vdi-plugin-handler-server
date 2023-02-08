@@ -17,6 +17,7 @@ dependencies {
   implementation(project(":components:io-utils"))
   implementation(project(":components:json"))
   implementation(project(":components:ldap-lookup"))
+  implementation(project(":components:metrics"))
   implementation(project(":components:script-execution"))
 
   implementation("io.ktor:ktor-server-core-jvm:2.2.2")

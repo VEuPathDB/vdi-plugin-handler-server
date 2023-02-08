@@ -30,14 +30,8 @@ fun Application.configureRouting(
       post("/meta") { withExceptionMapping { call.handleInstallMetaRequest(config, ldap, executor) } }
     }
 
-    post("/uninstall") {
-      withExceptionMapping {
-        call.handlePostUninstall()
-      }
-    }
+    post("/uninstall") { withExceptionMapping { call.handleUninstallRequest(executor, ldap, config) } }
 
-    get("/metrics") {
-      call.respond(micrometer.scrape())
-    }
+    get("/metrics") { call.respond(micrometer.scrape()) }
   }
 }

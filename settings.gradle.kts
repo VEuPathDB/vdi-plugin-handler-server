@@ -6,6 +6,7 @@ include(
   ":components:io-utils",
   ":components:json",
   ":components:ldap-lookup",
+  ":components:metrics",
   ":components:script-execution",
 )
 

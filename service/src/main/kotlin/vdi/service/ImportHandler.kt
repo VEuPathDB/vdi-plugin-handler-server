@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import vdi.components.io.LineListOutputStream
 import vdi.components.io.LoggingOutputStream
 import vdi.components.json.JSON
+import vdi.components.metrics.Metrics
 import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
 import vdi.consts.ExitCode
@@ -100,7 +101,9 @@ class ImportHandler(
    * execution.
    */
   private suspend fun executeScript(): Collection<String> {
-    return executor.executeScript(
+    val timer = Metrics.importScriptDuration.startTimer()
+
+    val warnings = executor.executeScript(
       script.path,
       workspace,
       arrayOf(inputDirectory.pathString, outputDirectory.pathString)
@@ -133,6 +136,10 @@ class ImportHandler(
         warnings
       }
     }
+
+    timer.observeDuration()
+
+    return warnings
   }
 
   private fun collectOutputFiles() : MutableCollection<Path> {

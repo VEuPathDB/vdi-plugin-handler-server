@@ -9,6 +9,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import vdi.components.io.LoggingOutputStream
 import vdi.components.json.JSON
+import vdi.components.metrics.Metrics
 import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
 import vdi.model.DatabaseDetails
@@ -35,6 +36,7 @@ class InstallMetaHandler(
       .apply { outputStream().use { JSON.writeValue(it, meta) } }
 
     log.debug("calling install-meta script for VDI dataset ID {}", vdiID)
+    val timer = Metrics.installMetaScriptDuration.startTimer()
     executor.executeScript(script.path, workspace, arrayOf(vdiID, metaFile.pathString), dbDetails.toEnvMap()) {
       coroutineScope {
         val logJob = launch { LoggingOutputStream(log).use { scriptStdErr.transferTo(it) } }
@@ -55,5 +57,7 @@ class InstallMetaHandler(
         }
       }
     }
+
+    timer.observeDuration()
   }
 }

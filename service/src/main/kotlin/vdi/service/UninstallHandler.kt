@@ -5,6 +5,7 @@ import java.nio.file.Path
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import vdi.components.io.LoggingOutputStream
+import vdi.components.metrics.Metrics
 import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
 import vdi.model.DatabaseDetails
@@ -22,6 +23,7 @@ class UninstallHandler(
     log.trace("run()")
 
     log.debug("calling uninstall script for VDI dataset ID {}", vdiID)
+    val timer = Metrics.uninstallScriptDuration.startTimer()
     executor.executeScript(script.path, workspace, arrayOf(vdiID), dbDetails.toEnvMap()) {
       coroutineScope {
         val logJob = launch { LoggingOutputStream(log).use { scriptStdErr.transferTo(it) } }
@@ -42,5 +44,7 @@ class UninstallHandler(
         }
       }
     }
+
+    timer.observeDuration()
   }
 }
