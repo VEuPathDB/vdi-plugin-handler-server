@@ -350,13 +350,13 @@ execution, the ID of the dataset, and the path to a
 .Structure
 [source, shell-session]
 ----
-$ import-meta {vdi-id} {path-to-meta-json}
+$ install-meta {vdi-id} {path-to-meta-json}
 ----
 
 .Example
 [source, shell-session]
 ----
-$ import-meta d002dcac1aff37435c355f8deb16ee17 /some/path/to/meta.json
+$ install-meta d002dcac1aff37435c355f8deb16ee17 /some/path/to/meta.json
 ----
 
 The `meta.json` file will exist for the duration of the script's execution.
