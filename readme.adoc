@@ -41,7 +41,7 @@ required and optional environment variables.
 |===
 | Required | Variable | Default
 
-3+h| HTTP Server Settings
+3+<h| HTTP Server Settings
 
 |
 | SERVER_PORT
@@ -51,7 +51,7 @@ required and optional environment variables.
 | SERVER_HOST
 | 0.0.0.0
 
-3+h| Service Settings
+3+<h| Service Settings
 
 | ✔
 | LDAP_SERVER
@@ -61,7 +61,7 @@ required and optional environment variables.
 | ORACLE_BASE_DN
 |
 
-3+h| Plugin Script Settings
+3+<h| Plugin Script Settings
 
 |
 | IMPORT_SCRIPT_PATH
