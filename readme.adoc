@@ -469,6 +469,21 @@ TODO: Describe me!
 
 ===== CLI
 
+The Uninstall Script will be passed a single positional CLI argument on
+execution, the VDI dataset ID of the dataset to be uninstalled.
+
+.Structure
+[source, shell-session]
+----
+$ uninstall {vdi-id}
+----
+
+.Example
+[source, shell-session]
+----
+$ uninstall bfcb312a5875ae38536a64e60055c74e
+----
+
 ===== Environment
 
 [%header, cols="2m,8"]
