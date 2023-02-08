@@ -186,6 +186,8 @@ DB_CONNECTION_PASS_TOXO_DB=somePassword
 
 == Plugin Scripts
 
+image::docs/assets/plugin-scripts-overall.svg[]
+
 The VDI Plugin Handler Server wraps 4 plugin "scripts" that may be written in
 any language, however must be callable via a CLI call aligning with the API as
 defined below.
