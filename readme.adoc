@@ -1,5 +1,6 @@
 = VDI Plugin Handler Server
 :toc: left
+:toclevels: 3
 :icons: font
 
 ifdef::env-github[]
@@ -40,7 +41,7 @@ required and optional environment variables.
 |===
 | Required | Variable | Default
 
-3+h| HTTP Server Settings
+3+<h| HTTP Server Settings
 
 |
 | SERVER_PORT
@@ -50,7 +51,7 @@ required and optional environment variables.
 | SERVER_HOST
 | 0.0.0.0
 
-3+h| Service Settings
+3+<h| Service Settings
 
 | ✔
 | LDAP_SERVER
@@ -60,7 +61,7 @@ required and optional environment variables.
 | ORACLE_BASE_DN
 |
 
-3+h| Plugin Script Settings
+3+<h| Plugin Script Settings
 
 |
 | IMPORT_SCRIPT_PATH
@@ -185,6 +186,10 @@ DB_CONNECTION_PASS_TOXO_DB=somePassword
 
 == Plugin Scripts
 
+image::docs/assets/plugin-scripts-overall.svg[]
+
+{nbsp}
+
 The VDI Plugin Handler Server wraps 4 plugin "scripts" that may be written in
 any language, however must be callable via a CLI call aligning with the API as
 defined below.
@@ -293,6 +298,14 @@ after the import script has completed execution.
 If the import script _does_ produce a file named `warnings.json`, the handler
 server will throw an exception.
 
+==== Working Directory
+
+The import script will not only be handed an input and output directory from and
+to which its inputs and outputs are to be delivered, it is also called in the
+context of a temporary `CWD` (current working directory).  This means that the
+script may create files and directories relative to its `CWD` freely as the
+`CWD` itself will be recursively deleted on completion of the script.
+
 ==== Logging
 
 The import script is expected to log messages to 2 separate channels with
@@ -337,13 +350,13 @@ execution, the ID of the dataset, and the path to a
 .Structure
 [source, shell-session]
 ----
-$ import-meta {vdi-id} {path-to-meta-json}
+$ install-meta {vdi-id} {path-to-meta-json}
 ----
 
 .Example
 [source, shell-session]
 ----
-$ import-meta d002dcac1aff37435c355f8deb16ee17 /some/path/to/meta.json
+$ install-meta d002dcac1aff37435c355f8deb16ee17 /some/path/to/meta.json
 ----
 
 The `meta.json` file will exist for the duration of the script's execution.
@@ -363,6 +376,13 @@ The `meta.json` file will exist for the duration of the script's execution.
 ==== Outputs
 
 This script is not expected to produce any outputs.
+
+==== Working Directory
+
+The install-meta script will be called in the context of a temporary `CWD`
+(current working directory).  This means that the script may create files and
+directories relative to its `CWD` freely as the `CWD` itself will be recursively
+deleted on completion of the script.
 
 ==== Logging
 
@@ -423,13 +443,26 @@ completes its execution.
 
 This script is not expected to produce any outputs.
 
+==== Working Directory
+
+The install-meta script will be called in the context of a temporary `CWD`
+(current working directory).  This means that the script may create files and
+directories relative to its `CWD` freely as the `CWD` itself will be recursively
+deleted on completion of the script.
+
 ==== Logging
 
-This script is expected to log only to `STDERR`, messages logged to `STDOUT`
-will be disregarded.
+The Install-Data script is expected to log messages to 2 separate channels with
+specific meaning assigned to each, `STDOUT` and `STDERR`.
 
-Messages logged to `STDERR` will be recorded in the logs of the VDI Plugin
-Handler Server itself.
+`STDOUT` is expected to be used solely to emit installation warnings and errors.
+All messages written to this channel will be surfaced to the submitter of the
+VDI dataset being processed.
+
+`STDERR` is expected to be used to emit general script log output.  All messages
+written to this channel will be passed through to the standard logging of the
+VDI Plugin Handler Server.
+
 ==== Exit Codes
 
 [source]
@@ -446,6 +479,21 @@ TODO: Describe me!
 
 ===== CLI
 
+The Uninstall Script will be passed a single positional CLI argument on
+execution, the VDI dataset ID of the dataset to be uninstalled.
+
+.Structure
+[source, shell-session]
+----
+$ uninstall {vdi-id}
+----
+
+.Example
+[source, shell-session]
+----
+$ uninstall bfcb312a5875ae38536a64e60055c74e
+----
+
 ===== Environment
 
 [%header, cols="2m,8"]
@@ -461,6 +509,13 @@ TODO: Describe me!
 ==== Outputs
 
 This script is not expected to produce any outputs.
+
+==== Working Directory
+
+The install-meta script will be called in the context of a temporary `CWD`
+(current working directory).  This means that the script may create files and
+directories relative to its `CWD` freely as the `CWD` itself will be recursively
+deleted on completion of the script.
 
 ==== Logging
 
