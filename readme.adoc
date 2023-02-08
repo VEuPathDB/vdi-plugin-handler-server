@@ -448,11 +448,17 @@ deleted on completion of the script.
 
 ==== Logging
 
-This script is expected to log only to `STDERR`, messages logged to `STDOUT`
-will be disregarded.
+The Install-Data script is expected to log messages to 2 separate channels with
+specific meaning assigned to each, `STDOUT` and `STDERR`.
 
-Messages logged to `STDERR` will be recorded in the logs of the VDI Plugin
-Handler Server itself.
+`STDOUT` is expected to be used solely to emit installation warnings and errors.
+All messages written to this channel will be surfaced to the submitter of the
+VDI dataset being processed.
+
+`STDERR` is expected to be used to emit general script log output.  All messages
+written to this channel will be passed through to the standard logging of the
+VDI Plugin Handler Server.
+
 ==== Exit Codes
 
 [source]
