@@ -1,15 +1,15 @@
 package vdi.server.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import vdi.consts.Const
+import vdi.consts.FieldName
 
 data class DatasetDependency(
-  @JsonProperty(Const.FieldName.ResourceIdentifier)
+  @JsonProperty(FieldName.ResourceIdentifier)
   val resourceIdentifier: String,
 
-  @JsonProperty(Const.FieldName.ResourceVersion)
+  @JsonProperty(FieldName.ResourceVersion)
   val resourceVersion: String,
 
-  @JsonProperty(Const.FieldName.ResourceDisplayName)
+  @JsonProperty(FieldName.ResourceDisplayName)
   val resourceDisplayName: String,
 )
