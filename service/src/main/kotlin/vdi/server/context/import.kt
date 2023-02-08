@@ -24,7 +24,7 @@ private const val IMPORT_PAYLOAD_FILE_NAME = "import.tar.gz"
 private const val IMPORT_DETAILS_MAX_SIZE  = 16384uL
 
 suspend fun ApplicationCall.withImportContext(fn: suspend (workspace: Path, details: ImportDetails, payload: Path) -> Unit) {
-  if (request.contentType() != ContentType.MultiPart.FormData)
+  if (!request.contentType().match(ContentType.MultiPart.FormData))
     throw UnsupportedMediaTypeException()
 
   withTempDirectory { workspace ->

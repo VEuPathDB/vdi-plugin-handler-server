@@ -21,7 +21,7 @@ private const val MAX_INPUT_BYTES = 32768uL
 suspend fun ApplicationCall.withInstallMetaContext(
   fn: suspend (workspace: Path, request: InstallMetaRequest) -> Unit
 ) {
-  if (request.contentType() != ContentType.Application.Json)
+  if (!request.contentType().match(ContentType.Application.Json))
     throw UnsupportedMediaTypeException()
 
   val body = try {

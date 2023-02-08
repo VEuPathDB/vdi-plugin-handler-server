@@ -23,7 +23,7 @@ private const val INSTALL_PAYLOAD_FILE_NAME = "install.tar.gz"
 private const val INSTALL_DETAILS_MAX_SIZE = 1024uL
 
 suspend fun ApplicationCall.withInstallDataContext(fn: suspend (workspace: Path, details: InstallDetails, payload: Path) -> Unit) {
-  if (request.contentType() != ContentType.MultiPart.FormData)
+  if (!request.contentType().match(ContentType.MultiPart.FormData))
     throw UnsupportedMediaTypeException()
 
   // Create temp directory

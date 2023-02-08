@@ -16,7 +16,7 @@ import vdi.util.withTempDirectory
 suspend fun ApplicationCall.withUninstallContext(
   fn: suspend (workspace: Path, vdiID: String, projectID: String) -> Unit
 ) {
-  if (request.contentType() != ContentType.Application.Json)
+  if (!request.contentType().match(ContentType.Application.Json))
     throw UnsupportedMediaTypeException()
 
   withTempDirectory { workspace ->
