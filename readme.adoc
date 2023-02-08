@@ -293,6 +293,14 @@ after the import script has completed execution.
 If the import script _does_ produce a file named `warnings.json`, the handler
 server will throw an exception.
 
+==== Working Directory
+
+The import script will not only be handed an input and output directory from and
+to which its inputs and outputs are to be delivered, it is also called in the
+context of a temporary `CWD` (current working directory).  This means that the
+script may create files and directories relative to its `CWD` freely as the
+`CWD` itself will be recursively deleted on completion of the script.
+
 ==== Logging
 
 The import script is expected to log messages to 2 separate channels with
@@ -364,6 +372,13 @@ The `meta.json` file will exist for the duration of the script's execution.
 
 This script is not expected to produce any outputs.
 
+==== Working Directory
+
+The install-meta script will be called in the context of a temporary `CWD`
+(current working directory).  This means that the script may create files and
+directories relative to its `CWD` freely as the `CWD` itself will be recursively
+deleted on completion of the script.
+
 ==== Logging
 
 This script is expected to log only to `STDERR`, messages logged to `STDOUT`
@@ -423,6 +438,13 @@ completes its execution.
 
 This script is not expected to produce any outputs.
 
+==== Working Directory
+
+The install-meta script will be called in the context of a temporary `CWD`
+(current working directory).  This means that the script may create files and
+directories relative to its `CWD` freely as the `CWD` itself will be recursively
+deleted on completion of the script.
+
 ==== Logging
 
 This script is expected to log only to `STDERR`, messages logged to `STDOUT`
@@ -461,6 +483,13 @@ TODO: Describe me!
 ==== Outputs
 
 This script is not expected to produce any outputs.
+
+==== Working Directory
+
+The install-meta script will be called in the context of a temporary `CWD`
+(current working directory).  This means that the script may create files and
+directories relative to its `CWD` freely as the `CWD` itself will be recursively
+deleted on completion of the script.
 
 ==== Logging
 
