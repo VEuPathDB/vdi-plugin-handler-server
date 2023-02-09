@@ -106,7 +106,7 @@ class ImportHandler(
     val warnings = executor.executeScript(
       script.path,
       workspace,
-      arrayOf(inputDirectory.pathString, outputDirectory.pathString)
+      arrayOf(inputDirectory.absolutePathString(), outputDirectory.absolutePathString())
     ) {
       coroutineScope {
         val warnings = ArrayList<String>(8)

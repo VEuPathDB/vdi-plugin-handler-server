@@ -2,6 +2,7 @@ package vdi.service
 
 import org.slf4j.LoggerFactory
 import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.createFile
 import kotlin.io.path.outputStream
 import kotlin.io.path.pathString
@@ -37,7 +38,7 @@ class InstallMetaHandler(
 
     log.debug("calling install-meta script for VDI dataset ID {}", vdiID)
     val timer = Metrics.installMetaScriptDuration.startTimer()
-    executor.executeScript(script.path, workspace, arrayOf(vdiID, metaFile.pathString), dbDetails.toEnvMap()) {
+    executor.executeScript(script.path, workspace, arrayOf(vdiID, metaFile.absolutePathString()), dbDetails.toEnvMap()) {
       coroutineScope {
         val logJob = launch { LoggingOutputStream(log).use { scriptStdErr.transferTo(it) } }
 

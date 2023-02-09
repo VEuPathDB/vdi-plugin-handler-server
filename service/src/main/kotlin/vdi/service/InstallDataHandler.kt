@@ -2,6 +2,7 @@ package vdi.service
 
 import org.slf4j.LoggerFactory
 import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.createDirectory
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.pathString
@@ -57,7 +58,7 @@ class InstallDataHandler(
     executor.executeScript(
       script.path,
       workspace,
-      arrayOf(vdiID, installDir.pathString),
+      arrayOf(vdiID, installDir.absolutePathString()),
       dbDetails.toEnvMap()
     ) {
       coroutineScope {
