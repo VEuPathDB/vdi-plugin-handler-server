@@ -104,6 +104,7 @@ class ImportHandler(
   private suspend fun executeScript(): Collection<String> {
     val timer = metrics.importScriptDuration.startTimer()
 
+    log.info("executing import script for VDI dataset ID {}", details.vdiID)
     val warnings = executor.executeScript(
       script.path,
       workspace,

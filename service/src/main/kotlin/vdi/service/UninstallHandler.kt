@@ -23,7 +23,7 @@ class UninstallHandler(
   suspend fun run() {
     log.trace("run()")
 
-    log.debug("calling uninstall script for VDI dataset ID {}", vdiID)
+    log.info("executing uninstall script for VDI dataset ID {}", vdiID)
     val timer = metrics.uninstallScriptDuration.startTimer()
     executor.executeScript(script.path, workspace, arrayOf(vdiID), dbDetails.toEnvMap()) {
       coroutineScope {
