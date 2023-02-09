@@ -6,7 +6,6 @@ import vdi.components.ldap.LDAPConfig
 import vdi.components.ldap.LDAPHost
 import vdi.conf.ServiceConfiguration
 
-private const val DEFAULT_LDAP_PORT: UShort = 389u
 
 private val URLPattern = Regex("^([^:]+):(\\d+)$")
 

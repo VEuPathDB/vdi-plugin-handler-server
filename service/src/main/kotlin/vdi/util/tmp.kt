@@ -1,6 +1,5 @@
 package vdi.util
 
-import java.io.File
 import java.nio.file.Path
 import java.util.*
 import kotlin.contracts.ExperimentalContracts
