@@ -9,7 +9,7 @@
   "properties": {
     "vdiID":     { "$ref": "#/definitions/dataset-id" },
     "projectID": { "$ref": "#/definitions/non-empty-string" },
-    "meta":      { "$ref": "#/definitions/dataset-dependency" }
+    "meta":      { "$ref": "#/definitions/dataset-meta" }
   },
 
   "required": [
