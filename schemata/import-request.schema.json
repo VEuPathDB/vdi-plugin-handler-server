@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "Import Request Body",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "vdiID": { "$ref": "#/definitions/dataset-id" },
+    "type": { "$ref": "#/definitions/dataset-type" },
+    "projects": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "additionalItems": false
+    },
+    "owner": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "summary": { "type": "string" },
+    "description": { "type": "string" },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/dataset-dependency"
+      },
+      "additionalItems": false,
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "vdiID",
+    "type",
+    "projects",
+    "owner",
+    "name"
+  ],
+  "definitions": {
+    "dataset-id": {
+      "type": "string",
+      "minLength": 32,
+      "maxLength": 32,
+      "pattern": "^[0-9a-fA-F]{32}$"
+    },
+    "dataset-type": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ]
+    },
+    "dataset-dependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "resourceIdentifier": { "type": "string" },
+        "resourceVersion": { "type": "string" },
+        "resourceDisplayName": { "type": "string" }
+      },
+      "required": [
+        "resourceIdentifier",
+        "resourceVersion",
+        "resourceDisplayName"
+      ]
+    }
+  }
+}
