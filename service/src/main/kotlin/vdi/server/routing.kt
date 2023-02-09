@@ -4,34 +4,25 @@ import io.ktor.server.application.*
 import io.ktor.server.metrics.micrometer.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.micrometer.prometheus.PrometheusConfig
-import io.micrometer.prometheus.PrometheusMeterRegistry
 import vdi.components.http.errors.withExceptionMapping
-import vdi.components.ldap.LDAP
-import vdi.components.script.ScriptExecutor
-import vdi.conf.HandlerConfig
+import vdi.model.ApplicationContext
 import vdi.server.controller.*
 
 
-fun Application.configureRouting(
-  config:   HandlerConfig,
-  ldap:     LDAP,
-  executor: ScriptExecutor,
-) {
-  val micrometer = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
+fun Application.configureServer(appCtx: ApplicationContext) {
 
-  install(MicrometerMetrics) { registry = micrometer }
+  install(MicrometerMetrics) { registry = appCtx.metrics.micrometer }
 
   routing {
-    post("/import") { withExceptionMapping { call.handleImportRequest(executor, config.service.importScript) } }
+    post("/import") { withExceptionMapping { call.handleImportRequest(appCtx) } }
 
     route("/install") {
-      post("/data") { withExceptionMapping { call.handleInstallDataRequest(config, ldap, executor) } }
-      post("/meta") { withExceptionMapping { call.handleInstallMetaRequest(config, ldap, executor) } }
+      post("/data") { withExceptionMapping { call.handleInstallDataRequest(appCtx) } }
+      post("/meta") { withExceptionMapping { call.handleInstallMetaRequest(appCtx) } }
     }
 
-    post("/uninstall") { withExceptionMapping { call.handleUninstallRequest(executor, ldap, config) } }
+    post("/uninstall") { withExceptionMapping { call.handleUninstallRequest(appCtx) } }
 
-    get("/metrics") { call.respond(micrometer.scrape()) }
+    get("/metrics") { call.respond(appCtx.metrics.micrometer.scrape()) }
   }
 }

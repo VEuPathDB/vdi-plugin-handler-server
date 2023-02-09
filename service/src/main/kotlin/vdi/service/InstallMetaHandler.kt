@@ -5,12 +5,11 @@ import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createFile
 import kotlin.io.path.outputStream
-import kotlin.io.path.pathString
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import vdi.components.io.LoggingOutputStream
 import vdi.components.json.JSON
-import vdi.components.metrics.Metrics
+import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
 import vdi.model.DatabaseDetails
@@ -25,6 +24,7 @@ class InstallMetaHandler(
   private val dbDetails: DatabaseDetails,
   private val executor: ScriptExecutor,
   private val script: ScriptConfiguration,
+  private val metrics: ScriptMetrics,
 ) {
   private val log = LoggerFactory.getLogger(javaClass)
 
@@ -37,7 +37,7 @@ class InstallMetaHandler(
       .apply { outputStream().use { JSON.writeValue(it, meta) } }
 
     log.debug("calling install-meta script for VDI dataset ID {}", vdiID)
-    val timer = Metrics.installMetaScriptDuration.startTimer()
+    val timer = metrics.installMetaScriptDuration.startTimer()
     executor.executeScript(script.path, workspace, arrayOf(vdiID, metaFile.absolutePathString()), dbDetails.toEnvMap()) {
       coroutineScope {
         val logJob = launch { LoggingOutputStream(log).use { scriptStdErr.transferTo(it) } }

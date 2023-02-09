@@ -5,8 +5,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import kotlin.io.path.inputStream
 import vdi.components.http.errors.SimpleErrorResponse
-import vdi.components.script.ScriptExecutor
-import vdi.conf.ScriptConfiguration
+import vdi.model.ApplicationContext
 import vdi.server.context.withImportContext
 import vdi.server.model.WarningsListResponse
 import vdi.server.respondJSON400
@@ -14,10 +13,18 @@ import vdi.server.respondJSON418
 import vdi.server.respondJSON420
 import vdi.service.ImportHandler
 
-suspend fun ApplicationCall.handleImportRequest(executor: ScriptExecutor, script: ScriptConfiguration) {
+suspend fun ApplicationCall.handleImportRequest(appCtx: ApplicationContext) {
   withImportContext { workspace, details, payload ->
     try {
-      val outFile = ImportHandler(workspace, payload, details, executor, script).processImport()
+      val outFile = ImportHandler(
+        workspace,
+        payload,
+        details,
+        appCtx.executor,
+        appCtx.config.service.importScript,
+        appCtx.metrics.scriptMetrics,
+      )
+        .run()
 
       respondOutputStream(ContentType.Application.OctetStream, HttpStatusCode.OK) {
         outFile.inputStream().use { it.transferTo(this) }

@@ -1,18 +1,24 @@
 package vdi.server.controller
 
 import io.ktor.server.application.*
-import vdi.components.ldap.LDAP
-import vdi.components.script.ScriptExecutor
-import vdi.conf.HandlerConfig
+import vdi.model.ApplicationContext
 import vdi.server.context.withDatabaseDetails
 import vdi.server.context.withUninstallContext
 import vdi.server.respond204
 import vdi.service.UninstallHandler
 
-suspend fun ApplicationCall.handleUninstallRequest(executor: ScriptExecutor, ldap: LDAP, config: HandlerConfig) {
+suspend fun ApplicationCall.handleUninstallRequest(appCtx: ApplicationContext) {
   withUninstallContext { workspace, vdiID, projectID ->
-    withDatabaseDetails(config.databases, ldap, projectID) { dbDetails ->
-      UninstallHandler(workspace, vdiID, dbDetails, executor, config.service.uninstallScript).run()
+    withDatabaseDetails(appCtx.config.databases, appCtx.ldap, projectID) { dbDetails ->
+      UninstallHandler(
+        workspace,
+        vdiID,
+        dbDetails,
+        appCtx.executor,
+        appCtx.config.service.uninstallScript,
+        appCtx.metrics.scriptMetrics,
+      )
+        .run()
       respond204()
     }
   }

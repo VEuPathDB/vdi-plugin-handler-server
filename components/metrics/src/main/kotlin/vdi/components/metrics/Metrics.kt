@@ -1,8 +1,9 @@
 package vdi.components.metrics
 
+import io.prometheus.client.CollectorRegistry
 import io.prometheus.client.Histogram
 
-object Metrics {
+class ScriptMetrics(registry: CollectorRegistry) {
 
   val importScriptDuration: Histogram = Histogram.build()
     .name("script_import_duration")
@@ -17,7 +18,7 @@ object Metrics {
       60.0,  // 1m
       300.0, // 5m
     )
-    .register()
+    .register(registry)
 
   val installMetaScriptDuration: Histogram = Histogram.build()
     .name("script_install_meta_duration")
@@ -32,7 +33,7 @@ object Metrics {
       60.0,  // 1m
       300.0, // 5m
     )
-    .register()
+    .register(registry)
 
   val installDataScriptDuration: Histogram = Histogram.build()
     .name("script_install_data_duration")
@@ -48,7 +49,7 @@ object Metrics {
       900.0,  // 15m
       1800.0, // 30m
     )
-    .register()
+    .register(registry)
 
   val uninstallScriptDuration: Histogram = Histogram.build()
     .name("script_uninstall_duration")
@@ -63,5 +64,5 @@ object Metrics {
       60.0,  // 1m
       300.0, // 5m
     )
-    .register()
+    .register(registry)
 }

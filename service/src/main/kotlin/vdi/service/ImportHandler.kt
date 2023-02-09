@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 import vdi.components.io.LineListOutputStream
 import vdi.components.io.LoggingOutputStream
 import vdi.components.json.JSON
-import vdi.components.metrics.Metrics
+import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
 import vdi.consts.ExitCode
@@ -26,9 +26,10 @@ private const val OUTPUT_FILE_NAME      = "output.tar.gz"
 class ImportHandler(
   private val workspace: Path,
   private val inputFile: Path,
-  private val details:   ImportDetails,
-  private val executor:  ScriptExecutor,
-  private val script:    ScriptConfiguration,
+  private val details: ImportDetails,
+  private val executor: ScriptExecutor,
+  private val script: ScriptConfiguration,
+  private val metrics: ScriptMetrics,
 ) {
   private val log = LoggerFactory.getLogger("ImportProcessor")
 
@@ -39,7 +40,7 @@ class ImportHandler(
     .createDirectory()
 
   @OptIn(ExperimentalPathApi::class)
-  suspend fun processImport(): Path {
+  suspend fun run(): Path {
     val inputFiles = unpackInput()
     val warnings   = executeScript()
 
@@ -101,7 +102,7 @@ class ImportHandler(
    * execution.
    */
   private suspend fun executeScript(): Collection<String> {
-    val timer = Metrics.importScriptDuration.startTimer()
+    val timer = metrics.importScriptDuration.startTimer()
 
     val warnings = executor.executeScript(
       script.path,

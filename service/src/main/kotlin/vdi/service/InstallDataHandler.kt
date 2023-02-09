@@ -5,12 +5,11 @@ import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createDirectory
 import kotlin.io.path.deleteIfExists
-import kotlin.io.path.pathString
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import vdi.components.io.LineListOutputStream
 import vdi.components.io.LoggingOutputStream
-import vdi.components.metrics.Metrics
+import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
 import vdi.model.DatabaseDetails
@@ -25,6 +24,7 @@ class InstallDataHandler(
   private val dbDetails: DatabaseDetails,
   private val executor: ScriptExecutor,
   private val script: ScriptConfiguration,
+  private val metrics: ScriptMetrics,
 ) {
   private val log = LoggerFactory.getLogger(javaClass)
 
@@ -54,7 +54,7 @@ class InstallDataHandler(
     payload.deleteIfExists()
 
     log.info("executing install-data script for VDI dataset ID {}", vdiID)
-    val timer = Metrics.installDataScriptDuration.startTimer()
+    val timer = metrics.installDataScriptDuration.startTimer()
     executor.executeScript(
       script.path,
       workspace,
