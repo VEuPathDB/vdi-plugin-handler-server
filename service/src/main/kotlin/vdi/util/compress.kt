@@ -40,7 +40,7 @@ fun Path.unpackAsTarGZ(into: Path, overwrite: Boolean = false) {
 
   TarArchiveInputStream(GZIPInputStream(inputStream().buffered())).use { tar ->
     tar.forEach { entry ->
-      val target = into.resolve(entry.file.name)
+      val target = into.resolve(entry.name)
 
       if (entry.isDirectory) {
         target.createDirectories()
@@ -52,8 +52,9 @@ fun Path.unpackAsTarGZ(into: Path, overwrite: Boolean = false) {
             throw IllegalStateException("unable to unpack the file $target due to a conflicting file already existing at that path while overwrite is set to false")
         }
 
+        target.parent.createDirectories()
         target.createFile()
-        target.outputStream().use { os -> entry.file.inputStream().transferTo(os) }
+        target.outputStream().use { os -> tar.transferTo(os) }
       }
     }
   }
