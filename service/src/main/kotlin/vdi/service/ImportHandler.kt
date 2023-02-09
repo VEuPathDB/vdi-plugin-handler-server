@@ -31,7 +31,7 @@ class ImportHandler(
   private val script:    ScriptConfiguration,
   private val metrics:   ScriptMetrics,
 ) {
-  private val log = LoggerFactory.getLogger("ImportProcessor")
+  private val log = LoggerFactory.getLogger(javaClass)
 
   private val inputDirectory: Path = workspace.resolve(INPUT_DIRECTORY_NAME)
     .createDirectory()
