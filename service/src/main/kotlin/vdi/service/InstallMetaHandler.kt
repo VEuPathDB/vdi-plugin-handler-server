@@ -40,7 +40,7 @@ class InstallMetaHandler(
     val timer = metrics.installMetaScriptDuration.startTimer()
     executor.executeScript(script.path, workspace, arrayOf(vdiID, metaFile.absolutePathString()), dbDetails.toEnvMap()) {
       coroutineScope {
-        val logJob = launch { LoggingOutputStream(log).use { scriptStdErr.transferTo(it) } }
+        val logJob = launch { LoggingOutputStream("[install-meta][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
 
         waitFor(script.maxSeconds)
 

@@ -113,7 +113,7 @@ class ImportHandler(
         val warnings = ArrayList<String>(8)
 
         val j1 = launch { LineListOutputStream(warnings).use { scriptStdOut.transferTo(it) } }
-        val j2 = launch { LoggingOutputStream(log).use { scriptStdErr.transferTo(it) } }
+        val j2 = launch { LoggingOutputStream("[import][${details.vdiID}]", log).use { scriptStdErr.transferTo(it) } }
 
         waitFor(script.maxSeconds)
 

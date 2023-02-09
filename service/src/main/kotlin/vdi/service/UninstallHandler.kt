@@ -27,7 +27,7 @@ class UninstallHandler(
     val timer = metrics.uninstallScriptDuration.startTimer()
     executor.executeScript(script.path, workspace, arrayOf(vdiID), dbDetails.toEnvMap()) {
       coroutineScope {
-        val logJob = launch { LoggingOutputStream(log).use { scriptStdErr.transferTo(it) } }
+        val logJob = launch { LoggingOutputStream("[uninstall][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
 
         waitFor(script.maxSeconds)
 

@@ -62,7 +62,7 @@ class InstallDataHandler(
       dbDetails.toEnvMap()
     ) {
       coroutineScope {
-        val job1 = launch { LoggingOutputStream(log).use { scriptStdErr.transferTo(it) } }
+        val job1 = launch { LoggingOutputStream("[install-data][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
         val job2 = launch { LineListOutputStream(warnings).use { scriptStdOut.transferTo(it) } }
 
         waitFor(script.maxSeconds)

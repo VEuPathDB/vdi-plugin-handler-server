@@ -17,12 +17,15 @@ private const val ASCII_LF = 0x0A
  *
  * @param log `Logger` instance that the written bytes will be logged to.
  */
-class LoggingOutputStream(private val log: Logger) : OutputStream() {
+class LoggingOutputStream(
+  private val prefix: String,
+  private val log:    Logger,
+) : OutputStream() {
   private val buffer = StringBuilder(1024)
 
   override fun write(b: Int) {
     if (b == ASCII_LF) {
-      log.info(buffer.toString())
+      log.info("{} {}", prefix, buffer.toString())
       buffer.clear()
     } else {
       buffer.append(b.toChar())
@@ -31,7 +34,7 @@ class LoggingOutputStream(private val log: Logger) : OutputStream() {
 
   override fun close() {
     if (buffer.isNotEmpty()) {
-      log.info(buffer.toString())
+      log.info("{} {}", prefix, buffer.toString())
       buffer.clear()
     }
   }
