@@ -12,11 +12,11 @@ import vdi.model.DatabaseDetails
 
 class UninstallHandler(
   private val workspace: Path,
-  private val vdiID: String,
+  private val vdiID:     String,
   private val dbDetails: DatabaseDetails,
-  private val executor: ScriptExecutor,
-  private val script: ScriptConfiguration,
-  private val metrics: ScriptMetrics,
+  private val executor:  ScriptExecutor,
+  private val script:    ScriptConfiguration,
+  private val metrics:   ScriptMetrics,
 ) {
   private val log = LoggerFactory.getLogger(javaClass)
 

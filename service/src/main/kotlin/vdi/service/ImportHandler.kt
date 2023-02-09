@@ -26,10 +26,10 @@ private const val OUTPUT_FILE_NAME      = "output.tar.gz"
 class ImportHandler(
   private val workspace: Path,
   private val inputFile: Path,
-  private val details: ImportDetails,
-  private val executor: ScriptExecutor,
-  private val script: ScriptConfiguration,
-  private val metrics: ScriptMetrics,
+  private val details:   ImportDetails,
+  private val executor:  ScriptExecutor,
+  private val script:    ScriptConfiguration,
+  private val metrics:   ScriptMetrics,
 ) {
   private val log = LoggerFactory.getLogger("ImportProcessor")
 

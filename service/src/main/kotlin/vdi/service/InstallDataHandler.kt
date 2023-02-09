@@ -19,12 +19,12 @@ private const val INSTALL_DIR_NAME = "install"
 
 class InstallDataHandler(
   private val workspace: Path,
-  private val vdiID: String,
-  private val payload: Path,
+  private val vdiID:     String,
+  private val payload:   Path,
   private val dbDetails: DatabaseDetails,
-  private val executor: ScriptExecutor,
-  private val script: ScriptConfiguration,
-  private val metrics: ScriptMetrics,
+  private val executor:  ScriptExecutor,
+  private val script:    ScriptConfiguration,
+  private val metrics:   ScriptMetrics,
 ) {
   private val log = LoggerFactory.getLogger(javaClass)
 

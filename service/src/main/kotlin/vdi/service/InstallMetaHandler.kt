@@ -19,12 +19,12 @@ private const val META_FILE_NAME = "meta.json"
 
 class InstallMetaHandler(
   private val workspace: Path,
-  private val vdiID: String,
-  private val meta: DatasetMeta,
+  private val vdiID:     String,
+  private val meta:      DatasetMeta,
   private val dbDetails: DatabaseDetails,
-  private val executor: ScriptExecutor,
-  private val script: ScriptConfiguration,
-  private val metrics: ScriptMetrics,
+  private val executor:  ScriptExecutor,
+  private val script:    ScriptConfiguration,
+  private val metrics:   ScriptMetrics,
 ) {
   private val log = LoggerFactory.getLogger(javaClass)
 
