@@ -29,14 +29,11 @@ class InstallMetaHandler(
   private val log = LoggerFactory.getLogger(javaClass)
 
   suspend fun run() {
-    log.trace("run()")
 
-    log.debug("writing meta file out to workspace {}", workspace)
     val metaFile = workspace.resolve(META_FILE_NAME)
       .createFile()
       .apply { outputStream().use { JSON.writeValue(it, meta) } }
 
-    log.debug("calling install-meta script for VDI dataset ID {}", vdiID)
     val timer = metrics.installMetaScriptDuration.startTimer()
     executor.executeScript(script.path, workspace, arrayOf(vdiID, metaFile.absolutePathString()), dbDetails.toEnvMap()) {
       coroutineScope {
