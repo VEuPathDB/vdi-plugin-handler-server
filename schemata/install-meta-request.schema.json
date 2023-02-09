@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "Install Meta Request Body",
+
+  "type": "object",
+
+  "additionalProperties": false,
+
+  "properties": {
+    "vdiID":     { "$ref": "#/definitions/dataset-id" },
+    "projectID": { "$ref": "#/definitions/non-empty-string" },
+    "meta":      { "$ref": "#/definitions/dataset-dependency" }
+  },
+
+  "required": [
+    "vdiID",
+    "projectID",
+    "meta"
+  ],
+
+  "definitions": {
+
+    "non-empty-string": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "dataset-id": {
+      "type": "string",
+      "minLength": 32,
+      "maxLength": 32,
+      "pattern": "^[0-9a-fA-F]{32}$"
+    },
+
+    "dataset-type": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ]
+    },
+
+    "dataset-dependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "resourceIdentifier": { "type": "string" },
+        "resourceVersion": { "type": "string" },
+        "resourceDisplayName": { "type": "string" }
+      },
+      "required": [
+        "resourceIdentifier",
+        "resourceVersion",
+        "resourceDisplayName"
+      ]
+    },
+
+    "dataset-meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": { "$ref": "#/definitions/dataset-type" },
+        "projects": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/non-empty-string" },
+          "uniqueItems": true,
+          "additionalItems": false,
+          "minItems": 1
+        },
+        "owner": { "$ref": "#/definitions/non-empty-string" },
+        "name": { "$ref": "#/definitions/non-empty-string" },
+        "summary": { "type": "string" },
+        "description": { "type": "string" },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/dataset-dependency"
+          },
+          "uniqueItems": true,
+          "additionalItems": false
+        }
+      },
+      "required": [
+        "type",
+        "projects",
+        "owner",
+        "name"
+      ]
+    }
+  }
+}
