@@ -4,6 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import vdi.consts.FieldName
 
 data class WarningsListResponse(
-  @JsonProperty(FieldName.Messages)
+  @JsonProperty(FieldName.Warnings)
   val messages: Collection<String>,
 )

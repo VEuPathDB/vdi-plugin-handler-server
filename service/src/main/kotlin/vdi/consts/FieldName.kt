@@ -7,7 +7,6 @@ object FieldName {
   const val Details = "details"
   const val InputFiles = "inputFiles"
   const val Message = "message"
-  const val Messages = "messages"
   const val Meta = "meta"
   const val Name = "name"
   const val Owner = "owner"
@@ -21,4 +20,5 @@ object FieldName {
   const val Type = "type"
   const val VDIID = "vdiID"
   const val Version = "version"
+  const val Warnings = "warnings"
 }
