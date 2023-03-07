@@ -311,13 +311,13 @@ script may create files and directories relative to its `CWD` freely as the
 The import script is expected to log messages to 2 separate channels with
 specific meaning assigned to each, `STDOUT` and `STDERR`.
 
-`STDOUT` is expected to be used solely to emit validation warnings and errors.
+`STDOUT` is used solely to emit validation warnings and errors.
 All messages written to this channel will be surfaced to the submitter of the
 VDI dataset being processed (e.g. an end user).
 
-`STDERR` is expected to be used to emit general script log output.  All messages
+`STDERR` is used to emit general script log output.  All messages
 written to this channel will be passed through to the standard logging of the
-VDI Plugin Handler Server.
+VDI Plugin Handler Server, for developer/operations use.
 
 ==== Exit Codes
 
