@@ -313,7 +313,7 @@ specific meaning assigned to each, `STDOUT` and `STDERR`.
 
 `STDOUT` is expected to be used solely to emit validation warnings and errors.
 All messages written to this channel will be surfaced to the submitter of the
-VDI dataset being processed.
+VDI dataset being processed (e.g. an end user).
 
 `STDERR` is expected to be used to emit general script log output.  All messages
 written to this channel will be passed through to the standard logging of the
