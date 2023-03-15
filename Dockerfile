@@ -13,8 +13,21 @@ COPY service/ service/
 
 RUN gradle test shadowJar
 
-FROM amazoncorretto:18-alpine3.16 AS run
+FROM veupathdb/rserve:2.1.3
 
+ENV JAVA_HOME=/opt/jdk \
+    PATH=/opt/jdk/bin:$PATH \
+    JVM_MEM_ARGS="" \
+    JVM_ARGS=""
+
+RUN apt install wget \
+    && cd /opt \
+    && wget https://corretto.aws/downloads/resources/19.0.2.7.1/amazon-corretto-19.0.2.7.1-linux-x64.tar.gz -O jdk.tgz \
+    && tar -xf jdk.tgz \
+    && rm jdk.tgz \
+    && mv amazon-corretto-19.0.2.7.1-linux-x64 jdk
+
+COPY startup.sh startup.sh
 COPY --from=build /project/service/build/libs/service.jar service.jar
 
-CMD java -jar service.jar
+CMD chmod +x startup.sh && /startup.sh
