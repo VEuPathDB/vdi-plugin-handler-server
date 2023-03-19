@@ -331,8 +331,7 @@ script exits.
 ----
 0   - Successful exit
 1   - Failure due to validation errors
-2   - Failure due to transformation errors
-3+  - Failure due to unexpected/undefined error
+2+  - Failure due to unexpected/undefined error
 ----
 
 === Install-Meta Script
