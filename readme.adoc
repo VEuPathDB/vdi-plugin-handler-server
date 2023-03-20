@@ -467,7 +467,8 @@ VDI Plugin Handler Server.
 [source]
 ----
 0    - Success
-1+   - Failure due to unxpected/undefined error.
+1    - Failure due to validation error.
+2+   - Failure due to unxpected/undefined error.
 ----
 
 === Uninstall Script

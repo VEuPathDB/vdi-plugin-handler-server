@@ -122,7 +122,7 @@ description: |
             type: object
             additionalProperties: false
             properties:
-              messages:
+              warnings:
                 type: array
                 items:
                   type: string
@@ -213,6 +213,20 @@ description: |
           body:
             application/json:
               type: SimpleError
+        418:
+          description: |
+            Validation Failure
+            
+            The posted dataset failed the install process validation step.
+          body:
+            application/json:
+              type: object
+              additionalProperties: false
+              properties:
+                warnings:
+                  type: array
+                  items:
+                    type: string
         500:
           description: |
             Internal Server Error
