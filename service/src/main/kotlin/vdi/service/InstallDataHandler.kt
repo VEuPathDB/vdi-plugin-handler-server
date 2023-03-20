@@ -12,6 +12,7 @@ import vdi.components.io.LoggingOutputStream
 import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
+import vdi.consts.ExitCode
 import vdi.model.DatabaseDetails
 import vdi.util.unpackAsTarGZ
 
@@ -71,8 +72,13 @@ class InstallDataHandler(
         job2.join()
 
         when (exitCode()) {
-          0    -> {
-            log.debug("install-data script completed successfully for VDI dataset ID {}", vdiID)
+          ExitCode.InstallScriptSuccess -> {
+            log.info("install-data script completed successfully for VDI dataset ID {}", vdiID)
+          }
+
+          ExitCode.InstallScriptValidationFailure -> {
+            log.info("install-data script refused to install VDI dataset {} for validation errors", vdiID)
+            throw ValidationError(warnings)
           }
 
           else -> {
@@ -86,4 +92,6 @@ class InstallDataHandler(
 
     return warnings
   }
+
+  class ValidationError(val warnings: Collection<String>) : RuntimeException()
 }
