@@ -91,10 +91,6 @@ class ImportHandler(
    * [ExitCode.ImportScriptValidationFailure], this method will throw a
    * [ValidationError] exception.
    *
-   * If the import script returns a status code of
-   * [ExitCode.ImportScriptTransformationFailure], this method will throw a
-   * [TransformationError] exception.
-   *
    * If the import script returns any other status code, this method will throw
    * an [IllegalStateException].
    *
@@ -127,9 +123,6 @@ class ImportHandler(
 
           ExitCode.ImportScriptValidationFailure
           -> throw ValidationError(warnings)
-
-          ExitCode.ImportScriptTransformationFailure
-          -> throw TransformationError(warnings)
 
           else
           -> throw IllegalStateException("import script failed with unexpected exit code")
@@ -185,8 +178,6 @@ class ImportHandler(
   class EmptyInputError : RuntimeException("input archive contained no files")
 
   class ValidationError(val warnings: Collection<String>) : RuntimeException()
-
-  class TransformationError(val warnings: Collection<String>) : RuntimeException()
 
   data class Manifest(val inputFiles: Collection<String>, val dataFiles: Collection<String>)
 
