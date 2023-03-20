@@ -12,10 +12,9 @@ import vdi.components.json.JSON
 import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
+import vdi.consts.FileName
 import vdi.model.DatabaseDetails
 import vdi.server.model.DatasetMeta
-
-private const val META_FILE_NAME = "meta.json"
 
 class InstallMetaHandler(
   private val workspace: Path,
@@ -30,7 +29,7 @@ class InstallMetaHandler(
 
   suspend fun run() {
 
-    val metaFile = workspace.resolve(META_FILE_NAME)
+    val metaFile = workspace.resolve(FileName.MetaFileName)
       .createFile()
       .apply { outputStream().use { JSON.writeValue(it, meta) } }
 
@@ -46,7 +45,7 @@ class InstallMetaHandler(
 
         when (exitCode()) {
           0 -> {
-            log.debug("install-meta script completed successfully for VDI dataset ID {}", vdiID)
+            log.info("install-meta script completed successfully for VDI dataset ID {}", vdiID)
           }
 
           else -> {

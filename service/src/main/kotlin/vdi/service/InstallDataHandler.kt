@@ -2,9 +2,7 @@ package vdi.service
 
 import org.slf4j.LoggerFactory
 import java.nio.file.Path
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.createDirectory
-import kotlin.io.path.deleteIfExists
+import kotlin.io.path.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import vdi.components.io.LineListOutputStream
@@ -13,38 +11,40 @@ import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
 import vdi.consts.ExitCode
+import vdi.consts.FileName
 import vdi.model.DatabaseDetails
 import vdi.util.unpackAsTarGZ
 
-private const val INSTALL_DIR_NAME = "install"
-
 class InstallDataHandler(
-  private val workspace: Path,
-  private val vdiID:     String,
-  private val payload:   Path,
-  private val dbDetails: DatabaseDetails,
-  private val executor:  ScriptExecutor,
-  private val script:    ScriptConfiguration,
-  private val metrics:   ScriptMetrics,
+  private val workspace:  Path,
+  private val vdiID:      String,
+  private val payload:    Path,
+  private val dbDetails:  DatabaseDetails,
+  private val executor:   ScriptExecutor,
+  private val metaScript: ScriptConfiguration,
+  private val dataScript: ScriptConfiguration,
+  private val metrics:    ScriptMetrics,
 ) {
   private val log = LoggerFactory.getLogger(javaClass)
 
   init {
     log.trace(
-      "init(workspace={}, vdiID={}, payload={}, dbDetails={}, executor={}, script={}",
+      "init(workspace={}, vdiID={}, payload={}, dbDetails={}, executor={}, metaScript={}, dataScript={}, metrics={})",
       workspace,
       vdiID,
       payload,
       dbDetails,
       executor,
-      script
+      metaScript,
+      dataScript,
+      metrics,
     )
   }
 
   suspend fun run() : List<String> {
     log.trace("processInstall()")
 
-    val installDir   = workspace.resolve(INSTALL_DIR_NAME)
+    val installDir   = workspace.resolve(FileName.InstallDirName)
     val warnings     = ArrayList<String>(4)
 
     log.debug("creating install data directory {}", installDir)
@@ -54,10 +54,52 @@ class InstallDataHandler(
     payload.unpackAsTarGZ(installDir)
     payload.deleteIfExists()
 
+    runInstallMeta(installDir)
+    runInstallData(installDir, warnings)
+
+    return warnings
+  }
+
+  private suspend fun runInstallMeta(installDir: Path) {
+    val metaFile = installDir.resolve(FileName.MetaFileName)
+
+    if (!metaFile.exists()) {
+      log.error("no meta file was found in the install directory for VDI dataset {}", vdiID)
+      throw IllegalStateException("no meta file was found in the install directory for VDI dataset $vdiID")
+    }
+
+    val timer = metrics.installMetaScriptDuration.startTimer()
+    log.info("executing install-meta (for install-data) script for VDI dataset ID {}", vdiID)
+    executor.executeScript(metaScript.path, workspace, arrayOf(vdiID, metaFile.absolutePathString()), dbDetails.toEnvMap()) {
+      coroutineScope {
+        val logJob = launch { LoggingOutputStream("[install-meta][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
+
+        waitFor(metaScript.maxSeconds)
+
+        logJob.join()
+
+        when (exitCode()) {
+          0 -> {
+            log.info("install-meta (for install-data) script completed successfully for VDI dataset ID {}", vdiID)
+          }
+
+          else -> {
+            log.error("install-meta (for install-data) script failed for VDI dataset ID {}", vdiID)
+            throw IllegalStateException("install-meta (for install-data) script failed with unexpected exit code")
+          }
+        }
+      }
+    }
+
+    timer.observeDuration()
+
+  }
+
+  private suspend fun runInstallData(installDir: Path, warnings: MutableList<String>) {
     log.info("executing install-data script for VDI dataset ID {}", vdiID)
     val timer = metrics.installDataScriptDuration.startTimer()
     executor.executeScript(
-      script.path,
+      dataScript.path,
       workspace,
       arrayOf(vdiID, installDir.absolutePathString()),
       dbDetails.toEnvMap()
@@ -66,7 +108,7 @@ class InstallDataHandler(
         val job1 = launch { LoggingOutputStream("[install-data][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
         val job2 = launch { LineListOutputStream(warnings).use { scriptStdOut.transferTo(it) } }
 
-        waitFor(script.maxSeconds)
+        waitFor(dataScript.maxSeconds)
 
         job1.join()
         job2.join()
@@ -90,7 +132,6 @@ class InstallDataHandler(
     }
     timer.observeDuration()
 
-    return warnings
   }
 
   class ValidationError(val warnings: Collection<String>) : RuntimeException()
