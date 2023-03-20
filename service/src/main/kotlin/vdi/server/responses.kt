@@ -18,9 +18,6 @@ suspend inline fun ApplicationCall.respondJSON400(body: Any) =
 suspend inline fun ApplicationCall.respondJSON418(body: Any) =
   respondJSON(body, StatusValidationError)
 
-suspend inline fun ApplicationCall.respondJSON420(body: Any) =
-  respondJSON(body, StatusTransformationError)
-
 suspend inline fun ApplicationCall.respondJSON500(body: Any) =
   respondJSON(body, StatusServerError)
 
