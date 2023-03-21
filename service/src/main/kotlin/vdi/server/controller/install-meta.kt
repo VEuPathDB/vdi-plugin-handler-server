@@ -13,6 +13,7 @@ suspend fun ApplicationCall.handleInstallMetaRequest(appCtx: ApplicationContext)
       InstallMetaHandler(
         workspace,
         request.vdiID,
+        request.projectID,
         request.meta,
         dbDetails,
         appCtx.executor,

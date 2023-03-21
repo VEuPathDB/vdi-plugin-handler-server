@@ -18,6 +18,7 @@ import vdi.util.unpackAsTarGZ
 class InstallDataHandler(
   private val workspace:  Path,
   private val vdiID:      String,
+  private val projectID:  String,
   private val payload:    Path,
   private val dbDetails:  DatabaseDetails,
   private val executor:   ScriptExecutor,
@@ -29,9 +30,10 @@ class InstallDataHandler(
 
   init {
     log.trace(
-      "init(workspace={}, vdiID={}, payload={}, dbDetails={}, executor={}, metaScript={}, dataScript={}, metrics={})",
+      "init(workspace={}, vdiID={}, projectID={}, payload={}, dbDetails={}, executor={}, metaScript={}, dataScript={}, metrics={})",
       workspace,
       vdiID,
+      projectID,
       payload,
       dbDetails,
       executor,
@@ -70,7 +72,7 @@ class InstallDataHandler(
 
     val timer = metrics.installMetaScriptDuration.startTimer()
     log.info("executing install-meta (for install-data) script for VDI dataset ID {}", vdiID)
-    executor.executeScript(metaScript.path, workspace, arrayOf(vdiID, metaFile.absolutePathString()), dbDetails.toEnvMap()) {
+    executor.executeScript(metaScript.path, workspace, arrayOf(vdiID, metaFile.absolutePathString()), makeEnv()) {
       coroutineScope {
         val logJob = launch { LoggingOutputStream("[install-meta][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
 
@@ -102,7 +104,7 @@ class InstallDataHandler(
       dataScript.path,
       workspace,
       arrayOf(vdiID, installDir.absolutePathString()),
-      dbDetails.toEnvMap()
+      makeEnv()
     ) {
       coroutineScope {
         val job1 = launch { LoggingOutputStream("[install-data][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
@@ -131,7 +133,13 @@ class InstallDataHandler(
       }
     }
     timer.observeDuration()
+  }
 
+  private fun makeEnv(): Map<String, String> {
+    val out = HashMap<String, String>(12)
+    out.putAll(dbDetails.toEnvMap())
+    out["PROJECT_ID"] = projectID
+    return out
   }
 
   class ValidationError(val warnings: Collection<String>) : RuntimeException()
