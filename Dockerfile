@@ -20,7 +20,7 @@ ENV JAVA_HOME=/opt/jdk \
     JVM_MEM_ARGS="" \
     JVM_ARGS=""
 
-RUN apt install wget \
+RUN apt install -y wget python3 \
     && cd /opt \
     && wget https://corretto.aws/downloads/resources/19.0.2.7.1/amazon-corretto-19.0.2.7.1-linux-x64.tar.gz -O jdk.tgz \
     && tar -xf jdk.tgz \
