@@ -11,21 +11,21 @@ import vdi.conf.ScriptConfiguration
 import vdi.model.DatabaseDetails
 
 class UninstallHandler(
-  private val workspace: Path,
-  private val vdiID:     String,
+  workspace: Path,
+  private val vdiID: String,
   private val dbDetails: DatabaseDetails,
-  private val executor:  ScriptExecutor,
-  private val script:    ScriptConfiguration,
-  private val metrics:   ScriptMetrics,
-) {
+  executor:  ScriptExecutor,
+  private val script: ScriptConfiguration,
+  metrics: ScriptMetrics,
+) : HandlerBase<Unit>(workspace, executor, metrics) {
   private val log = LoggerFactory.getLogger(javaClass)
 
-  suspend fun run() {
+  override suspend fun run() {
     log.trace("run()")
 
     log.info("executing uninstall script for VDI dataset ID {}", vdiID)
     val timer = metrics.uninstallScriptDuration.startTimer()
-    executor.executeScript(script.path, workspace, arrayOf(vdiID), dbDetails.toEnvMap()) {
+    executor.executeScript(script.path, workspace, arrayOf(vdiID), buildScriptEnv()) {
       coroutineScope {
         val logJob = launch { LoggingOutputStream("[uninstall][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
 
@@ -48,4 +48,6 @@ class UninstallHandler(
 
     timer.observeDuration()
   }
+
+  override fun buildScriptEnv() = dbDetails.toEnvMap()
 }

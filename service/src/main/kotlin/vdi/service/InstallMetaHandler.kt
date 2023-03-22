@@ -17,18 +17,18 @@ import vdi.model.DatabaseDetails
 import vdi.server.model.DatasetMeta
 
 class InstallMetaHandler(
-  private val workspace: Path,
-  private val vdiID:     String,
+  workspace: Path,
+  private val vdiID: String,
   private val projectID: String,
-  private val meta:      DatasetMeta,
+  private val meta: DatasetMeta,
   private val dbDetails: DatabaseDetails,
-  private val executor:  ScriptExecutor,
-  private val script:    ScriptConfiguration,
-  private val metrics:   ScriptMetrics,
-) {
+  executor:  ScriptExecutor,
+  private val script: ScriptConfiguration,
+  metrics: ScriptMetrics,
+) : HandlerBase<Unit>(workspace, executor, metrics) {
   private val log = LoggerFactory.getLogger(javaClass)
 
-  suspend fun run() {
+  override suspend fun run() {
 
     val metaFile = workspace.resolve(FileName.MetaFileName)
       .createFile()
@@ -36,7 +36,7 @@ class InstallMetaHandler(
 
     val timer = metrics.installMetaScriptDuration.startTimer()
     log.info("executing install-meta script for VDI dataset ID {}", vdiID)
-    executor.executeScript(script.path, workspace, arrayOf(vdiID, metaFile.absolutePathString()), makeEnv()) {
+    executor.executeScript(script.path, workspace, arrayOf(vdiID, metaFile.absolutePathString()), buildScriptEnv()) {
       coroutineScope {
         val logJob = launch { LoggingOutputStream("[install-meta][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
 
@@ -60,7 +60,7 @@ class InstallMetaHandler(
     timer.observeDuration()
   }
 
-  private fun makeEnv(): Map<String, String> {
+  override fun buildScriptEnv(): Map<String, String> {
     val out = HashMap<String, String>(12)
     out.putAll(dbDetails.toEnvMap())
     out["PROJECT_ID"] = projectID

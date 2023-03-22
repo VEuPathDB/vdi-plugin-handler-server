@@ -24,13 +24,13 @@ private const val WARNING_FILE_NAME     = "warnings.json"
 private const val OUTPUT_FILE_NAME      = "output.tar.gz"
 
 class ImportHandler(
-  private val workspace: Path,
+  workspace: Path,
   private val inputFile: Path,
-  private val details:   ImportDetails,
-  private val executor:  ScriptExecutor,
-  private val script:    ScriptConfiguration,
-  private val metrics:   ScriptMetrics,
-) {
+  private val details: ImportDetails,
+  executor:  ScriptExecutor,
+  private val script: ScriptConfiguration,
+  metrics: ScriptMetrics,
+) : HandlerBase<Path>(workspace, executor, metrics) {
   private val log = LoggerFactory.getLogger(javaClass)
 
   private val inputDirectory: Path = workspace.resolve(INPUT_DIRECTORY_NAME)
@@ -40,7 +40,7 @@ class ImportHandler(
     .createDirectory()
 
   @OptIn(ExperimentalPathApi::class)
-  suspend fun run(): Path {
+  override suspend fun run(): Path {
     val inputFiles = unpackInput()
     val warnings   = executeScript()
 
@@ -57,6 +57,8 @@ class ImportHandler(
       .also { outputFiles.packAsTarGZ(it) }
       .also { outputDirectory.deleteRecursively() }
   }
+
+  override fun buildScriptEnv(): Map<String, String> = emptyMap()
 
   /**
    * Unpacks the given input archive into the input directory and ensures that
@@ -104,7 +106,8 @@ class ImportHandler(
     val warnings = executor.executeScript(
       script.path,
       workspace,
-      arrayOf(inputDirectory.absolutePathString(), outputDirectory.absolutePathString())
+      arrayOf(inputDirectory.absolutePathString(), outputDirectory.absolutePathString()),
+      buildScriptEnv(),
     ) {
       coroutineScope {
         val warnings = ArrayList<String>(8)

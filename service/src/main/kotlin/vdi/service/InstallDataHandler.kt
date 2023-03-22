@@ -16,21 +16,21 @@ import vdi.model.DatabaseDetails
 import vdi.util.unpackAsTarGZ
 
 class InstallDataHandler(
-  private val workspace:  Path,
-  private val vdiID:      String,
-  private val projectID:  String,
-  private val payload:    Path,
-  private val dbDetails:  DatabaseDetails,
-  private val executor:   ScriptExecutor,
+  workspace: Path,
+  private val vdiID: String,
+  private val projectID: String,
+  private val payload: Path,
+  private val dbDetails: DatabaseDetails,
+  executor: ScriptExecutor,
   private val metaScript: ScriptConfiguration,
   private val dataScript: ScriptConfiguration,
-  private val metrics:    ScriptMetrics,
-) {
+  metrics: ScriptMetrics,
+) : HandlerBase<List<String>>(workspace, executor, metrics) {
   private val log = LoggerFactory.getLogger(javaClass)
 
   init {
     log.trace(
-      "init(workspace={}, vdiID={}, projectID={}, payload={}, dbDetails={}, executor={}, metaScript={}, dataScript={}, metrics={})",
+      "::init(workspace={}, vdiID={}, projectID={}, payload={}, dbDetails={}, executor={}, metaScript={}, dataScript={}, metrics={})",
       workspace,
       vdiID,
       projectID,
@@ -43,7 +43,7 @@ class InstallDataHandler(
     )
   }
 
-  suspend fun run() : List<String> {
+  override suspend fun run() : List<String> {
     log.trace("processInstall()")
 
     val installDir   = workspace.resolve(FileName.InstallDirName)
@@ -72,7 +72,7 @@ class InstallDataHandler(
 
     val timer = metrics.installMetaScriptDuration.startTimer()
     log.info("executing install-meta (for install-data) script for VDI dataset ID {}", vdiID)
-    executor.executeScript(metaScript.path, workspace, arrayOf(vdiID, metaFile.absolutePathString()), makeEnv()) {
+    executor.executeScript(metaScript.path, workspace, arrayOf(vdiID, metaFile.absolutePathString()), buildScriptEnv()) {
       coroutineScope {
         val logJob = launch { LoggingOutputStream("[install-meta][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
 
@@ -104,7 +104,7 @@ class InstallDataHandler(
       dataScript.path,
       workspace,
       arrayOf(vdiID, installDir.absolutePathString()),
-      makeEnv()
+      buildScriptEnv()
     ) {
       coroutineScope {
         val job1 = launch { LoggingOutputStream("[install-data][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
@@ -135,7 +135,7 @@ class InstallDataHandler(
     timer.observeDuration()
   }
 
-  private fun makeEnv(): Map<String, String> {
+  override fun buildScriptEnv(): Map<String, String> {
     val out = HashMap<String, String>(12)
     out.putAll(dbDetails.toEnvMap())
     out["PROJECT_ID"] = projectID
