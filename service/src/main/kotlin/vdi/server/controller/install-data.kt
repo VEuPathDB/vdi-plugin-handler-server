@@ -19,6 +19,7 @@ suspend fun ApplicationCall.handleInstallDataRequest(appCtx: ApplicationContext)
         val warnings = InstallDataHandler(
           workspace,
           details.vdiID,
+          details.projectID,
           payload,
           dbDetails,
           appCtx.executor,

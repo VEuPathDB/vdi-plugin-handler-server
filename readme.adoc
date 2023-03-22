@@ -364,12 +364,13 @@ The `meta.json` file will exist for the duration of the script's execution.
 
 [%header, cols="2m,8"]
 |===
-| Variable | Description
-| DB_HOST  | Database connection hostname.
-| DB_PORT  | Database connection port.
-| DB_NAME  | Target database name.
-| DB_USER  | Database credentials username.
-| DB_PASS  | Database credentials password.
+| Variable   | Description
+| DB_HOST    | Database connection hostname.
+| DB_PORT    | Database connection port.
+| DB_NAME    | Target database name.
+| DB_USER    | Database credentials username.
+| DB_PASS    | Database credentials password.
+| PROJECT_ID | Project ID for the target project the dataset should be installed into.
 |===
 
 ==== Outputs
@@ -430,12 +431,13 @@ completes its execution.
 
 [%header, cols="2m,8"]
 |===
-| Variable | Description
-| DB_HOST  | Database connection hostname.
-| DB_PORT  | Database connection port.
-| DB_NAME  | Target database name.
-| DB_USER  | Database credentials username.
-| DB_PASS  | Database credentials password.
+| Variable   | Description
+| DB_HOST    | Database connection hostname.
+| DB_PORT    | Database connection port.
+| DB_NAME    | Target database name.
+| DB_USER    | Database credentials username.
+| DB_PASS    | Database credentials password.
+| PROJECT_ID | Project ID for the target project the dataset should be installed into.
 |===
 
 ==== Outputs
