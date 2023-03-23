@@ -13,7 +13,7 @@ COPY service/ service/
 
 RUN gradle test shadowJar
 
-FROM veupathdb/rserve:2.1.3
+FROM veupathdb/rserve:5.1.3
 
 ENV JAVA_HOME=/opt/jdk \
     PATH=/opt/jdk/bin:$PATH \
