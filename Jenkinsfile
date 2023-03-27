@@ -8,6 +8,6 @@ node('centos8') {
 
   builder.gitClone()
   builder.buildContainers([
-    [ name: 'vdi-plugin-handler-server', path: 'service' ]
+    [ name: 'vdi-plugin-handler-server' ]
   ])
 }
