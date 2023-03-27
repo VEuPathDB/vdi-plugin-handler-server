@@ -20,12 +20,13 @@ ENV JAVA_HOME=/opt/jdk \
     JVM_MEM_ARGS="" \
     JVM_ARGS=""
 
-RUN apt install -y wget \
+RUN apt-get update && apt-get install -y wget \
     && cd /opt \
     && wget https://corretto.aws/downloads/resources/19.0.2.7.1/amazon-corretto-19.0.2.7.1-linux-x64.tar.gz -O jdk.tgz \
     && tar -xf jdk.tgz \
     && rm jdk.tgz \
-    && mv amazon-corretto-19.0.2.7.1-linux-x64 jdk
+    && mv amazon-corretto-19.0.2.7.1-linux-x64 jdk \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY startup.sh startup.sh
 COPY --from=build /project/service/build/libs/service.jar service.jar
