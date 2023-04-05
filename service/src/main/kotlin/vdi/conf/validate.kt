@@ -8,6 +8,7 @@ fun HandlerConfig.validate() {
   validateScript(service.installDataScript.path)
   validateScript(service.installMetaScript.path)
   validateScript(service.uninstallScript.path)
+  validateScript(service.checkCompatScript.path)
 
   if (databases.isEmpty())
     throw RuntimeException("At least one set of database connection details must be provided.")
