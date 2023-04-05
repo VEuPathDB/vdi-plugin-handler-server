@@ -227,6 +227,21 @@ description: |
                   type: array
                   items:
                     type: string
+        420:
+          description: |
+            Incompatible Dataset
+
+            The posted dataset depends on one or more resources that are not
+            available in the versions specified, if at all.
+          body:
+            application/json:
+              type: object
+              additionalProperties: false
+              properties:
+                warnings:
+                  type: array
+                  items:
+                    type: string
         500:
           description: |
             Internal Server Error
