@@ -95,6 +95,14 @@ required and optional environment variables.
 |
 | UNINSTALL_SCRIPT_MAX_DURATION
 | 1h
+
+|
+| CHECK_COMPAT_SCRIPT_PATH
+| /opt/veupathdb/bin/check-compatibility
+
+|
+| CHECK_COMPAT_SCRIPT_MAX_DURATION
+| 1h
 |===
 
 `SERVER_PORT`:: Port the HTTP service will listen on for incoming connections.
