@@ -1,5 +1,8 @@
 FROM veupathdb/alpine-dev-base:jdk-18-gradle-7.5.1 AS build
 
+ARG GITHUB_USERNAME
+ARG GITHUB_TOKEN
+
 WORKDIR /project
 
 COPY [ \

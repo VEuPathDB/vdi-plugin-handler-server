@@ -19,6 +19,7 @@ data class ServiceConfiguration(
   val installDataScript: ScriptConfiguration,
   val installMetaScript: ScriptConfiguration,
   val uninstallScript: ScriptConfiguration,
+  val checkCompatScript: ScriptConfiguration,
 ) {
   constructor(env: EnvironmentAccessor) : this(
     env.require(ConfigEnvKey.LDAPServer),
@@ -38,6 +39,10 @@ data class ServiceConfiguration(
     ScriptConfiguration(
       env.optional(ConfigEnvKey.UninstallScriptPath) ?: ConfigDefault.UninstallScriptPath,
       (env.optional(ConfigEnvKey.UninstallScriptMaxDuration) ?: ConfigDefault.UninstallScriptMaxDuration).toDurSeconds(),
+    ),
+    ScriptConfiguration(
+      env.optional(ConfigEnvKey.CheckCompatScriptPath) ?: ConfigDefault.CheckCompatScriptPath,
+      (env.optional(ConfigEnvKey.CheckCompatScriptMaxDuration) ?: ConfigDefault.CheckCompatScriptMaxDuration).toDurSeconds(),
     ),
   )
 }

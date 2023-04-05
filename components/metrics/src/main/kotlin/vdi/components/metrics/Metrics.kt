@@ -22,7 +22,7 @@ class ScriptMetrics(registry: CollectorRegistry) {
 
   val installMetaScriptDuration: Histogram = Histogram.build()
     .name("script_install_meta_duration")
-    .help("Install-Meta script duration in milliseconds")
+    .help("Install-Meta script duration in seconds")
     .buckets(
       0.1,   // 100ms
       0.5,   // 500ms
@@ -37,7 +37,7 @@ class ScriptMetrics(registry: CollectorRegistry) {
 
   val installDataScriptDuration: Histogram = Histogram.build()
     .name("script_install_data_duration")
-    .help("Install-Data script duration in milliseconds")
+    .help("Install-Data script duration in seconds")
     .buckets(
       5.0,    // 5s
       10.0,   // 10s
@@ -51,9 +51,24 @@ class ScriptMetrics(registry: CollectorRegistry) {
     )
     .register(registry)
 
+  val checkCompatScriptDuration: Histogram = Histogram.build()
+    .name("script_check_compat_duration")
+    .help("Check-Compatibility script duration in seconds")
+    .buckets(
+      0.1,   // 100ms
+      0.5,   // 500ms
+      1.0,   // 1s
+      5.0,   // 5s
+      10.0,  // 10s
+      30.0,  // 30s
+      60.0,  // 1m
+      300.0, // 5m
+    )
+    .register(registry)
+
   val uninstallScriptDuration: Histogram = Histogram.build()
     .name("script_uninstall_duration")
-    .help("Uninstall script duration in milliseconds")
+    .help("Uninstall script duration in seconds")
     .buckets(
       0.1,   // 100ms
       0.5,   // 500ms

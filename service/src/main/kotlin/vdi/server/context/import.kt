@@ -8,6 +8,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.util.*
 import io.ktor.utils.io.jvm.javaio.*
+import org.veupathdb.vdi.lib.json.JSON
 import java.nio.file.Path
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -15,7 +16,6 @@ import kotlin.contracts.contract
 import vdi.components.http.errors.BadRequestException
 import vdi.components.http.errors.UnsupportedMediaTypeException
 import vdi.components.io.BoundedInputStream
-import vdi.components.json.JSON
 import vdi.consts.FieldName
 import vdi.server.model.ImportDetails
 import vdi.util.withTempDirectory
@@ -134,29 +134,26 @@ private fun PartData.handlePayload(workspace: Path, payloadCB: (Path) -> Unit) {
 private fun ImportDetails.validate() {
   vdiID.validateAsVDIID("vdiID")
 
-  if (type.name.isBlank())
+  if (meta.type.name.isBlank())
     throw BadRequestException("type.name cannot be blank")
-  if (type.version.isBlank())
+  if (meta.type.version.isBlank())
     throw BadRequestException("type.version cannot be blank")
 
-  if (projects.isEmpty())
+  if (meta.projects.isEmpty())
     throw BadRequestException("projects cannot be empty")
-  for (project in projects)
+  for (project in meta.projects)
     if (project.isBlank())
       throw BadRequestException("projects cannot contain a blank string")
 
-  if (owner.isBlank())
-    throw BadRequestException("owner cannot be blank")
-
-  if (name.isBlank())
+  if (meta.name.isBlank())
     throw BadRequestException("name cannot be blank")
 
-  for (dependency in dependencies) {
-    if (dependency.resourceIdentifier.isBlank())
+  for (dependency in meta.dependencies) {
+    if (dependency.identifier.isBlank())
       throw BadRequestException("dependency.resourceIdentifier cannot be blank")
-    if (dependency.resourceVersion.isBlank())
+    if (dependency.version.isBlank())
       throw BadRequestException("dependency.resourceVersion cannot be blank")
-    if (dependency.resourceDisplayName.isBlank())
+    if (dependency.displayName.isBlank())
       throw BadRequestException("dependency.resourceDisplayName cannot be blank")
   }
 }

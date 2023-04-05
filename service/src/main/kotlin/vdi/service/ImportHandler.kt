@@ -1,13 +1,13 @@
 package vdi.service
 
 import org.slf4j.LoggerFactory
+import org.veupathdb.vdi.lib.json.JSON
 import java.nio.file.Path
 import kotlin.io.path.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import vdi.components.io.LineListOutputStream
 import vdi.components.io.LoggingOutputStream
-import vdi.components.json.JSON
 import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
@@ -160,50 +160,18 @@ class ImportHandler(
   private fun writeMetaFile() =
     outputDirectory.resolve(META_FILE_NAME)
       .createFile()
-      .apply { outputStream().use { JSON.writeValue(it, details.toMetaFile()) } }
+      .apply { outputStream().use { JSON.writeValue(it, details.meta) } }
 
   private fun writeWarningFile(warnings: Collection<String>) =
     outputDirectory.resolve(WARNING_FILE_NAME)
       .createFile()
       .apply { outputStream().use { JSON.writeValue(it, WarningsFile(warnings)) } }
 
-  private fun ImportDetails.toMetaFile() =
-    Meta(
-      MetaType(type.name, type.version),
-      projects,
-      owner,
-      name,
-      if (summary.isNullOrBlank()) null else summary,
-      if (description.isNullOrBlank()) null else description,
-      dependencies.map { MetaDependency(it.resourceIdentifier, it.resourceVersion, it.resourceDisplayName) }
-    )
-
   class EmptyInputError : RuntimeException("input archive contained no files")
 
   class ValidationError(val warnings: Collection<String>) : RuntimeException()
 
   data class Manifest(val inputFiles: Collection<String>, val dataFiles: Collection<String>)
-
-  data class Meta(
-    val type: MetaType,
-    val projects: Collection<String>,
-    val owner: String,
-    val name: String,
-    val summary: String?,
-    val description: String?,
-    val dependencies: Collection<MetaDependency>
-  )
-
-  data class MetaType(
-    val name:    String,
-    val version: String,
-  )
-
-  data class MetaDependency(
-    val resourceIdentifier:  String,
-    val resourceVersion:     String,
-    val resourceDisplayName: String
-  )
 
   data class WarningsFile(val warnings: Collection<String>)
 }

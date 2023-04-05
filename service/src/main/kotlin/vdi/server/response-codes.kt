@@ -14,8 +14,8 @@ inline val StatusBadRequest
 inline val StatusValidationError
   get() = HttpStatusCode(418, "validation-error")
 
-inline val StatusTransformationError
-  get() = HttpStatusCode(420, "transformation-error")
+inline val StatusCompatibilityError
+  get() = HttpStatusCode(420, "compatibility-error")
 
 inline val StatusServerError
   get() = HttpStatusCode.InternalServerError

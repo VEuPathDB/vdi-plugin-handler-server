@@ -6,10 +6,10 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
+import org.veupathdb.vdi.lib.json.JSON
 import java.nio.file.Path
 import vdi.components.http.errors.BadRequestException
 import vdi.components.http.errors.UnsupportedMediaTypeException
-import vdi.components.json.JSON
 import vdi.consts.FieldName
 import vdi.util.withTempDirectory
 

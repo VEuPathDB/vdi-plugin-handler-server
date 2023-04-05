@@ -1,7 +1,9 @@
 package vdi.server.model
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
+import org.veupathdb.vdi.lib.common.field.ProjectID
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class InstallDetails(
@@ -9,7 +11,7 @@ data class InstallDetails(
   val vdiID: String,
 
   @JsonProperty("projectID")
-  val projectID: String,
+  val projectID: ProjectID,
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)

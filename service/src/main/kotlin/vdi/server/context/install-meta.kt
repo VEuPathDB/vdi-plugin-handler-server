@@ -5,13 +5,12 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
+import org.veupathdb.vdi.lib.json.JSON
 import java.nio.file.Path
 import vdi.components.http.errors.BadRequestException
 import vdi.components.http.errors.UnsupportedMediaTypeException
 import vdi.components.io.BoundedInputStream
-import vdi.components.json.JSON
 import vdi.consts.FieldName
-import vdi.server.model.DatasetMeta
 import vdi.server.model.InstallMetaRequest
 import vdi.util.withTempDirectory
 
@@ -52,18 +51,15 @@ private fun InstallMetaRequest.validate() {
     if (project.isBlank())
       throw BadRequestException("projects cannot contain a blank string")
 
-  if (meta.owner.isBlank())
-    throw BadRequestException("owner cannot be blank")
-
   if (meta.name.isBlank())
     throw BadRequestException("name cannot be blank")
 
   for (dependency in meta.dependencies) {
-    if (dependency.resourceIdentifier.isBlank())
+    if (dependency.identifier.isBlank())
       throw BadRequestException("dependency.resourceIdentifier cannot be blank")
-    if (dependency.resourceVersion.isBlank())
+    if (dependency.version.isBlank())
       throw BadRequestException("dependency.resourceVersion cannot be blank")
-    if (dependency.resourceDisplayName.isBlank())
+    if (dependency.displayName.isBlank())
       throw BadRequestException("dependency.resourceDisplayName cannot be blank")
   }
 }

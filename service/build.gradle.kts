@@ -5,31 +5,45 @@ plugins {
 
 repositories {
   mavenCentral()
+  maven {
+    name = "GitHubPackages"
+    url  = uri("https://maven.pkg.github.com/veupathdb/maven-packages")
+    credentials {
+      username = if (extra.has("gpr.user")) extra["gpr.user"] as String? else System.getenv("GITHUB_USERNAME")
+      password = if (extra.has("gpr.key")) extra["gpr.key"] as String? else System.getenv("GITHUB_TOKEN")
+    }
+  }
 }
 
 kotlin {
   jvmToolchain(18)
 }
 
+configurations.all {
+  resolutionStrategy.cacheChangingModulesFor(5, TimeUnit.MINUTES)
+}
+
 dependencies {
   implementation(project(":components:common"))
   implementation(project(":components:http-errors"))
   implementation(project(":components:io-utils"))
-  implementation(project(":components:json"))
   implementation(project(":components:ldap-lookup"))
   implementation(project(":components:metrics"))
   implementation(project(":components:script-execution"))
+
+  implementation("org.veupathdb.vdi:vdi-component-json:1.0.0")
+  implementation("org.veupathdb.vdi:vdi-component-common:1.0.0-SNAPSHOT") { isChanging = true }
 
   implementation("io.ktor:ktor-server-core-jvm:2.2.2")
   implementation("io.ktor:ktor-server-netty-jvm:2.2.2")
   implementation("io.ktor:ktor-server-metrics-micrometer:2.2.2")
 
   implementation("org.slf4j:slf4j-api:1.7.36")
-  implementation("org.apache.logging.log4j:log4j-core:2.19.0")
-  implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.19.0")
-  implementation("org.apache.logging.log4j:log4j-iostreams:2.19.0")
+  implementation("org.apache.logging.log4j:log4j-core:2.20.0")
+  implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.20.0")
+  implementation("org.apache.logging.log4j:log4j-iostreams:2.20.0")
 
-  implementation("io.micrometer:micrometer-registry-prometheus:1.10.3")
+  implementation("io.micrometer:micrometer-registry-prometheus:1.10.5")
 
   implementation("com.fasterxml.jackson.core:jackson-core:2.14.2")
   implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
@@ -42,9 +56,9 @@ dependencies {
   implementation("org.apache.commons:commons-compress:1.22")
 
   testImplementation(kotlin("test"))
-  testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
-  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
-  testImplementation("org.mockito:mockito-core:4.8.0")
+  testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
+  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
+  testImplementation("org.mockito:mockito-core:5.2.0")
 }
 
 tasks.test {

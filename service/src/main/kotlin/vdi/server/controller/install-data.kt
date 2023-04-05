@@ -8,6 +8,7 @@ import vdi.server.model.InstallDataSuccessResponse
 import vdi.server.model.WarningsListResponse
 import vdi.server.respondJSON200
 import vdi.server.respondJSON418
+import vdi.server.respondJSON420
 import vdi.service.InstallDataHandler
 
 suspend fun ApplicationCall.handleInstallDataRequest(appCtx: ApplicationContext) {
@@ -25,6 +26,7 @@ suspend fun ApplicationCall.handleInstallDataRequest(appCtx: ApplicationContext)
           appCtx.executor,
           appCtx.config.service.installMetaScript,
           appCtx.config.service.installDataScript,
+          appCtx.config.service.checkCompatScript,
           appCtx.metrics.scriptMetrics,
         )
           .run()
@@ -32,6 +34,8 @@ suspend fun ApplicationCall.handleInstallDataRequest(appCtx: ApplicationContext)
         respondJSON200(InstallDataSuccessResponse(warnings))
       } catch (e: InstallDataHandler.ValidationError) {
         respondJSON418(WarningsListResponse(e.warnings))
+      } catch (e: InstallDataHandler.CompatibilityError) {
+        respondJSON420(WarningsListResponse(e.warnings))
       }
     }
   }

@@ -32,64 +32,7 @@ description: |
         additionalProperties: false
         properties:
           details:
-            type: object
-            additionalProperties: false
-            properties:
-              vdiID:
-                displayName: Dataset ID
-                type: VDI-ID
-                required: true
-              type:
-                displayName: Type Info
-                type: object
-                additionalProperties: false
-                properties:
-                  name:
-                    type: string
-                    required: true
-                  version:
-                    type: string
-                    required: true
-                required: true
-              projects:
-                displayName: Target Projects
-                type: ProjectID[]
-                required: true
-                minItems: 1
-              owner:
-                displayName: Dataset Owner ID
-                type: string
-                required: true
-                minLength: 1
-              name:
-                displayName: Dataset Name
-                type: string
-                required: true
-                minLength: 1
-              summary:
-                displayName: Dataset Summary
-                type: string
-                required: false
-              description:
-                displayName: Dataset Description
-                type: string
-                required: false
-              dependencies:
-                displayName: Dataset Dependencies
-                type: array
-                items:
-                  type: object
-                  additionalProperties: false
-                  properties:
-                    resourceIdentifier:
-                      type: string
-                      required: true
-                    resourceVersion:
-                      type: string
-                      required: true
-                    resourceDisplayName:
-                      type: string
-                      required: true
+            type: ImportRequestDetails
           payload:
             type: file
             required: true
@@ -319,6 +262,17 @@ types:
       - VEuPathDB
     type: string
     example: PlasmoDB
+
+  ImportRequestDetails:
+    type: object
+    additionalProperties: false
+    properties:
+      vdiID:
+        type: VDI-ID
+        required: true
+      meta:
+        type: DatasetMeta
+        required: true
 
   InstallMetaRequest:
     type: object

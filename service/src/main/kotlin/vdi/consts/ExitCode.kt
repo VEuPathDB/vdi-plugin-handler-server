@@ -6,4 +6,7 @@ object ExitCode {
 
   const val InstallScriptSuccess           = 0
   const val InstallScriptValidationFailure = 1
+
+  const val CompatScriptSuccess      = 0
+  const val CompatScriptIncompatible = 1
 }

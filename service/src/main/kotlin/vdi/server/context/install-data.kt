@@ -7,6 +7,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.util.*
 import io.ktor.utils.io.jvm.javaio.*
+import org.veupathdb.vdi.lib.json.JSON
 import java.nio.file.Path
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -14,7 +15,6 @@ import kotlin.contracts.contract
 import vdi.components.http.errors.BadRequestException
 import vdi.components.http.errors.UnsupportedMediaTypeException
 import vdi.components.io.BoundedInputStream
-import vdi.components.json.JSON
 import vdi.consts.FieldName
 import vdi.server.model.InstallDetails
 import vdi.util.withTempDirectory

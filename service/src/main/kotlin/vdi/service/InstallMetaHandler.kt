@@ -1,6 +1,8 @@
 package vdi.service
 
 import org.slf4j.LoggerFactory
+import org.veupathdb.vdi.lib.common.model.VDIDatasetMeta
+import org.veupathdb.vdi.lib.json.JSON
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.createFile
@@ -8,19 +10,17 @@ import kotlin.io.path.outputStream
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import vdi.components.io.LoggingOutputStream
-import vdi.components.json.JSON
 import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
 import vdi.consts.FileName
 import vdi.model.DatabaseDetails
-import vdi.server.model.DatasetMeta
 
 class InstallMetaHandler(
   workspace: Path,
   private val vdiID: String,
   private val projectID: String,
-  private val meta: DatasetMeta,
+  private val meta: VDIDatasetMeta,
   private val dbDetails: DatabaseDetails,
   executor:  ScriptExecutor,
   private val script: ScriptConfiguration,

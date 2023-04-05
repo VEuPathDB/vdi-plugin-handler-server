@@ -1,6 +1,10 @@
 package vdi.service
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import org.slf4j.LoggerFactory
+import org.veupathdb.vdi.lib.common.model.VDIDatasetMeta
+import org.veupathdb.vdi.lib.json.JSON
+import java.io.OutputStreamWriter
 import java.nio.file.Path
 import kotlin.io.path.*
 import kotlinx.coroutines.coroutineScope
@@ -24,6 +28,7 @@ class InstallDataHandler(
   executor: ScriptExecutor,
   private val metaScript: ScriptConfiguration,
   private val dataScript: ScriptConfiguration,
+  private val compatScript: ScriptConfiguration,
   metrics: ScriptMetrics,
 ) : HandlerBase<List<String>>(workspace, executor, metrics) {
   private val log = LoggerFactory.getLogger(javaClass)
@@ -46,8 +51,8 @@ class InstallDataHandler(
   override suspend fun run() : List<String> {
     log.trace("processInstall()")
 
-    val installDir   = workspace.resolve(FileName.InstallDirName)
-    val warnings     = ArrayList<String>(4)
+    val installDir = workspace.resolve(FileName.InstallDirName)
+    val warnings   = ArrayList<String>(4)
 
     log.debug("creating install data directory {}", installDir)
     installDir.createDirectory()
@@ -56,20 +61,25 @@ class InstallDataHandler(
     payload.unpackAsTarGZ(installDir)
     payload.deleteIfExists()
 
-    runInstallMeta(installDir)
+    val metaFile = requireMetaFile(installDir)
+
+    runInstallMeta(metaFile)
+
+    runCheckDependencies(metaFile)
+
     runInstallData(installDir, warnings)
 
     return warnings
   }
 
-  private suspend fun runInstallMeta(installDir: Path) {
-    val metaFile = installDir.resolve(FileName.MetaFileName)
+  override fun buildScriptEnv(): Map<String, String> {
+    val out = HashMap<String, String>(12)
+    out.putAll(dbDetails.toEnvMap())
+    out["PROJECT_ID"] = projectID
+    return out
+  }
 
-    if (!metaFile.exists()) {
-      log.error("no meta file was found in the install directory for VDI dataset {}", vdiID)
-      throw IllegalStateException("no meta file was found in the install directory for VDI dataset $vdiID")
-    }
-
+  private suspend fun runInstallMeta(metaFile: Path) {
     val timer = metrics.installMetaScriptDuration.startTimer()
     log.info("executing install-meta (for install-data) script for VDI dataset ID {}", vdiID)
     executor.executeScript(metaScript.path, workspace, arrayOf(vdiID, metaFile.absolutePathString()), buildScriptEnv()) {
@@ -94,7 +104,52 @@ class InstallDataHandler(
     }
 
     timer.observeDuration()
+  }
 
+  private suspend fun runCheckDependencies(metaFile: Path) {
+    log.info("executing check-compatibility script for VDI dataset ID {}", vdiID)
+    val timer    = metrics.checkCompatScriptDuration.startTimer()
+    val warnings = ArrayList<String>()
+    val meta     = JSON.readValue<VDIDatasetMeta>(metaFile.inputStream())
+
+    executor.executeScript(
+      compatScript.path,
+      workspace,
+      emptyArray(),
+      buildScriptEnv()
+    ) {
+      coroutineScope {
+        val writer  = OutputStreamWriter(scriptStdIn)
+
+        for (dep in meta.dependencies)
+          writer.appendLine("${dep.identifier}\t${dep.version}")
+
+        val logJob  = launch { LoggingOutputStream("[check-compatibility][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
+        val warnJob = launch { LineListOutputStream(warnings).use { scriptStdOut.transferTo(it) } }
+
+        waitFor(compatScript.maxSeconds)
+
+        logJob.join()
+        warnJob.join()
+
+        when (exitCode()) {
+          ExitCode.CompatScriptSuccess -> {
+            log.info("check-compatibility script completed successfully for dataset ID {}", vdiID)
+          }
+
+          ExitCode.CompatScriptIncompatible -> {
+            log.info("check-compatibility script completed with 'incompatible' for dataset ID {}", vdiID)
+            throw CompatibilityError(warnings)
+          }
+
+          else -> {
+            log.error("check-compatibility script failed for dataset ID {}", vdiID)
+            throw IllegalStateException("check-compatibility script failed")
+          }
+        }
+      }
+    }
+    timer.observeDuration()
   }
 
   private suspend fun runInstallData(installDir: Path, warnings: MutableList<String>) {
@@ -135,12 +190,18 @@ class InstallDataHandler(
     timer.observeDuration()
   }
 
-  override fun buildScriptEnv(): Map<String, String> {
-    val out = HashMap<String, String>(12)
-    out.putAll(dbDetails.toEnvMap())
-    out["PROJECT_ID"] = projectID
-    return out
+  private fun requireMetaFile(installDir: Path): Path {
+    val metaFile = installDir.resolve(FileName.MetaFileName)
+
+    if (!metaFile.exists()) {
+      log.error("no meta file was found in the install directory for VDI dataset {}", vdiID)
+      throw IllegalStateException("no meta file was found in the install directory for VDI dataset $vdiID")
+    }
+
+    return metaFile
   }
 
   class ValidationError(val warnings: Collection<String>) : RuntimeException()
+
+  class CompatibilityError(val warnings: Collection<String>) : RuntimeException()
 }
