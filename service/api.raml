@@ -76,7 +76,7 @@ description: |
           Congratulations!  You found a bug!
         body:
           application/json:
-            type: Error500
+            type: SimpleError
 
 /install:
   displayName: Install Actions
@@ -105,7 +105,7 @@ description: |
             Congratulations!  You found a bug!
           body:
             application/json:
-              type: Error500
+              type: SimpleError
 
   /data:
     displayName: Data Installation Actions
@@ -192,7 +192,7 @@ description: |
             Congratulations!  You found a bug!
           body:
             application/json:
-              type: Error500
+              type: SimpleError
 
 /uninstall:
   displayName: Uninstall Actions
@@ -219,7 +219,7 @@ description: |
           Congratulations!  You found a bug!
         body:
           application/json:
-            type: Error500
+            type: SimpleError
 
 types:
   VDI-ID:
@@ -349,14 +349,6 @@ types:
         required: true
 
   SimpleError:
-    type: object
-    additionalProperties: false
-    properties:
-      message:
-        type: string
-        required: true
-
-  Error500:
     type: object
     additionalProperties: false
     properties:
