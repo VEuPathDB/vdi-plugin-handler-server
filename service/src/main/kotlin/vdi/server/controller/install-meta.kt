@@ -17,6 +17,7 @@ suspend fun ApplicationCall.handleInstallMetaRequest(appCtx: ApplicationContext)
         request.meta,
         dbDetails,
         appCtx.executor,
+        appCtx.config.service.customPath,
         appCtx.config.service.installMetaScript,
         appCtx.metrics.scriptMetrics,
       )

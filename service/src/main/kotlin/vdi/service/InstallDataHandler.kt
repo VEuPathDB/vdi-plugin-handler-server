@@ -2,6 +2,7 @@ package vdi.service
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.slf4j.LoggerFactory
+import org.veupathdb.vdi.lib.common.env.Environment
 import org.veupathdb.vdi.lib.common.model.VDIDatasetMeta
 import org.veupathdb.vdi.lib.json.JSON
 import java.io.OutputStreamWriter
@@ -26,11 +27,12 @@ class InstallDataHandler(
   private val payload: Path,
   private val dbDetails: DatabaseDetails,
   executor: ScriptExecutor,
+  customPath: String,
   private val metaScript: ScriptConfiguration,
   private val dataScript: ScriptConfiguration,
   private val compatScript: ScriptConfiguration,
   metrics: ScriptMetrics,
-) : HandlerBase<List<String>>(workspace, executor, metrics) {
+) : HandlerBase<List<String>>(workspace, executor, customPath, metrics) {
   private val log = LoggerFactory.getLogger(javaClass)
 
   init {
@@ -72,11 +74,9 @@ class InstallDataHandler(
     return warnings
   }
 
-  override fun buildScriptEnv(): Map<String, String> {
-    val out = HashMap<String, String>(12)
-    out.putAll(dbDetails.toEnvMap())
-    out["PROJECT_ID"] = projectID
-    return out
+  override fun appendScriptEnv(env: MutableMap<String, String>) {
+    env.putAll(dbDetails.toEnvMap())
+    env["PROJECT_ID"] = projectID
   }
 
   private suspend fun runInstallMeta(metaFile: Path) {

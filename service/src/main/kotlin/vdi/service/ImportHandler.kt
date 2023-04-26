@@ -29,8 +29,9 @@ class ImportHandler(
   private val details: ImportDetails,
   executor:  ScriptExecutor,
   private val script: ScriptConfiguration,
+  customPath: String,
   metrics: ScriptMetrics,
-) : HandlerBase<Path>(workspace, executor, metrics) {
+) : HandlerBase<Path>(workspace, executor, customPath, metrics) {
   private val log = LoggerFactory.getLogger(javaClass)
 
   private val inputDirectory: Path = workspace.resolve(INPUT_DIRECTORY_NAME)
@@ -57,8 +58,6 @@ class ImportHandler(
       .also { outputFiles.packAsTarGZ(it) }
       .also { outputDirectory.deleteRecursively() }
   }
-
-  override fun buildScriptEnv(): Map<String, String> = emptyMap()
 
   /**
    * Unpacks the given input archive into the input directory and ensures that

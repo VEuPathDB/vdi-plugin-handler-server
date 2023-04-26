@@ -23,9 +23,10 @@ class InstallMetaHandler(
   private val meta: VDIDatasetMeta,
   private val dbDetails: DatabaseDetails,
   executor:  ScriptExecutor,
+  customPath: String,
   private val script: ScriptConfiguration,
   metrics: ScriptMetrics,
-) : HandlerBase<Unit>(workspace, executor, metrics) {
+) : HandlerBase<Unit>(workspace, executor, customPath, metrics) {
   private val log = LoggerFactory.getLogger(javaClass)
 
   override suspend fun run() {
@@ -60,10 +61,8 @@ class InstallMetaHandler(
     timer.observeDuration()
   }
 
-  override fun buildScriptEnv(): Map<String, String> {
-    val out = HashMap<String, String>(12)
-    out.putAll(dbDetails.toEnvMap())
-    out["PROJECT_ID"] = projectID
-    return out
+  override fun appendScriptEnv(env: MutableMap<String, String>) {
+    env.putAll(dbDetails.toEnvMap())
+    env["PROJECT_ID"] = projectID
   }
 }

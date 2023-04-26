@@ -15,9 +15,10 @@ class UninstallHandler(
   private val vdiID: String,
   private val dbDetails: DatabaseDetails,
   executor:  ScriptExecutor,
+  customPath: String,
   private val script: ScriptConfiguration,
   metrics: ScriptMetrics,
-) : HandlerBase<Unit>(workspace, executor, metrics) {
+) : HandlerBase<Unit>(workspace, executor, customPath, metrics) {
   private val log = LoggerFactory.getLogger(javaClass)
 
   override suspend fun run() {
@@ -49,5 +50,7 @@ class UninstallHandler(
     timer.observeDuration()
   }
 
-  override fun buildScriptEnv() = dbDetails.toEnvMap()
+  override fun appendScriptEnv(env: MutableMap<String, String>) {
+    env.putAll(dbDetails.toEnvMap())
+  }
 }
