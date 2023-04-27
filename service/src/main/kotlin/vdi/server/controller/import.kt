@@ -21,6 +21,7 @@ suspend fun ApplicationCall.handleImportRequest(appCtx: ApplicationContext) {
         details,
         appCtx.executor,
         appCtx.config.service.importScript,
+        appCtx.config.service.customPath,
         appCtx.metrics.scriptMetrics,
       )
         .run()

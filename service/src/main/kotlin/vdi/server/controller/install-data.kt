@@ -24,6 +24,7 @@ suspend fun ApplicationCall.handleInstallDataRequest(appCtx: ApplicationContext)
           payload,
           dbDetails,
           appCtx.executor,
+          appCtx.config.service.customPath,
           appCtx.config.service.installMetaScript,
           appCtx.config.service.installDataScript,
           appCtx.config.service.checkCompatScript,

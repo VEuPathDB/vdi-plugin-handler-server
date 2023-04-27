@@ -25,4 +25,6 @@ object ConfigEnvKey {
 
   const val ServerPort = "SERVER_PORT"
   const val ServerHost = "SERVER_HOST"
+
+  const val CustomPath = "CUSTOM_PATH"
 }

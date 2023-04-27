@@ -11,6 +11,8 @@ object ConfigDefault {
   const val UninstallScriptPath = "/opt/veupathdb/bin/uninstall"
   const val CheckCompatScriptPath = "/opt/veupathdb/bin/check-compatibility"
 
+  const val CustomPath = ""
+
   const val ImportScriptMaxDuration = "1h"
   const val DataInstallScriptMaxDuration = "1h"
   const val MetaInstallScriptMaxDuration = "1h"
