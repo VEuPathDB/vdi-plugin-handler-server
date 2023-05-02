@@ -6,8 +6,7 @@ import io.ktor.server.response.*
 import org.veupathdb.vdi.lib.json.toJSONString
 
 suspend inline fun ApplicationCall.respond204() =
-  respond(StatusNoContent, Unit)
-
+  respondText("", ContentType.Text.Plain, StatusNoContent)
 
 suspend inline fun ApplicationCall.respondJSON200(body: Any) =
   respondJSON(body, StatusSuccess)
