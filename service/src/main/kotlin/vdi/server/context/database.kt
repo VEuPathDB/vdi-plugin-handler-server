@@ -15,7 +15,7 @@ suspend fun withDatabaseDetails(
   fn:        suspend (dbDetails: DatabaseDetails) -> Unit,
 ) {
   fn((databases[projectID] ?: throw BadRequestException("unrecognized projectID value"))
-    .let { it to ldap.requireSingularOracleNetDesc(it.ldap.value) }
+    .let { it to ldap.requireSingularOracleNetDesc(it.ldap) }
     .toDatabaseDetails())
 }
 

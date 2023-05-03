@@ -7,7 +7,7 @@ data class DatabaseDetails(
   val dbHost: String,
   val dbPort: UShort,
   val dbName: String,
-  val dbUser: SecretString,
+  val dbUser: String,
   val dbPass: SecretString,
   val dbPlatform: DBPlatform,
 ) {
@@ -15,7 +15,7 @@ data class DatabaseDetails(
     ScriptEnvKey.DBHost to dbHost,
     ScriptEnvKey.DBPort to dbPort.toString(),
     ScriptEnvKey.DBName to dbName,
-    ScriptEnvKey.DBUser to dbUser.value,
+    ScriptEnvKey.DBUser to dbUser,
     ScriptEnvKey.DBPass to dbPass.value,
     ScriptEnvKey.DBPlatform to dbPlatform.value,
   )

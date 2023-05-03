@@ -43,13 +43,13 @@ class TestDatabaseConfigurationMap {
     assertTrue("ToxoDB" in output)
 
     assertEquals("PlasmoDB", output["PlasmoDB"]!!.name)
-    assertEquals("foo", output["PlasmoDB"]!!.ldap.value)
-    assertEquals("bar", output["PlasmoDB"]!!.user.value)
+    assertEquals("foo", output["PlasmoDB"]!!.ldap)
+    assertEquals("bar", output["PlasmoDB"]!!.user)
     assertEquals("fizz", output["PlasmoDB"]!!.pass.value)
 
     assertEquals("ToxoDB", output["ToxoDB"]!!.name)
-    assertEquals("buzz", output["ToxoDB"]!!.ldap.value)
-    assertEquals("ding", output["ToxoDB"]!!.user.value)
+    assertEquals("buzz", output["ToxoDB"]!!.ldap)
+    assertEquals("ding", output["ToxoDB"]!!.user)
     assertEquals("dong", output["ToxoDB"]!!.pass.value)
   }
 
