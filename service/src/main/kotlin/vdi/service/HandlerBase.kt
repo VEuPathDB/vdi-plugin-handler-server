@@ -35,11 +35,18 @@ sealed class HandlerBase<T>(
 
   abstract suspend fun run(): T
 
-  protected fun buildScriptEnv(): Environment =
+  protected fun buildScriptEnv(): Environment {
+    val out = HashMap<String, String>()
+
     if (customPath.isBlank())
-      mutableMapOf("PATH" to System.getenv("PATH"))
+      out["PATH"] = System.getenv("PATH")
     else
-      mutableMapOf("PATH" to System.getenv("PATH") + ':' + customPath)
+      out["PATH"] = System.getenv("PATH") + ':' + customPath
+
+    appendScriptEnv(out)
+
+    return out
+  }
 
   protected open fun appendScriptEnv(env: MutableMap<String, String>) {}
 }

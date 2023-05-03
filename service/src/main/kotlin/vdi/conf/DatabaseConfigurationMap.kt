@@ -132,8 +132,8 @@ private fun Map<String, String>.parse(
 private fun Map<String, String>.parse(suffix: String) =
   DatabaseConfiguration(
     name = get(DB_NAME_PREFIX + suffix) ?: parsingFailed(suffix),
-    ldap = get(DB_LDAP_PREFIX + suffix)?.let(::SecretString) ?: parsingFailed(suffix),
-    user = get(DB_USER_PREFIX + suffix)?.let(::SecretString) ?: parsingFailed(suffix),
+    ldap = get(DB_LDAP_PREFIX + suffix) ?: parsingFailed(suffix),
+    user = get(DB_USER_PREFIX + suffix) ?: parsingFailed(suffix),
     pass = get(DB_PASS_PREFIX + suffix)?.let(::SecretString) ?: parsingFailed(suffix),
   )
 
