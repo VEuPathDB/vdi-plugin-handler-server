@@ -424,13 +424,13 @@ directory containing the contents of the dataset to be installed.
 .Structure
 [source, shell-session]
 ----
-$ install-data {vdi-id} {path-to-meta-json} {path-to-dataset-files}
+$ install-data {vdi-id} {path-to-dataset-files}
 ----
 
 .Example
 [source, shell-session]
 ----
-$ install-data bfcb312a5875ae38536a64e60055c74e /path/to/dataset/meta.json /path/to/dataset/files
+$ install-data bfcb312a5875ae38536a64e60055c74e /path/to/dataset/files
 ----
 
 The input directory is temporary and will be removed as soon as the script

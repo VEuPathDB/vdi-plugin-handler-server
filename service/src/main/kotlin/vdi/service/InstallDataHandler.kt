@@ -158,7 +158,7 @@ class InstallDataHandler(
     executor.executeScript(
       dataScript.path,
       workspace,
-      arrayOf(vdiID, installDir.resolve(FileName.MetaFileName).absolutePathString(), installDir.absolutePathString()),
+      arrayOf(vdiID, installDir.absolutePathString()),
       buildScriptEnv()
     ) {
       coroutineScope {
