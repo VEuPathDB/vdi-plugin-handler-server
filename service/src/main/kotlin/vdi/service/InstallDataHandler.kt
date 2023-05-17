@@ -119,10 +119,12 @@ class InstallDataHandler(
       buildScriptEnv()
     ) {
       coroutineScope {
-        val writer  = OutputStreamWriter(scriptStdIn)
+        OutputStreamWriter(scriptStdIn)
+          .use {
+            for (dep in meta.dependencies)
+              it.appendLine("${dep.identifier}\t${dep.version}")
+          }
 
-        for (dep in meta.dependencies)
-          writer.appendLine("${dep.identifier}\t${dep.version}")
 
         val logJob  = launch { LoggingOutputStream("[check-compatibility][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
         val warnJob = launch { LineListOutputStream(warnings).use { scriptStdOut.transferTo(it) } }
