@@ -408,6 +408,78 @@ Handler Server itself.
 0    - Success
 1+   - Failure due to unxpected/undefined error.
 ----
+=== Check Compatibility Script
+
+==== Inputs
+
+===== CLI
+
+The script will not be passed any arguments on the CLI call.
+
+.Example
+[source, shell-session]
+----
+$ check-compatibility
+----
+
+===== `STDIN`
+
+The script will be piped a collection of dependency identifiers and versions as
+a stream on `STDIN` of pairs.  The identifier and version will be separated by
+a single tab character, and the pairs will be separated by newlines.
+
+.Example Input
+[source]
+----
+identifier1	version1
+identifier2	version2
+identifier3	version3
+----
+
+.Test Call
+[source, shell-session]
+----
+$ check-compatibility <<EOF
+identifier1	version1
+identifier2	version2
+identifier3	version3
+EOF
+----
+
+===== Environment
+
+[%header, cols="2m,8"]
+|===
+| Variable    | Description
+| DB_HOST     | Database connection hostname.
+| DB_PORT     | Database connection port.
+| DB_NAME     | Target database name.
+| DB_USER     | Database credentials username.
+| DB_PASS     | Database credentials password.
+| DB_PLATFORM | Database platform type (`oracle\|postgresql`)
+| PROJECT_ID  | Project ID for the target project the dataset should be installed into.
+|===
+
+==== Outputs
+
+This script is not expected to produce any outputs.
+
+==== Logging
+
+The check-compatibility script is expected to log only to `STDERR`, messages
+logged to `STDOUT` will be disregarded.
+
+Messages logged to `STDERR` will be recorded in the logs of the VDI Plugin
+Handler Server itself.
+
+==== Exit Codes
+
+[source]
+----
+0    - Required dependencies are met (compatible).
+1    - Requried dependencies are not met (incompatible).
+1+   - Failure due to unexpected/undefined error.
+----
 
 === Install-Data Script
 
