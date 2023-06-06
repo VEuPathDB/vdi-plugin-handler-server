@@ -382,6 +382,13 @@ The `meta.json` file will exist for the duration of the script's execution.
 | PROJECT_ID  | Project ID for the target project the dataset should be installed into.
 |===
 
+[IMPORTANT]
+--
+The `DB_PLATFORM` environment variable value will always be lowercased, for Perl
+scripts using DBD the environment variable value will need to have its first
+letter uppercased to read "Oracle" rather than "oracle".
+--
+
 ==== Outputs
 
 This script is not expected to produce any outputs.
