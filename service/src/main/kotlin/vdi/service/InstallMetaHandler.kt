@@ -45,6 +45,8 @@ class InstallMetaHandler(
 
         logJob.join()
 
+        metrics.installMetaCalls.labels(exitCode().toString()).inc()
+
         when (exitCode()) {
           0 -> {
             log.info("install-meta script completed successfully for VDI dataset ID {}", vdiID)

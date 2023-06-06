@@ -119,6 +119,8 @@ class ImportHandler(
         j1.join()
         j2.join()
 
+        metrics.importScriptCalls.labels(exitCode().toString()).inc()
+
         when (exitCode()) {
           ExitCode.ImportScriptSuccess
           -> {}

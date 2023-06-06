@@ -90,6 +90,8 @@ class InstallDataHandler(
 
         logJob.join()
 
+        metrics.installMetaCalls.labels(exitCode().toString()).inc()
+
         when (exitCode()) {
           0 -> {
             log.info("install-meta (for install-data) script completed successfully for VDI dataset ID {}", vdiID)
@@ -134,6 +136,8 @@ class InstallDataHandler(
         logJob.join()
         warnJob.join()
 
+        metrics.checkCompatCalls.labels(exitCode().toString()).inc()
+
         when (exitCode()) {
           ExitCode.CompatScriptSuccess -> {
             log.info("check-compatibility script completed successfully for dataset ID {}", vdiID)
@@ -171,6 +175,8 @@ class InstallDataHandler(
 
         job1.join()
         job2.join()
+
+        metrics.installDataCalls.labels(exitCode().toString()).inc()
 
         when (exitCode()) {
           ExitCode.InstallScriptSuccess -> {

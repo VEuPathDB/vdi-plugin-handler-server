@@ -34,6 +34,8 @@ class UninstallHandler(
 
         logJob.join()
 
+        metrics.uninstallCalls.labels(exitCode().toString()).inc()
+
         when (exitCode()) {
           0 -> {
             log.debug("uninstall script completed successfully for VDI dataset ID {}", vdiID)

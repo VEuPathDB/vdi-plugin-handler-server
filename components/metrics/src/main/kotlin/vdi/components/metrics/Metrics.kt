@@ -1,6 +1,7 @@
 package vdi.components.metrics
 
 import io.prometheus.client.CollectorRegistry
+import io.prometheus.client.Counter
 import io.prometheus.client.Histogram
 
 class ScriptMetrics(registry: CollectorRegistry) {
@@ -20,6 +21,12 @@ class ScriptMetrics(registry: CollectorRegistry) {
     )
     .register(registry)
 
+  val importScriptCalls: Counter = Counter.build()
+    .name("import_script_executions")
+    .help("Import script executions by exit code.")
+    .labelNames("exit_code")
+    .register(registry)
+
   val installMetaScriptDuration: Histogram = Histogram.build()
     .name("script_install_meta_duration")
     .help("Install-Meta script duration in seconds")
@@ -33,6 +40,12 @@ class ScriptMetrics(registry: CollectorRegistry) {
       60.0,  // 1m
       300.0, // 5m
     )
+    .register(registry)
+
+  val installMetaCalls: Counter = Counter.build()
+    .name("install_meta_script_executions")
+    .help("Install-Meta script executions by exit code.")
+    .labelNames("exit_code")
     .register(registry)
 
   val installDataScriptDuration: Histogram = Histogram.build()
@@ -51,6 +64,12 @@ class ScriptMetrics(registry: CollectorRegistry) {
     )
     .register(registry)
 
+  val installDataCalls: Counter = Counter.build()
+    .name("install_data_script_executions")
+    .help("Install-Data script executions by exit code.")
+    .labelNames("exit_code")
+    .register(registry)
+
   val checkCompatScriptDuration: Histogram = Histogram.build()
     .name("script_check_compat_duration")
     .help("Check-Compatibility script duration in seconds")
@@ -66,6 +85,12 @@ class ScriptMetrics(registry: CollectorRegistry) {
     )
     .register(registry)
 
+  val checkCompatCalls: Counter = Counter.build()
+    .name("check_compat_script_executions")
+    .help("Check-Compatibility script executions by exit code.")
+    .labelNames("exit_code")
+    .register(registry)
+
   val uninstallScriptDuration: Histogram = Histogram.build()
     .name("script_uninstall_duration")
     .help("Uninstall script duration in seconds")
@@ -79,5 +104,11 @@ class ScriptMetrics(registry: CollectorRegistry) {
       60.0,  // 1m
       300.0, // 5m
     )
+    .register(registry)
+
+  val uninstallCalls: Counter = Counter.build()
+    .name("uninstall_script_executions")
+    .help("Uninstall script excecutions by exit code.")
+    .labelNames("exit_code")
     .register(registry)
 }
