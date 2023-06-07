@@ -5,6 +5,7 @@ import org.veupathdb.vdi.lib.common.env.Environment
 import java.nio.file.Path
 import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
+import java.util.Map.copyOf
 
 sealed class HandlerBase<T>(
   /**
@@ -36,7 +37,7 @@ sealed class HandlerBase<T>(
   abstract suspend fun run(): T
 
   protected fun buildScriptEnv(): Environment {
-    val out = HashMap<String, String>()
+    val out = System.getenv().toMutableMap() // Copy the environment before appending script env.
 
     if (customPath.isBlank())
       out["PATH"] = System.getenv("PATH")
