@@ -5,7 +5,6 @@ import org.veupathdb.vdi.lib.common.env.Environment
 import java.nio.file.Path
 import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
-import java.util.Map.copyOf
 
 sealed class HandlerBase<T>(
   /**
