@@ -184,11 +184,13 @@ DB_CONNECTION_NAME_PLASMO_DB=PlasmoDB
 DB_CONNECTION_LDAP_PLASMO_DB=someLDAPQuery
 DB_CONNECTION_USER_PLASMO_DB=someUsername
 DB_CONNECTION_PASS_PLASMO_DB=somePassword
+DB_CONNECTION_SCHEMA_PLASMO_DB=someSchema
 
 DB_CONNECTION_NAME_TOXO_DB=ToxoDB
 DB_CONNECTION_NAME_TOXO_DB=someLDAPQuery
 DB_CONNECTION_USER_TOXO_DB=someUsername
 DB_CONNECTION_PASS_TOXO_DB=somePassword
+DB_CONNECTION_SCHEMA_TOXO_DB=someSchema
 ----
 ====
 
@@ -378,6 +380,7 @@ The `meta.json` file will exist for the duration of the script's execution.
 | DB_NAME     | Target database name.
 | DB_USER     | Database credentials username.
 | DB_PASS     | Database credentials password.
+| DB_SCHEMA   | Database schema for user dataset data to be installed to.
 | DB_PLATFORM | Database platform type (`oracle\|postgresql`)
 | PROJECT_ID  | Project ID for the target project the dataset should be installed into.
 |===
@@ -463,6 +466,7 @@ EOF
 | DB_NAME     | Target database name.
 | DB_USER     | Database credentials username.
 | DB_PASS     | Database credentials password.
+| DB_SCHEMA   | Database schema for user dataset data to be installed to.
 | DB_PLATFORM | Database platform type (`oracle\|postgresql`)
 | PROJECT_ID  | Project ID for the target project the dataset should be installed into.
 |===
@@ -525,6 +529,7 @@ completes its execution.
 | DB_NAME     | Target database name.
 | DB_USER     | Database credentials username.
 | DB_PASS     | Database credentials password.
+| DB_SCHEMA   | Database schema for user dataset data to be installed to.
 | DB_PLATFORM | Database platform type (`oracle\|postgresql`)
 | PROJECT_ID  | Project ID for the target project the dataset should be installed into.
 |===
@@ -595,6 +600,7 @@ $ uninstall bfcb312a5875ae38536a64e60055c74e
 | DB_NAME     | Target database name.
 | DB_USER     | Database credentials username.
 | DB_PASS     | Database credentials password.
+| DB_SCHEMA   | Database schema for user dataset data to be installed to.
 | DB_PLATFORM | Database platform type (`oracle\|postgresql`)
 |===
 
