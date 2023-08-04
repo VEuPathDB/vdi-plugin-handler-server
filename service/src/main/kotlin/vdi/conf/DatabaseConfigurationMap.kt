@@ -1,12 +1,14 @@
 package vdi.conf
 
+import org.veupathdb.vdi.lib.common.env.EnvKey
 import vdi.components.common.EnvironmentAccessor
 import vdi.components.common.SecretString
 
-private const val DB_NAME_PREFIX = "DB_CONNECTION_NAME_"
-private const val DB_LDAP_PREFIX = "DB_CONNECTION_LDAP_"
-private const val DB_USER_PREFIX = "DB_CONNECTION_USER_"
-private const val DB_PASS_PREFIX = "DB_CONNECTION_PASS_"
+private const val DB_NAME_PREFIX   = EnvKey.AppDB.DBNamePrefix
+private const val DB_LDAP_PREFIX   = EnvKey.AppDB.DBLDAPPrefix
+private const val DB_USER_PREFIX   = EnvKey.AppDB.DBUserPrefix
+private const val DB_PASS_PREFIX   = EnvKey.AppDB.DBPassPrefix
+private const val DB_SCHEMA_PREFIX = EnvKey.AppDB.DBSchemaPrefix
 
 private const val DB_ENV_VAR_INIT_CAPACITY = 12
 
@@ -18,47 +20,6 @@ private const val DB_ENV_VAR_INIT_CAPACITY = 12
  *
  * @author Elizabeth Paige Harper - https://github.com/foxcapades
  * @since 1.0.0
- *
- * @constructor
- *
- * Creating a new [DatabaseConfigurationMap] instance is done by parsing an
- * environment map of [String] key/value pairs looking for keys starting with
- * specific prefixes.
- *
- * **Prefixes**
- * ```
- * DB_CONNECTION_NAME_  - This prefix is used for variables that define a
- *                        database configuration variable group's name value.
- *
- * DB_CONNECTION_LDAP_  - This prefix is used for variables that define a
- *                        database configuration variable group's LDAP query
- *                        string.
- *
- * DB_CONNECTION_USER_  - This prefix is used for variables that define a
- *                        database configuration variable group's auth username
- *                        value.
- *
- * DB_CONNECTION_PASS_  - This prefix is used for variables that define a
- *                        database configuration variable group's auth password
- *                        value.
- * ```
- *
- * Once a key with one of the specified prefixes is found, the key will be split
- * on the prefix length to get a suffix value.  This suffix value is then used
- * to test for the existence of the other 3 expected keys by using the prefixes
- * that were not encountered.
- *
- * For example, if we were to encounter the key `DB_CONNECTION_NAME_FOO` in the
- * environment map, we would know to test for `DB_CONNECTION_LDAP_FOO`,
- * `DB_CONNECTION_USER_FOO`, and `DB_CONNECTION_PASS_FOO` in the map as well to
- * complete the config variable group.
- *
- * If one part of a database config variable group is present, then all 4 must
- * exist with the same suffix.  This means that it is an error to pass in an
- * environment that just contains `DB_CONNECTION_LDAP_FOO` but contains no other
- * variables with the other defined prefixes and the suffix "FOO".
- *
- * @param environment Map of environment variable names to values.
  */
 class DatabaseConfigurationMap(environment: EnvironmentAccessor)
 : Map<String, DatabaseConfiguration>
@@ -103,10 +64,11 @@ private fun Map<String, String>.parse(): Map<String, DatabaseConfiguration> {
       return@forEach
 
     when {
-      key.startsWith(DB_NAME_PREFIX) -> parse(key.substring(DB_NAME_PREFIX.length), seen, out)
-      key.startsWith(DB_LDAP_PREFIX) -> parse(key.substring(DB_LDAP_PREFIX.length), seen, out)
-      key.startsWith(DB_USER_PREFIX) -> parse(key.substring(DB_USER_PREFIX.length), seen, out)
-      key.startsWith(DB_PASS_PREFIX) -> parse(key.substring(DB_PASS_PREFIX.length), seen, out)
+      key.startsWith(DB_SCHEMA_PREFIX) -> parse(key.substring(DB_SCHEMA_PREFIX.length), seen, out)
+      key.startsWith(DB_NAME_PREFIX)   -> parse(key.substring(DB_NAME_PREFIX.length), seen, out)
+      key.startsWith(DB_LDAP_PREFIX)   -> parse(key.substring(DB_LDAP_PREFIX.length), seen, out)
+      key.startsWith(DB_USER_PREFIX)   -> parse(key.substring(DB_USER_PREFIX.length), seen, out)
+      key.startsWith(DB_PASS_PREFIX)   -> parse(key.substring(DB_PASS_PREFIX.length), seen, out)
     }
   }
 
@@ -121,6 +83,7 @@ private fun Map<String, String>.parse(
 ) {
   val db = parse(suffix)
 
+  seen.add(DB_SCHEMA_PREFIX + suffix)
   seen.add(DB_NAME_PREFIX + suffix)
   seen.add(DB_LDAP_PREFIX + suffix)
   seen.add(DB_USER_PREFIX + suffix)
@@ -131,10 +94,11 @@ private fun Map<String, String>.parse(
 
 private fun Map<String, String>.parse(suffix: String) =
   DatabaseConfiguration(
-    name = get(DB_NAME_PREFIX + suffix) ?: parsingFailed(suffix),
-    ldap = get(DB_LDAP_PREFIX + suffix) ?: parsingFailed(suffix),
-    user = get(DB_USER_PREFIX + suffix) ?: parsingFailed(suffix),
-    pass = get(DB_PASS_PREFIX + suffix)?.let(::SecretString) ?: parsingFailed(suffix),
+    name   = get(DB_NAME_PREFIX + suffix) ?: parsingFailed(suffix),
+    ldap   = get(DB_LDAP_PREFIX + suffix) ?: parsingFailed(suffix),
+    user   = get(DB_USER_PREFIX + suffix) ?: parsingFailed(suffix),
+    pass   = get(DB_PASS_PREFIX + suffix)?.let(::SecretString) ?: parsingFailed(suffix),
+    schema = get(DB_SCHEMA_PREFIX + suffix) ?: parsingFailed(suffix)
   )
 
 private fun parsingFailed(suffix: String): Nothing {

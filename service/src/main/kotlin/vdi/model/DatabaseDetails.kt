@@ -9,6 +9,7 @@ data class DatabaseDetails(
   val dbName: String,
   val dbUser: String,
   val dbPass: SecretString,
+  val dbSchema: String,
   val dbPlatform: DBPlatform,
 ) {
   fun toEnvMap(): Map<String, String> = mapOf(
@@ -17,6 +18,7 @@ data class DatabaseDetails(
     ScriptEnvKey.DBName to dbName,
     ScriptEnvKey.DBUser to dbUser,
     ScriptEnvKey.DBPass to dbPass.value,
+    ScriptEnvKey.DBSchema to dbSchema,
     ScriptEnvKey.DBPlatform to dbPlatform.value,
   )
 }
