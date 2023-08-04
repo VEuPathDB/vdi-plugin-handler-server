@@ -27,11 +27,13 @@ class TestDatabaseConfigurationMap {
       "DB_CONNECTION_LDAP_PLASMO_DB" to "foo",
       "DB_CONNECTION_USER_PLASMO_DB" to "bar",
       "DB_CONNECTION_PASS_PLASMO_DB" to "fizz",
+      "DB_CONNECTION_SCHEMA_PLASMO_DB" to "bazz",
 
       "DB_CONNECTION_NAME_TOXO_DB" to "ToxoDB",
       "DB_CONNECTION_LDAP_TOXO_DB" to "buzz",
       "DB_CONNECTION_USER_TOXO_DB" to "ding",
       "DB_CONNECTION_PASS_TOXO_DB" to "dong",
+      "DB_CONNECTION_SCHEMA_TOXO_DB" to "dang",
     )
 
     Mockito.`when`(mockEnv.rawEnvironment()).thenReturn(input)
@@ -46,11 +48,13 @@ class TestDatabaseConfigurationMap {
     assertEquals("foo", output["PlasmoDB"]!!.ldap)
     assertEquals("bar", output["PlasmoDB"]!!.user)
     assertEquals("fizz", output["PlasmoDB"]!!.pass.value)
+    assertEquals("bazz", output["PlasmoDB"]!!.schema)
 
     assertEquals("ToxoDB", output["ToxoDB"]!!.name)
     assertEquals("buzz", output["ToxoDB"]!!.ldap)
     assertEquals("ding", output["ToxoDB"]!!.user)
     assertEquals("dong", output["ToxoDB"]!!.pass.value)
+    assertEquals("dang", output["ToxoDB"]!!.schema)
   }
 
   @Test
@@ -60,6 +64,7 @@ class TestDatabaseConfigurationMap {
       "DB_CONNECTION_LDAP_PLASMO_DB" to "foo",
       "DB_CONNECTION_USER_PLASMO_DB" to "bar",
       "DB_CONNECTION_PASS_PLASMO_DB" to "fizz",
+      "DB_CONNECTION_SCHEMA_PLASMO_DB" to "bazz",
     )
 
     Mockito.`when`(mockEnv.rawEnvironment()).thenReturn(input)
@@ -74,6 +79,7 @@ class TestDatabaseConfigurationMap {
       "DB_CONNECTION_NAME_PLASMO_DB" to "PlasmoDB",
       "DB_CONNECTION_USER_PLASMO_DB" to "bar",
       "DB_CONNECTION_PASS_PLASMO_DB" to "fizz",
+      "DB_CONNECTION_SCHEMA_PLASMO_DB" to "bazz"
     )
 
     Mockito.`when`(mockEnv.rawEnvironment()).thenReturn(input)
@@ -88,6 +94,7 @@ class TestDatabaseConfigurationMap {
       "DB_CONNECTION_NAME_PLASMO_DB" to "PlasmoDB",
       "DB_CONNECTION_LDAP_PLASMO_DB" to "foo",
       "DB_CONNECTION_PASS_PLASMO_DB" to "fizz",
+      "DB_CONNECTION_SCHEMA_PLASMO_DB" to "bazz",
     )
 
     Mockito.`when`(mockEnv.rawEnvironment()).thenReturn(input)
@@ -102,6 +109,7 @@ class TestDatabaseConfigurationMap {
       "DB_CONNECTION_NAME_PLASMO_DB" to "PlasmoDB",
       "DB_CONNECTION_LDAP_PLASMO_DB" to "foo",
       "DB_CONNECTION_USER_PLASMO_DB" to "bar",
+      "DB_CONNECTION_SCHEMA_PLASMO_DB" to "fizz"
     )
 
     Mockito.`when`(mockEnv.rawEnvironment()).thenReturn(input)
