@@ -8,7 +8,7 @@ private const val DB_NAME_PREFIX   = EnvKey.AppDB.DBNamePrefix
 private const val DB_LDAP_PREFIX   = EnvKey.AppDB.DBLDAPPrefix
 private const val DB_USER_PREFIX   = EnvKey.AppDB.DBUserPrefix
 private const val DB_PASS_PREFIX   = EnvKey.AppDB.DBPassPrefix
-private const val DB_SCHEMA_PREFIX = EnvKey.AppDB.DBSchemaPrefix
+private const val DB_SCHEMA_PREFIX = EnvKey.AppDB.DBDataSchemaPrefix
 
 private const val DB_ENV_VAR_INIT_CAPACITY = 12
 
@@ -94,11 +94,11 @@ private fun Map<String, String>.parse(
 
 private fun Map<String, String>.parse(suffix: String) =
   DatabaseConfiguration(
-    name   = get(DB_NAME_PREFIX + suffix) ?: parsingFailed(suffix),
-    ldap   = get(DB_LDAP_PREFIX + suffix) ?: parsingFailed(suffix),
-    user   = get(DB_USER_PREFIX + suffix) ?: parsingFailed(suffix),
-    pass   = get(DB_PASS_PREFIX + suffix)?.let(::SecretString) ?: parsingFailed(suffix),
-    schema = get(DB_SCHEMA_PREFIX + suffix) ?: parsingFailed(suffix)
+    name       = get(DB_NAME_PREFIX + suffix) ?: parsingFailed(suffix),
+    ldap       = get(DB_LDAP_PREFIX + suffix) ?: parsingFailed(suffix),
+    user       = get(DB_USER_PREFIX + suffix) ?: parsingFailed(suffix),
+    pass       = get(DB_PASS_PREFIX + suffix)?.let(::SecretString) ?: parsingFailed(suffix),
+    dataSchema = get(DB_SCHEMA_PREFIX + suffix) ?: parsingFailed(suffix)
   )
 
 private fun parsingFailed(suffix: String): Nothing {

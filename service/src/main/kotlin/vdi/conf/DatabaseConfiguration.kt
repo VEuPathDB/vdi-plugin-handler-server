@@ -9,9 +9,9 @@ import vdi.components.common.SecretString
  * @since 1.0.0
  */
 data class DatabaseConfiguration(
-  val name:   String,
-  val ldap:   String,
-  val user:   String,
-  val pass:   SecretString,
-  val schema: String,
+  val name: String,
+  val ldap: String,
+  val user: String,
+  val pass: SecretString,
+  val dataSchema: String,
 )

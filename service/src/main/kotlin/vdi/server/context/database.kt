@@ -26,4 +26,4 @@ suspend fun withDatabaseDetails(
 //   | upstream of here what db platform we are actually using.
 @Suppress("NOTHING_TO_INLINE")
 private inline fun Pair<DatabaseConfiguration, OracleNetDesc>.toDatabaseDetails() =
-  DatabaseDetails(second.host, second.port, second.serviceName, first.user, first.pass, first.schema, DBPlatform.Oracle)
+  DatabaseDetails(second.host, second.port, second.serviceName, first.user, first.pass, first.dataSchema, DBPlatform.Oracle)
