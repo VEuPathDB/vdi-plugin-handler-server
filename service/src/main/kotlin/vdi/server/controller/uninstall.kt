@@ -16,6 +16,7 @@ suspend fun ApplicationCall.handleUninstallRequest(appCtx: ApplicationContext) {
         dbDetails,
         appCtx.executor,
         appCtx.config.service.customPath,
+        appCtx.pathFactory.makePath(projectID, vdiID),
         appCtx.config.service.uninstallScript,
         appCtx.metrics.scriptMetrics,
       )

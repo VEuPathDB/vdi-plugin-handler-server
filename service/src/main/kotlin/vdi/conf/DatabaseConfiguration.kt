@@ -13,5 +13,5 @@ data class DatabaseConfiguration(
   val ldap: String,
   val user: String,
   val pass: SecretString,
-  val dataSchema: String,
+  val userDataSchema: String,
 )

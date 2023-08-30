@@ -22,6 +22,8 @@ data class ServiceConfiguration(
   val checkCompatScript: ScriptConfiguration,
 
   val customPath: String,
+  val datasetRoot: String,
+  val siteBuild: String,
 ) {
   constructor(env: EnvironmentAccessor) : this(
     env.require(ConfigEnvKey.LDAPServer),
@@ -46,7 +48,9 @@ data class ServiceConfiguration(
       env.optional(ConfigEnvKey.CheckCompatScriptPath) ?: ConfigDefault.CheckCompatScriptPath,
       (env.optional(ConfigEnvKey.CheckCompatScriptMaxDuration) ?: ConfigDefault.CheckCompatScriptMaxDuration).toDurSeconds(),
     ),
-    env.optional(ConfigEnvKey.CustomPath) ?: ConfigDefault.CustomPath
+    env.optional(ConfigEnvKey.CustomPath) ?: ConfigDefault.CustomPath,
+    env.require(ConfigEnvKey.DatasetInstallRoot),
+    env.require(ConfigEnvKey.SiteBuild),
   )
 }
 

@@ -27,4 +27,7 @@ object ConfigEnvKey {
   const val ServerHost = "SERVER_HOST"
 
   const val CustomPath = "CUSTOM_PATH"
+  const val SiteBuild  = "SITE_BUILD"
+
+  const val DatasetInstallRoot = "DATASET_INSTALL_ROOT"
 }

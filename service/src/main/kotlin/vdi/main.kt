@@ -13,6 +13,7 @@ import vdi.conf.validate
 import vdi.model.ApplicationContext
 import vdi.model.MetricsBundle
 import vdi.server.configureServer
+import vdi.util.DatasetPathFactory
 import vdi.util.setupLDAP
 
 fun main() {
@@ -29,7 +30,8 @@ fun main() {
     config,
     setupLDAP(config.service),
     ScriptExecutorImpl(),
-    PrometheusMeterRegistry(PrometheusConfig.DEFAULT).let { MetricsBundle(it, ScriptMetrics(it.prometheusRegistry)) }
+    PrometheusMeterRegistry(PrometheusConfig.DEFAULT).let { MetricsBundle(it, ScriptMetrics(it.prometheusRegistry)) },
+    DatasetPathFactory(config.service.datasetRoot, config.service.siteBuild)
   )
 
   log.debug("starting embedded server")

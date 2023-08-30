@@ -28,11 +28,12 @@ class InstallDataHandler(
   private val dbDetails: DatabaseDetails,
   executor: ScriptExecutor,
   customPath: String,
+  installPath: Path,
   private val metaScript: ScriptConfiguration,
   private val dataScript: ScriptConfiguration,
   private val compatScript: ScriptConfiguration,
   metrics: ScriptMetrics,
-) : HandlerBase<List<String>>(workspace, executor, customPath, metrics) {
+) : InstallationHandlerBase<List<String>>(workspace, executor, customPath, installPath, metrics) {
   private val log = LoggerFactory.getLogger(javaClass)
 
   init {

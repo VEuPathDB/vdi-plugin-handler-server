@@ -24,9 +24,10 @@ class InstallMetaHandler(
   private val dbDetails: DatabaseDetails,
   executor:  ScriptExecutor,
   customPath: String,
+  installPath: Path,
   private val script: ScriptConfiguration,
   metrics: ScriptMetrics,
-) : HandlerBase<Unit>(workspace, executor, customPath, metrics) {
+) : InstallationHandlerBase<Unit>(workspace, executor, customPath, installPath, metrics) {
   private val log = LoggerFactory.getLogger(javaClass)
 
   override suspend fun run() {

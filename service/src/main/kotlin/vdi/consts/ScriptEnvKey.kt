@@ -6,6 +6,7 @@ object ScriptEnvKey {
   const val DBName = "DB_NAME"
   const val DBUser = "DB_USER"
   const val DBPass = "DB_PASS"
-  const val DBSchema = "DB_SCHEMA"
+  const val DBSchema = "DB_USER_SCHEMA"
   const val DBPlatform = "DB_PLATFORM"
+  const val InstallPath = "USER_FILES"
 }
