@@ -65,6 +65,7 @@ class InstallMetaHandler(
   }
 
   override fun appendScriptEnv(env: MutableMap<String, String>) {
+    super.appendScriptEnv(env)
     env.putAll(dbDetails.toEnvMap())
     env["PROJECT_ID"] = projectID
   }

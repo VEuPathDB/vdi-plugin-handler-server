@@ -54,6 +54,7 @@ class UninstallHandler(
   }
 
   override fun appendScriptEnv(env: MutableMap<String, String>) {
+    super.appendScriptEnv(env)
     env.putAll(dbDetails.toEnvMap())
   }
 }
