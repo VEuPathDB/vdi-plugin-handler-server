@@ -8,7 +8,7 @@ private const val DB_NAME_PREFIX   = EnvKey.AppDB.DBNamePrefix
 private const val DB_LDAP_PREFIX   = EnvKey.AppDB.DBLDAPPrefix
 private const val DB_USER_PREFIX   = EnvKey.AppDB.DBUserPrefix
 private const val DB_PASS_PREFIX   = EnvKey.AppDB.DBPassPrefix
-private const val DB_USER_SCHEMA_PREFIX = EnvKey.AppDB.DBUserDataSchemaPrefix
+private const val DB_SCHEMA_PREFIX = EnvKey.AppDB.DBDataSchemaPrefix
 
 private const val DB_ENV_VAR_INIT_CAPACITY = 12
 
@@ -64,8 +64,8 @@ private fun Map<String, String>.parse(): Map<String, DatabaseConfiguration> {
       return@forEach
 
     when {
-      key.startsWith(DB_USER_SCHEMA_PREFIX) -> parse(key.substring(DB_USER_SCHEMA_PREFIX.length), seen, out)
-      key.startsWith(DB_NAME_PREFIX)        -> parse(key.substring(DB_NAME_PREFIX.length), seen, out)
+      key.startsWith(DB_SCHEMA_PREFIX) -> parse(key.substring(DB_SCHEMA_PREFIX.length), seen, out)
+      key.startsWith(DB_NAME_PREFIX)   -> parse(key.substring(DB_NAME_PREFIX.length), seen, out)
       key.startsWith(DB_LDAP_PREFIX)        -> parse(key.substring(DB_LDAP_PREFIX.length), seen, out)
       key.startsWith(DB_USER_PREFIX)        -> parse(key.substring(DB_USER_PREFIX.length), seen, out)
       key.startsWith(DB_PASS_PREFIX)        -> parse(key.substring(DB_PASS_PREFIX.length), seen, out)
@@ -83,7 +83,7 @@ private fun Map<String, String>.parse(
 ) {
   val db = parse(suffix)
 
-  seen.add(DB_USER_SCHEMA_PREFIX + suffix)
+  seen.add(DB_SCHEMA_PREFIX + suffix)
   seen.add(DB_NAME_PREFIX + suffix)
   seen.add(DB_LDAP_PREFIX + suffix)
   seen.add(DB_USER_PREFIX + suffix)
@@ -98,7 +98,7 @@ private fun Map<String, String>.parse(suffix: String) =
     ldap           = get(DB_LDAP_PREFIX + suffix) ?: parsingFailed(suffix),
     user           = get(DB_USER_PREFIX + suffix) ?: parsingFailed(suffix),
     pass           = get(DB_PASS_PREFIX + suffix)?.let(::SecretString) ?: parsingFailed(suffix),
-    userDataSchema = get(DB_USER_SCHEMA_PREFIX + suffix) ?: parsingFailed(suffix)
+    dataSchema = get(DB_SCHEMA_PREFIX + suffix) ?: parsingFailed(suffix)
   )
 
 private fun parsingFailed(suffix: String): Nothing {
