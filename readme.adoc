@@ -383,6 +383,7 @@ The `meta.json` file will exist for the duration of the script's execution.
 | DB_SCHEMA   | Database schema for user dataset data to be installed to.
 | DB_PLATFORM | Database platform type (`oracle\|postgresql`)
 | PROJECT_ID  | Project ID for the target project the dataset should be installed into.
+| DATA_FILES  | Path to the directory into which the dataset files should be installed.
 |===
 
 [IMPORTANT]
@@ -532,6 +533,7 @@ completes its execution.
 | DB_SCHEMA   | Database schema for user dataset data to be installed to.
 | DB_PLATFORM | Database platform type (`oracle\|postgresql`)
 | PROJECT_ID  | Project ID for the target project the dataset should be installed into.
+| DATA_FILES  | Path to the directory into which the dataset files should be installed.
 |===
 
 ==== Outputs
@@ -602,6 +604,7 @@ $ uninstall bfcb312a5875ae38536a64e60055c74e
 | DB_PASS     | Database credentials password.
 | DB_SCHEMA   | Database schema for user dataset data to be installed to.
 | DB_PLATFORM | Database platform type (`oracle\|postgresql`)
+| DATA_FILES  | Path to the directory from which the dataset files should be uninstalled.
 |===
 
 ==== Outputs
