@@ -66,9 +66,9 @@ private fun Map<String, String>.parse(): Map<String, DatabaseConfiguration> {
     when {
       key.startsWith(DB_SCHEMA_PREFIX) -> parse(key.substring(DB_SCHEMA_PREFIX.length), seen, out)
       key.startsWith(DB_NAME_PREFIX)   -> parse(key.substring(DB_NAME_PREFIX.length), seen, out)
-      key.startsWith(DB_LDAP_PREFIX)        -> parse(key.substring(DB_LDAP_PREFIX.length), seen, out)
-      key.startsWith(DB_USER_PREFIX)        -> parse(key.substring(DB_USER_PREFIX.length), seen, out)
-      key.startsWith(DB_PASS_PREFIX)        -> parse(key.substring(DB_PASS_PREFIX.length), seen, out)
+      key.startsWith(DB_LDAP_PREFIX)   -> parse(key.substring(DB_LDAP_PREFIX.length), seen, out)
+      key.startsWith(DB_USER_PREFIX)   -> parse(key.substring(DB_USER_PREFIX.length), seen, out)
+      key.startsWith(DB_PASS_PREFIX)   -> parse(key.substring(DB_PASS_PREFIX.length), seen, out)
     }
   }
 
@@ -94,10 +94,10 @@ private fun Map<String, String>.parse(
 
 private fun Map<String, String>.parse(suffix: String) =
   DatabaseConfiguration(
-    name           = get(DB_NAME_PREFIX + suffix) ?: parsingFailed(suffix),
-    ldap           = get(DB_LDAP_PREFIX + suffix) ?: parsingFailed(suffix),
-    user           = get(DB_USER_PREFIX + suffix) ?: parsingFailed(suffix),
-    pass           = get(DB_PASS_PREFIX + suffix)?.let(::SecretString) ?: parsingFailed(suffix),
+    name       = get(DB_NAME_PREFIX + suffix) ?: parsingFailed(suffix),
+    ldap       = get(DB_LDAP_PREFIX + suffix) ?: parsingFailed(suffix),
+    user       = get(DB_USER_PREFIX + suffix) ?: parsingFailed(suffix),
+    pass       = get(DB_PASS_PREFIX + suffix)?.let(::SecretString) ?: parsingFailed(suffix),
     dataSchema = get(DB_SCHEMA_PREFIX + suffix) ?: parsingFailed(suffix)
   )
 
