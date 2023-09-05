@@ -381,7 +381,7 @@ The `meta.json` file will exist for the duration of the script's execution.
 | DB_USER     | Database credentials username.
 | DB_PASS     | Database credentials password.
 | DB_SCHEMA   | Database schema for user dataset data to be installed to.
-| DB_PLATFORM | Database platform type (`oracle\|postgresql`)
+| DB_PLATFORM | Database platform type (`Oracle\|Postgres`)
 | PROJECT_ID  | Project ID for the target project the dataset should be installed into.
 | DATA_FILES  | Path to the directory into which the dataset files should be installed.
 |===
@@ -468,7 +468,7 @@ EOF
 | DB_USER     | Database credentials username.
 | DB_PASS     | Database credentials password.
 | DB_SCHEMA   | Database schema for user dataset data to be installed to.
-| DB_PLATFORM | Database platform type (`oracle\|postgresql`)
+| DB_PLATFORM | Database platform type (`Oracle\|Postgres`)
 | PROJECT_ID  | Project ID for the target project the dataset should be installed into.
 |===
 
@@ -531,7 +531,7 @@ completes its execution.
 | DB_USER     | Database credentials username.
 | DB_PASS     | Database credentials password.
 | DB_SCHEMA   | Database schema for user dataset data to be installed to.
-| DB_PLATFORM | Database platform type (`oracle\|postgresql`)
+| DB_PLATFORM | Database platform type (`Oracle\|Postgres`)
 | PROJECT_ID  | Project ID for the target project the dataset should be installed into.
 | DATA_FILES  | Path to the directory into which the dataset files should be installed.
 |===
@@ -603,7 +603,7 @@ $ uninstall bfcb312a5875ae38536a64e60055c74e
 | DB_USER     | Database credentials username.
 | DB_PASS     | Database credentials password.
 | DB_SCHEMA   | Database schema for user dataset data to be installed to.
-| DB_PLATFORM | Database platform type (`oracle\|postgresql`)
+| DB_PLATFORM | Database platform type (`Oracle\|Postgres`)
 | DATA_FILES  | Path to the directory from which the dataset files should be uninstalled.
 |===
 
