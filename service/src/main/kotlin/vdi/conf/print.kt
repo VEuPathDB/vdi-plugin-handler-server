@@ -27,9 +27,11 @@ fun HandlerConfig.printToLogs(log: Logger) {
 
   databases.forEach { (key, value) ->
     sb.append("    ").append(key).append(":\n")
+      .append("      Name: ").appendLine(value.name)
       .append("      LDAP Query: ").appendLine(value.ldap)
       .append("      Username: ").appendLine(value.user)
       .append("      Password: ").appendLine(value.pass)
+      .append("      Data Schema: ").appendLine(value.dataSchema)
   }
 
   log.info(sb.toString())
