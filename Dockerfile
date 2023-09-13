@@ -20,7 +20,7 @@ FROM veupathdb/rserve:5.1.3
 
 ENV JAVA_HOME=/opt/jdk \
     PATH=/opt/jdk/bin:$PATH \
-    JVM_MEM_ARGS="" \
+    JVM_MEM_ARGS="-Xms16m -Xmx64m" \
     JVM_ARGS=""
 
 RUN apt-get update && apt-get install -y wget \
