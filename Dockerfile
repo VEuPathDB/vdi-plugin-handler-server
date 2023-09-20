@@ -29,7 +29,9 @@ RUN apt-get update && apt-get install -y wget \
     && tar -xf jdk.tgz \
     && rm jdk.tgz \
     && mv amazon-corretto-19.0.2.7.1-linux-x64 jdk \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && cp /usr/share/zoneinfo/America/New_York /etc/localtime \
+    && echo "America/New_York" > /etc/timezone
 
 COPY startup.sh startup.sh
 COPY --from=build /project/service/build/libs/service.jar service.jar
