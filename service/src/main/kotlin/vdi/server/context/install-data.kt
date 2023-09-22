@@ -124,8 +124,6 @@ private fun PartData.handlePayload(workspace: Path, payloadCB: (Path) -> Unit) {
 }
 
 private fun InstallDetails.validate() {
-  vdiID.validateAsVDIID("vdiID")
-
   if (projectID.isBlank()) {
     throw BadRequestException("projectID cannot be a blank value")
   }

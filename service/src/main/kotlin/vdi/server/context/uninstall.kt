@@ -28,8 +28,6 @@ suspend fun ApplicationCall.withUninstallContext(
 private suspend fun ApplicationCall.parseBody(): UninstallRequestBody {
   val out = receiveStream().use { JSON.readValue<UninstallRequestBody>(it) }
 
-  out.vdiID.validateAsVDIID(FieldName.VDIID)
-
   if (out.projectID.isBlank())
     throw BadRequestException("projectID must not be blank")
 

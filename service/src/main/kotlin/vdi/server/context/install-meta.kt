@@ -35,7 +35,6 @@ suspend fun ApplicationCall.withInstallMetaContext(
 }
 
 private fun InstallMetaRequest.validate() {
-  vdiID.validateAsVDIID(FieldName.VDIID)
 
   if (projectID.isBlank())
     throw BadRequestException("projectID cannot be blank")
