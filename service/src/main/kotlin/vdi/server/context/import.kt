@@ -132,8 +132,6 @@ private fun PartData.handlePayload(workspace: Path, payloadCB: (Path) -> Unit) {
  * Validates the posted details about a dataset being import processed.
  */
 private fun ImportDetails.validate() {
-  vdiID.validateAsVDIID("vdiID")
-
   if (meta.type.name.isBlank())
     throw BadRequestException("type.name cannot be blank")
   if (meta.type.version.isBlank())

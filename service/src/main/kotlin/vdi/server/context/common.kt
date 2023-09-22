@@ -23,16 +23,3 @@ fun PartData.handlePayload(workspace: Path, fileName: String, payloadCB: (Path) 
 
   payloadCB(payload)
 }
-
-fun String.validateAsVDIID(fieldName: String) {
-  if (length != 32)
-    throw BadRequestException("invalid $fieldName value.")
-
-  for (c in this)
-    when (c) {
-      in '0' .. '9',
-      in 'A' .. 'F',
-      in 'a' .. 'f' -> { /* do nothing */ }
-      else          -> throw BadRequestException("invalid $fieldName value.")
-    }
-}
