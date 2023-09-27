@@ -8,6 +8,8 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.util.*
 import io.ktor.utils.io.jvm.javaio.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.veupathdb.vdi.lib.json.JSON
 import java.nio.file.Path
 import kotlin.contracts.ExperimentalContracts
@@ -32,7 +34,9 @@ suspend fun ApplicationCall.withImportContext(fn: suspend (workspace: Path, deta
     val payload: Path
 
     // Parse the body.
-    parseMultipartBody(workspace, { details = it }, { payload = it })
+    withContext(Dispatchers.IO) {
+      parseMultipartBody(workspace, { details = it }, { payload = it })
+    }
 
     // Validate the details JSON
     details.validate()

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.veupathdb.vdi.lib.json.JSON
 import java.nio.file.Path
 import vdi.components.http.errors.BadRequestException
@@ -24,7 +26,9 @@ suspend fun ApplicationCall.withInstallMetaContext(
     throw UnsupportedMediaTypeException()
 
   val body = try {
-    JSON.readValue<InstallMetaRequest>(BoundedInputStream(this.receiveStream(), MAX_INPUT_BYTES))
+    withContext(Dispatchers.IO) {
+      JSON.readValue<InstallMetaRequest>(BoundedInputStream(this@withInstallMetaContext.receiveStream(), MAX_INPUT_BYTES))
+    }
   } catch (e: JacksonException) {
     throw BadRequestException("Could not parse request body as JSON", e)
   }

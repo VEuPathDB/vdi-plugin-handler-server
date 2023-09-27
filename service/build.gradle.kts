@@ -34,9 +34,9 @@ dependencies {
   implementation("org.veupathdb.vdi:vdi-component-json:1.0.0")
   implementation("org.veupathdb.vdi:vdi-component-common:6.1.0")
 
-  implementation("io.ktor:ktor-server-core-jvm:2.2.2")
-  implementation("io.ktor:ktor-server-netty-jvm:2.2.2")
-  implementation("io.ktor:ktor-server-metrics-micrometer:2.2.2")
+  implementation("io.ktor:ktor-server-core-jvm:2.3.4")
+  implementation("io.ktor:ktor-server-netty-jvm:2.3.4")
+  implementation("io.ktor:ktor-server-metrics-micrometer:2.3.4")
 
   implementation("org.slf4j:slf4j-api:1.7.36")
   implementation("org.apache.logging.log4j:log4j-core:2.20.0")

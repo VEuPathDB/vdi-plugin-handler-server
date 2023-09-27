@@ -7,6 +7,8 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.util.*
 import io.ktor.utils.io.jvm.javaio.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.veupathdb.vdi.lib.json.JSON
 import java.nio.file.Path
 import kotlin.contracts.ExperimentalContracts
@@ -32,7 +34,9 @@ suspend fun ApplicationCall.withInstallDataContext(fn: suspend (workspace: Path,
     val payload: Path
 
     // Parse the multipart post body
-    parseMultipartBody(workspace, { details = it }, { payload = it })
+    withContext(Dispatchers.IO) {
+      parseMultipartBody(workspace, { details = it }, { payload = it })
+    }
 
     // Validate the details
     details.validate()
