@@ -11,4 +11,4 @@ docker-build:
 		.
 
 docker-run:
-	@docker run -it --rm --env-file=.env $(IMAGE_NAME):latest
+	@docker run -it --rm --env-file=.env -p8080:8080 $(IMAGE_NAME):latest
