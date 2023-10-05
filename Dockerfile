@@ -14,7 +14,7 @@ COPY [ \
 COPY components/ components/
 COPY service/ service/
 
-RUN gradle test shadowJar
+RUN gradle test shadowJar --info
 
 FROM veupathdb/rserve:5.1.3
 

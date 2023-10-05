@@ -4,8 +4,7 @@ import org.veupathdb.vdi.lib.common.env.EnvKey
 import org.veupathdb.vdi.lib.common.env.Environment
 import org.veupathdb.vdi.lib.common.env.reqBool
 import org.veupathdb.vdi.lib.common.env.require
-import vdi.components.common.EnvironmentAccessor
-import vdi.components.common.SecretString
+import org.veupathdb.vdi.lib.common.field.SecretString
 
 private const val DB_ENABLED_PREFIX = EnvKey.AppDB.DBEnabledPrefix
 private const val DB_NAME_PREFIX    = EnvKey.AppDB.DBNamePrefix
@@ -25,13 +24,13 @@ private const val DB_ENV_VAR_INIT_CAPACITY = 12
  * @author Elizabeth Paige Harper - https://github.com/foxcapades
  * @since 1.0.0
  */
-class DatabaseConfigurationMap(environment: EnvironmentAccessor)
+class DatabaseConfigurationMap(environment: Environment)
 : Map<String, DatabaseConfiguration>
 {
   private val raw: Map<String, DatabaseConfiguration>
 
   init {
-    raw = parseDatabaseConfigs(environment.rawEnvironment())
+    raw = parseDatabaseConfigs(environment)
   }
 
   override val entries: Set<Map.Entry<String, DatabaseConfiguration>>
@@ -56,7 +55,7 @@ class DatabaseConfigurationMap(environment: EnvironmentAccessor)
 }
 
 
-private fun parseDatabaseConfigs(environment: Map<String, String>) =
+private fun parseDatabaseConfigs(environment: Environment) =
   environment.parse()
 
 private fun Environment.parse(): Map<String, DatabaseConfiguration> {
@@ -88,7 +87,7 @@ private fun Environment.parse(key: String, names: MutableSet<String>, out: Mutab
       name       = name,
       ldap       = require(DB_LDAP_PREFIX + key),
       user       = require(DB_USER_PREFIX + key),
-      pass       = require(DB_PASS_PREFIX + key).let(::SecretString),
+      pass       = SecretString(require(DB_PASS_PREFIX + key)),
       dataSchema = require(DB_SCHEMA_PREFIX + key),
     )
   }

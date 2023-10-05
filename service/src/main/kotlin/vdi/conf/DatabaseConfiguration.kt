@@ -1,6 +1,7 @@
 package vdi.conf
 
-import vdi.components.common.SecretString
+import org.veupathdb.vdi.lib.common.field.SecretString
+
 
 /**
  * Database Configuration

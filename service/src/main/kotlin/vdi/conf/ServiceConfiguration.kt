@@ -1,7 +1,9 @@
 package vdi.conf
 
+import org.veupathdb.vdi.lib.common.env.Environment
+import org.veupathdb.vdi.lib.common.env.optional
+import org.veupathdb.vdi.lib.common.env.require
 import kotlin.time.Duration
-import vdi.components.common.EnvironmentAccessor
 import vdi.consts.ConfigDefault
 import vdi.consts.ConfigEnvKey
 
@@ -25,7 +27,7 @@ data class ServiceConfiguration(
   val datasetRoot: String,
   val siteBuild: String,
 ) {
-  constructor(env: EnvironmentAccessor) : this(
+  constructor(env: Environment) : this(
     env.require(ConfigEnvKey.LDAPServer),
     env.require(ConfigEnvKey.OracleBaseDN),
     ScriptConfiguration(

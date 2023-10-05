@@ -1,6 +1,6 @@
 package vdi.model
 
-import vdi.components.common.SecretString
+import org.veupathdb.vdi.lib.common.field.SecretString
 import vdi.consts.ScriptEnvKey
 
 data class DatabaseDetails(
@@ -17,7 +17,7 @@ data class DatabaseDetails(
     ScriptEnvKey.DBPort to dbPort.toString(),
     ScriptEnvKey.DBName to dbName,
     ScriptEnvKey.DBUser to dbUser,
-    ScriptEnvKey.DBPass to dbPass.value,
+    ScriptEnvKey.DBPass to dbPass.unwrap(),
     ScriptEnvKey.DBSchema to dbSchema,
     ScriptEnvKey.DBPlatform to dbPlatform.value,
   )
