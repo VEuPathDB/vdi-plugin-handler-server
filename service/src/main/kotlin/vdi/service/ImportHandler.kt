@@ -6,6 +6,7 @@ import java.nio.file.Path
 import kotlin.io.path.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import org.veupathdb.vdi.lib.common.compression.Zip
 import vdi.components.io.LineListOutputStream
 import vdi.components.io.LoggingOutputStream
 import vdi.components.metrics.ScriptMetrics
@@ -14,7 +15,6 @@ import vdi.conf.ScriptConfiguration
 import vdi.consts.ExitCode
 import vdi.server.model.ImportDetails
 import vdi.util.packAsTarGZ
-import vdi.util.unpackAsTarGZ
 
 private const val INPUT_DIRECTORY_NAME  = "input"
 private const val OUTPUT_DIRECTORY_NAME = "output"
@@ -67,7 +67,10 @@ class ImportHandler(
    * input directory.
    */
   private fun unpackInput(): Collection<String> {
-    inputFile.unpackAsTarGZ(inputDirectory)
+    Zip.zipEntries(inputFile).forEach { (entry, inp) ->
+      val file = inputDirectory.resolve(entry.name)
+      file.outputStream().use { out -> inp.transferTo(out) }
+    }
     inputFile.deleteExisting()
 
     val inputFiles = inputDirectory.listDirectoryEntries()
