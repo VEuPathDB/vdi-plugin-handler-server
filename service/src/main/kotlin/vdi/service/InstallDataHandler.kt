@@ -127,6 +127,7 @@ class InstallDataHandler(
           .use {
             for (dep in meta.dependencies)
               it.appendLine("${dep.identifier}\t${dep.version}")
+            it.flush()
           }
 
 
