@@ -18,9 +18,11 @@ class ScriptExecutorImpl : ScriptExecutor {
       environment().putAll(environment)
     }.start()
 
-    val out = fn(ScriptProcessImpl(rawProcess))
-
-    rawProcess.waitFor()
+    val out = try {
+      fn(ScriptProcessImpl(rawProcess))
+    } finally {
+      rawProcess.waitFor()
+    }
 
     out
   }

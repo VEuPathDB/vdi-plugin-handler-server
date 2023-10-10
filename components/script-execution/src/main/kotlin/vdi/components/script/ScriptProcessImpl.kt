@@ -32,4 +32,6 @@ class ScriptProcessImpl(private val raw: Process) : ScriptProcess {
   }
 
   override fun exitCode() = raw.exitValue()
+
+  override fun isAlive() = raw.isAlive
 }

@@ -129,10 +129,19 @@ class InstallDataHandler(
           for (dep in meta.dependencies)
             osw.appendLine("${dep.identifier}\t${dep.version}")
           osw.flush()
+        } catch (e: IOException) {
+          if (isAlive()) {
+            throw e
+          }
         } finally {
-          try { osw.close() } catch (_: IOException) {}
+          try {
+            osw.close()
+          } catch (e: IOException) {
+            if (isAlive()) {
+              throw e
+            }
+          }
         }
-
 
         val logJob  = launch { LoggingOutputStream("[check-compatibility][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
         val warnJob = launch { LineListOutputStream(warnings).use { scriptStdOut.transferTo(it) } }

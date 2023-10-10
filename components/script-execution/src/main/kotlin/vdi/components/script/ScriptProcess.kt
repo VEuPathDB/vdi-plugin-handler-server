@@ -45,4 +45,9 @@ interface ScriptProcess {
    * Returns the exit code of the process.
    */
   fun exitCode(): Int
+
+  /**
+   * Tests whether the process is still alive.
+   */
+  fun isAlive(): Boolean
 }
