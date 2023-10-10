@@ -2,7 +2,6 @@ package vdi.service
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.slf4j.LoggerFactory
-import org.veupathdb.vdi.lib.common.env.Environment
 import org.veupathdb.vdi.lib.common.model.VDIDatasetMeta
 import org.veupathdb.vdi.lib.json.JSON
 import java.io.OutputStreamWriter
@@ -66,10 +65,12 @@ class InstallDataHandler(
     payload.deleteIfExists()
 
     val metaFile = requireMetaFile(installDir)
+    val metaData = JSON.readValue<VDIDatasetMeta>(metaFile.toFile())
 
     runInstallMeta(metaFile)
 
-    runCheckDependencies(metaFile)
+    if (metaData.dependencies.isNotEmpty())
+      runCheckDependencies(metaFile)
 
     runInstallData(installDir, warnings)
 
