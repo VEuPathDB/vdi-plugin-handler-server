@@ -44,7 +44,7 @@ class UninstallHandler(
 
           else -> {
             log.error("uninstall script failed for VDI dataset ID {}", vdiID)
-            throw IllegalStateException("uninstall script failed with an unexpected exit code")
+            throw IllegalStateException("uninstall script failed with an unexpected exit code ${exitCode()}")
           }
         }
       }

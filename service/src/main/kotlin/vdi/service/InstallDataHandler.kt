@@ -103,7 +103,7 @@ class InstallDataHandler(
 
           else -> {
             log.error("install-meta (for install-data) script failed for VDI dataset ID {}", vdiID)
-            throw IllegalStateException("install-meta (for install-data) script failed with unexpected exit code")
+            throw IllegalStateException("install-meta (for install-data) script failed with unexpected exit code ${exitCode()}")
           }
         }
       }
@@ -169,7 +169,7 @@ class InstallDataHandler(
 
           else -> {
             log.error("check-compatibility script failed for dataset ID {}", vdiID)
-            throw IllegalStateException("check-compatibility script failed")
+            throw IllegalStateException("check-compatibility script failed with exit code ${exitCode()}")
           }
         }
       }
@@ -209,7 +209,7 @@ class InstallDataHandler(
 
           else -> {
             log.error("install-data script failed for VDI dataset ID {}", vdiID)
-            throw IllegalStateException("install-data script failed with unexpected exit code")
+            throw IllegalStateException("install-data script failed with unexpected exit code ${exitCode()}")
           }
         }
       }

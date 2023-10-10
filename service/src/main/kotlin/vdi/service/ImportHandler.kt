@@ -132,7 +132,7 @@ class ImportHandler(
           -> throw ValidationError(warnings)
 
           else
-          -> throw IllegalStateException("import script failed with unexpected exit code")
+          -> throw IllegalStateException("import script failed with unexpected exit code ${exitCode()}")
         }
 
         warnings

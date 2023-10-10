@@ -55,7 +55,7 @@ class InstallMetaHandler(
 
           else -> {
             log.error("install-meta script failed for VDI dataset ID {}", vdiID)
-            throw IllegalStateException("install-meta script failed with unexpected exit code")
+            throw IllegalStateException("install-meta script failed with unexpected exit code ${exitCode()}")
           }
         }
       }
