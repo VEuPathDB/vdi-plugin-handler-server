@@ -19,6 +19,7 @@ import vdi.consts.ExitCode
 import vdi.consts.FileName
 import vdi.model.DatabaseDetails
 import vdi.util.unpackAsTarGZ
+import java.io.IOException
 
 class InstallDataHandler(
   workspace: Path,
@@ -123,12 +124,14 @@ class InstallDataHandler(
       buildScriptEnv()
     ) {
       coroutineScope {
-        OutputStreamWriter(scriptStdIn)
-          .use {
-            for (dep in meta.dependencies)
-              it.appendLine("${dep.identifier}\t${dep.version}")
-            it.flush()
-          }
+        val osw = OutputStreamWriter(scriptStdIn)
+        try {
+          for (dep in meta.dependencies)
+            osw.appendLine("${dep.identifier}\t${dep.version}")
+          osw.flush()
+        } finally {
+          try { osw.close() } catch (_: IOException) {}
+        }
 
 
         val logJob  = launch { LoggingOutputStream("[check-compatibility][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
