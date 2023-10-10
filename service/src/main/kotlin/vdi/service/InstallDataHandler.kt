@@ -130,6 +130,7 @@ class InstallDataHandler(
             osw.appendLine("${dep.identifier}\t${dep.version}")
           osw.flush()
         } catch (e: IOException) {
+          log.error("Encountered error while attempting to write to process stdin:", e)
           if (isAlive()) {
             throw e
           }
@@ -137,6 +138,7 @@ class InstallDataHandler(
           try {
             osw.close()
           } catch (e: IOException) {
+            log.error("Encountered error while attempting to close process stdin:", e)
             if (isAlive()) {
               throw e
             }
