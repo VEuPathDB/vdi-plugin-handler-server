@@ -124,6 +124,10 @@ class InstallDataHandler(
       buildScriptEnv()
     ) {
       coroutineScope {
+
+        val logJob  = launch { LoggingOutputStream("[check-compatibility][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
+        val warnJob = launch { LineListOutputStream(warnings).use { scriptStdOut.transferTo(it) } }
+
         val osw = OutputStreamWriter(scriptStdIn)
         try {
           for (dep in meta.dependencies)
@@ -144,9 +148,6 @@ class InstallDataHandler(
             }
           }
         }
-
-        val logJob  = launch { LoggingOutputStream("[check-compatibility][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
-        val warnJob = launch { LineListOutputStream(warnings).use { scriptStdOut.transferTo(it) } }
 
         waitFor(compatScript.maxSeconds)
 
