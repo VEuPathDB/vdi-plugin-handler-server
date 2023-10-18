@@ -1,11 +1,9 @@
 package vdi.util
 
-import vdi.components.common.StartupException
 import vdi.components.ldap.LDAP
 import vdi.components.ldap.LDAPConfig
 import vdi.components.ldap.LDAPHost
 import vdi.conf.ServiceConfiguration
-
 
 private val URLPattern = Regex("^([^:]+):(\\d+)$")
 
@@ -14,7 +12,7 @@ fun setupLDAP(conf: ServiceConfiguration) = LDAP(LDAPConfig(parseLDAPHosts(conf.
 private fun parseLDAPHosts(string: String) = string.split(',').map(::parseLDAPHost)
 
 private fun parseLDAPHost(string: String): LDAPHost {
-  val match = URLPattern.find(string) ?: throw StartupException("invalid LDAP server entry")
+  val match = URLPattern.find(string) ?: throw Exception("invalid LDAP server entry")
 
   val (host, port) = match.destructured
 

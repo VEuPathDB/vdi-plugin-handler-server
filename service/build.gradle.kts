@@ -24,7 +24,6 @@ configurations.all {
 }
 
 dependencies {
-  implementation(project(":components:common"))
   implementation(project(":components:http-errors"))
   implementation(project(":components:io-utils"))
   implementation(project(":components:ldap-lookup"))
@@ -32,7 +31,7 @@ dependencies {
   implementation(project(":components:script-execution"))
 
   implementation("org.veupathdb.vdi:vdi-component-json:1.0.0")
-  implementation("org.veupathdb.vdi:vdi-component-common:6.1.0")
+  implementation("org.veupathdb.vdi:vdi-component-common:6.2.0")
 
   implementation("io.ktor:ktor-server-core-jvm:2.3.4")
   implementation("io.ktor:ktor-server-netty-jvm:2.3.4")

@@ -1,6 +1,7 @@
 package vdi.conf
 
-import vdi.components.common.EnvironmentAccessor
+import org.veupathdb.vdi.lib.common.env.Environment
+import org.veupathdb.vdi.lib.common.env.optional
 import vdi.consts.ConfigDefault
 import vdi.consts.ConfigEnvKey
 
@@ -14,7 +15,7 @@ data class ServerConfiguration(
   val port: UShort,
   val host: String
 ) {
-  constructor(env: EnvironmentAccessor) : this(
+  constructor(env: Environment) : this(
     port = (env.optional(ConfigEnvKey.ServerPort) ?: ConfigDefault.ServerPort).toUShort(),
     host = env.optional(ConfigEnvKey.ServerHost) ?: ConfigDefault.ServerHost,
   )

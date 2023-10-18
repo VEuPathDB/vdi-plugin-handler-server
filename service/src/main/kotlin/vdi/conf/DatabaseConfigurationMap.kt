@@ -1,14 +1,17 @@
 package vdi.conf
 
 import org.veupathdb.vdi.lib.common.env.EnvKey
-import vdi.components.common.EnvironmentAccessor
-import vdi.components.common.SecretString
+import org.veupathdb.vdi.lib.common.env.Environment
+import org.veupathdb.vdi.lib.common.env.reqBool
+import org.veupathdb.vdi.lib.common.env.require
+import org.veupathdb.vdi.lib.common.field.SecretString
 
-private const val DB_NAME_PREFIX   = EnvKey.AppDB.DBNamePrefix
-private const val DB_LDAP_PREFIX   = EnvKey.AppDB.DBLDAPPrefix
-private const val DB_USER_PREFIX   = EnvKey.AppDB.DBUserPrefix
-private const val DB_PASS_PREFIX   = EnvKey.AppDB.DBPassPrefix
-private const val DB_SCHEMA_PREFIX = EnvKey.AppDB.DBDataSchemaPrefix
+private const val DB_ENABLED_PREFIX = EnvKey.AppDB.DBEnabledPrefix
+private const val DB_NAME_PREFIX    = EnvKey.AppDB.DBNamePrefix
+private const val DB_LDAP_PREFIX    = EnvKey.AppDB.DBLDAPPrefix
+private const val DB_USER_PREFIX    = EnvKey.AppDB.DBUserPrefix
+private const val DB_PASS_PREFIX    = EnvKey.AppDB.DBPassPrefix
+private const val DB_SCHEMA_PREFIX  = EnvKey.AppDB.DBDataSchemaPrefix
 
 private const val DB_ENV_VAR_INIT_CAPACITY = 12
 
@@ -21,13 +24,13 @@ private const val DB_ENV_VAR_INIT_CAPACITY = 12
  * @author Elizabeth Paige Harper - https://github.com/foxcapades
  * @since 1.0.0
  */
-class DatabaseConfigurationMap(environment: EnvironmentAccessor)
+class DatabaseConfigurationMap(environment: Environment)
 : Map<String, DatabaseConfiguration>
 {
   private val raw: Map<String, DatabaseConfiguration>
 
   init {
-    raw = parseDatabaseConfigs(environment.rawEnvironment())
+    raw = parseDatabaseConfigs(environment)
   }
 
   override val entries: Set<Map.Entry<String, DatabaseConfiguration>>
@@ -52,57 +55,40 @@ class DatabaseConfigurationMap(environment: EnvironmentAccessor)
 }
 
 
-private fun parseDatabaseConfigs(environment: Map<String, String>) =
+private fun parseDatabaseConfigs(environment: Environment) =
   environment.parse()
 
-private fun Map<String, String>.parse(): Map<String, DatabaseConfiguration> {
+private fun Environment.parse(): Map<String, DatabaseConfiguration> {
   val out  = HashMap<String, DatabaseConfiguration>(DB_ENV_VAR_INIT_CAPACITY)
   val seen = HashSet<String>(12)
 
   forEach { (key, _) ->
-    if (key in seen)
-      return@forEach
-
     when {
-      key.startsWith(DB_SCHEMA_PREFIX) -> parse(key.substring(DB_SCHEMA_PREFIX.length), seen, out)
-      key.startsWith(DB_NAME_PREFIX)   -> parse(key.substring(DB_NAME_PREFIX.length), seen, out)
-      key.startsWith(DB_LDAP_PREFIX)   -> parse(key.substring(DB_LDAP_PREFIX.length), seen, out)
-      key.startsWith(DB_USER_PREFIX)   -> parse(key.substring(DB_USER_PREFIX.length), seen, out)
-      key.startsWith(DB_PASS_PREFIX)   -> parse(key.substring(DB_PASS_PREFIX.length), seen, out)
+      key.startsWith(DB_ENABLED_PREFIX) -> parse(key.substring(DB_ENABLED_PREFIX.length), seen, out)
+      key.startsWith(DB_SCHEMA_PREFIX)  -> parse(key.substring(DB_SCHEMA_PREFIX.length), seen, out)
+      key.startsWith(DB_NAME_PREFIX)    -> parse(key.substring(DB_NAME_PREFIX.length), seen, out)
+      key.startsWith(DB_LDAP_PREFIX)    -> parse(key.substring(DB_LDAP_PREFIX.length), seen, out)
+      key.startsWith(DB_USER_PREFIX)    -> parse(key.substring(DB_USER_PREFIX.length), seen, out)
+      key.startsWith(DB_PASS_PREFIX)    -> parse(key.substring(DB_PASS_PREFIX.length), seen, out)
     }
   }
-
 
   return out
 }
 
-private fun Map<String, String>.parse(
-  suffix: String,
-  seen:   MutableSet<String>,
-  out:    MutableMap<String, DatabaseConfiguration>
-) {
-  val db = parse(suffix)
+private fun Environment.parse(key: String, names: MutableSet<String>, out: MutableMap<String, DatabaseConfiguration>) {
+  if (key in names)
+    return
 
-  seen.add(DB_SCHEMA_PREFIX + suffix)
-  seen.add(DB_NAME_PREFIX + suffix)
-  seen.add(DB_LDAP_PREFIX + suffix)
-  seen.add(DB_USER_PREFIX + suffix)
-  seen.add(DB_PASS_PREFIX + suffix)
+  if (reqBool(DB_ENABLED_PREFIX + key)) {
+    val name = require(DB_NAME_PREFIX + key)
 
-  out[db.name] = db
-}
-
-private fun Map<String, String>.parse(suffix: String) =
-  DatabaseConfiguration(
-    name       = get(DB_NAME_PREFIX + suffix) ?: parsingFailed(suffix),
-    ldap       = get(DB_LDAP_PREFIX + suffix) ?: parsingFailed(suffix),
-    user       = get(DB_USER_PREFIX + suffix) ?: parsingFailed(suffix),
-    pass       = get(DB_PASS_PREFIX + suffix)?.let(::SecretString) ?: parsingFailed(suffix),
-    dataSchema = get(DB_SCHEMA_PREFIX + suffix) ?: parsingFailed(suffix)
-  )
-
-private fun parsingFailed(suffix: String): Nothing {
-  throw RuntimeException(
-    "One or more database connection configuration environment variables was not set with the suffix: $suffix"
-  )
+    out[name] = DatabaseConfiguration(
+      name       = name,
+      ldap       = require(DB_LDAP_PREFIX + key),
+      user       = require(DB_USER_PREFIX + key),
+      pass       = SecretString(require(DB_PASS_PREFIX + key)),
+      dataSchema = require(DB_SCHEMA_PREFIX + key),
+    )
+  }
 }
