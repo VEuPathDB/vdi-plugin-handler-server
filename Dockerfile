@@ -16,11 +16,9 @@ COPY service/ service/
 
 RUN gradle test shadowJar --info
 
-FROM veupathdb/gus-apidb-base:0.1.0
+FROM veupathdb/gus-apidb-base:0.1.1
 
-ENV JAVA_HOME=/opt/jdk \
-    PATH=/opt/jdk/bin:$PATH \
-    JVM_MEM_ARGS="-Xms16m -Xmx64m" \
+ENV JVM_MEM_ARGS="-Xms16m -Xmx64m" \
     JVM_ARGS="" \
     TZ="America/New_York"
 
