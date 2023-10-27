@@ -29,18 +29,33 @@ class LDAP(private val config: LDAPConfig) {
   fun lookupOracleNetDesc(commonName: String): List<OracleNetDesc> {
     log.trace("lookupOracleNetDesc(commonName={})", commonName)
 
-    return getConnection()
-      .search(SearchRequest(
-        config.oracleBaseDN,
-        SearchScope.SUB,
-        Filter.createANDFilter(
-          Filter.create("cn=$commonName"),
-          Filter.create("objectClass=orclNetService")
-        ),
-        "orclNetDescString"
-      ))
-      .searchEntries
-      .map { OracleNetDesc(it.getAttribute("orclNetDescString").value!!) }
+    var err: LDAPSearchException? = null
+
+    // To handle network hiccups, try this 5x before giving up.
+    for (i in 0 ..< 5) {
+      try {
+        return getConnection()
+          .search(
+            SearchRequest(
+              config.oracleBaseDN,
+              SearchScope.SUB,
+              Filter.createANDFilter(
+                Filter.create("cn=$commonName"),
+                Filter.create("objectClass=orclNetService")
+              ),
+              "orclNetDescString"
+            )
+          )
+          .searchEntries
+          .map { OracleNetDesc(it.getAttribute("orclNetDescString").value!!) }
+      } catch (e: LDAPSearchException) {
+        log.warn("failed to search LDAP {} times", i+1)
+        err = e
+        continue
+      }
+    }
+
+    throw err!!
   }
 
   private fun getConnection(): LDAPConnection {
@@ -58,8 +73,12 @@ class LDAP(private val config: LDAPConfig) {
           return ldapConnection!!
         // else, the LDAP connection we've already got is _not_ still connected
         else
-          // then disregard it
-          ldapConnection = null
+          try {
+            ldapConnection!!.reconnect()
+            return ldapConnection!!
+          } catch (e: Exception) {
+            ldapConnection = null
+          }
       }
 
       log.debug("Attempting to establish a connection to a configured LDAP server")
@@ -67,7 +86,7 @@ class LDAP(private val config: LDAPConfig) {
         log.trace("Trying to connect to {}:{}", host.host, host.port)
 
          try {
-           ldapConnection =LDAPConnection(host.host, host.port.toInt())
+           ldapConnection = LDAPConnection(host.host, host.port.toInt())
             .also { log.debug("Connected to {}:{}", host.host, host.port) }
           break
         } catch (e: Throwable) {
