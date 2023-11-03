@@ -72,6 +72,9 @@ class InstallDataHandler(
     if (metaData.dependencies.isNotEmpty())
       runCheckDependencies(metaFile)
 
+    metaFile.deleteIfExists()
+    getManifestFile(installDir).deleteIfExists()
+
     runInstallData(installDir, warnings)
 
     return warnings
@@ -226,6 +229,10 @@ class InstallDataHandler(
     }
 
     return metaFile
+  }
+
+  private fun getManifestFile(installDir: Path): Path {
+    return installDir.resolve(FileName.ManifestFileName)
   }
 
   class ValidationError(val warnings: Collection<String>) : RuntimeException()
