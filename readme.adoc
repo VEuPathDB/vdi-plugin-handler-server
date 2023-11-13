@@ -204,10 +204,11 @@ The VDI Plugin Handler Server wraps 4 plugin "scripts" that may be written in
 any language, however must be callable via a CLI call aligning with the API as
 defined below.
 
-The 4 plugin scripts are:
+The plugin scripts are:
 
 . The <<Import Script>>
 . The <<Install-Meta Script>>
+. The <<Check Compatibility Script>>
 . The <<Install-Data Script>>
 . The <<Uninstall Script>>
 
@@ -638,3 +639,9 @@ Handler Server itself.
 link:https://veupathdb.github.io/vdi-plugin-handler-server/http-api.html[API Documentation]
 
 TODO
+
+== Local Plugin Development
+
+=== Getting Set Up
+
+. Create a
