@@ -60,29 +60,30 @@ private suspend fun ApplicationCall.parseMultipartBody(
   var payload = false
 
   receiveMultipart().forEachPart { part ->
-    when (part.name) {
-      FieldName.Details -> {
-        if (details)
-          throw BadRequestException("part \"${FieldName.Details}\" was specified more than once in the request body")
+    try {
+      when (part.name) {
+        FieldName.Details -> {
+          if (details)
+            throw BadRequestException("part \"${FieldName.Details}\" was specified more than once in the request body")
 
-        part.parseInstallDetails(detailsCB)
-        part.dispose()
-        details = true
+          part.parseInstallDetails(detailsCB)
+          details = true
+        }
+
+        FieldName.Payload -> {
+          if (payload)
+            throw BadRequestException("part \"${FieldName.Payload}\" was specified more than once in the request body")
+
+          part.handlePayload(workspace, payloadCB)
+          payload = true
+        }
+
+        else -> {
+          throw BadRequestException("unexpected part \"${part.name}\"")
+        }
       }
-
-      FieldName.Payload -> {
-        if (payload)
-          throw BadRequestException("part \"${FieldName.Payload}\" was specified more than once in the request body")
-
-        part.handlePayload(workspace, payloadCB)
-        part.dispose()
-        payload = true
-      }
-
-      else                    -> {
-        part.dispose()
-        throw BadRequestException("unexpected part \"${part.name}\"")
-      }
+    } finally {
+      part.dispose()
     }
   }
 

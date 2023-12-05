@@ -16,19 +16,19 @@ suspend fun PipelineContext<*, ApplicationCall>.withExceptionMapping(
     fn()
   } catch (e: Throwable) {
     when (e) {
-      is BadRequestException           -> {
+      is BadRequestException -> {
         log.debug("Thrown 400 exception.", e)
         call.respondText(
-          SimpleErrorResponse(e.message!!).toJSONString(),
+          SimpleErrorResponse(e.message ?: "null").toJSONString(),
           ContentType.Application.Json,
           HttpStatusCode.BadRequest,
         )
       }
 
-      is NotFoundException             -> {
+      is NotFoundException -> {
         log.debug("Thrown 404 exception.", e)
         call.respondText(
-          SimpleErrorResponse(e.message!!).toJSONString(),
+          SimpleErrorResponse(e.message ?: "null").toJSONString(),
           ContentType.Application.Json,
           HttpStatusCode.NotFound,
         )
@@ -37,25 +37,25 @@ suspend fun PipelineContext<*, ApplicationCall>.withExceptionMapping(
       is UnsupportedMediaTypeException -> {
         log.debug("Thrown 415 exception.", e)
         call.respondText(
-          SimpleErrorResponse(e.message!!).toJSONString(),
+          SimpleErrorResponse(e.message ?: "null").toJSONString(),
           ContentType.Application.Json,
           HttpStatusCode.UnsupportedMediaType,
         )
       }
 
-      is InternalServerException       -> {
+      is InternalServerException -> {
         log.warn("Thrown 500 exception.", e)
         call.respondText(
-          SimpleErrorResponse(e.message!!).toJSONString(),
+          SimpleErrorResponse(e.message ?: "null").toJSONString(),
           ContentType.Application.Json,
           HttpStatusCode.InternalServerError,
         )
       }
 
-      else                             -> {
+      else -> {
         log.error("Uncaught exception", e)
         call.respondText(
-          SimpleErrorResponse(e.message!!).toJSONString(),
+          SimpleErrorResponse(e.message ?: "null").toJSONString(),
           ContentType.Application.Json,
           HttpStatusCode.InternalServerError,
         )
