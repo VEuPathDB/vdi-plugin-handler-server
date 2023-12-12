@@ -6,6 +6,8 @@ import java.nio.file.Path
 import kotlin.io.path.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import org.veupathdb.vdi.lib.common.DatasetManifestFilename
+import org.veupathdb.vdi.lib.common.DatasetMetaFilename
 import org.veupathdb.vdi.lib.common.compression.Zip
 import vdi.components.io.LineListOutputStream
 import vdi.components.io.LoggingOutputStream
@@ -18,8 +20,6 @@ import vdi.util.packAsTarGZ
 
 private const val INPUT_DIRECTORY_NAME  = "input"
 private const val OUTPUT_DIRECTORY_NAME = "output"
-private const val MANIFEST_FILE_NAME    = "manifest.json"
-private const val META_FILE_NAME        = "meta.json"
 private const val WARNING_FILE_NAME     = "warnings.json"
 private const val OUTPUT_FILE_NAME      = "output.tar.gz"
 
@@ -157,12 +157,12 @@ class ImportHandler(
   }
 
   private fun writeManifestFile(inputFiles: Collection<String>, outputFiles: Collection<Path>) =
-    outputDirectory.resolve(MANIFEST_FILE_NAME)
+    outputDirectory.resolve(DatasetManifestFilename)
       .createFile()
       .apply { outputStream().use { JSON.writeValue(it, Manifest(inputFiles, outputFiles.map { it.name })) } }
 
   private fun writeMetaFile() =
-    outputDirectory.resolve(META_FILE_NAME)
+    outputDirectory.resolve(DatasetMetaFilename)
       .createFile()
       .apply { outputStream().use { JSON.writeValue(it, details.meta) } }
 

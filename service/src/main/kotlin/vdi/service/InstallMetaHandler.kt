@@ -9,6 +9,7 @@ import kotlin.io.path.createFile
 import kotlin.io.path.outputStream
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import org.veupathdb.vdi.lib.common.DatasetMetaFilename
 import vdi.components.io.LoggingOutputStream
 import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
@@ -32,7 +33,7 @@ class InstallMetaHandler(
 
   override suspend fun run() {
 
-    val metaFile = workspace.resolve(FileName.MetaFileName)
+    val metaFile = workspace.resolve(DatasetMetaFilename)
       .createFile()
       .apply { outputStream().use { JSON.writeValue(it, meta) } }
 

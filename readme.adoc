@@ -288,19 +288,19 @@ execution of the import.
 The import script may produce any files it needs, provided they are not named
 with one of the following reserved file names.
 
-`meta.json`:: This file name is reserved for the dataset's metadata file which
-is produced by the VDI Plugin Handler Server itself after the import script has
-completed execution.
-+
-If the import script _does_ produce a file named `meta.json`, the handler server
-will throw an exception.
-
-`manifest.json`:: This file name is reserved for the dataset's manifest file
+`vdi-meta.json`:: This file name is reserved for the dataset's metadata file
 which is produced by the VDI Plugin Handler Server itself after the import
 script has completed execution.
 +
-If the import script _does_ produce a file named `manifest.json`, the handler
+If the import script _does_ produce a file named `vdi-meta.json`, the handler
 server will throw an exception.
+
+`vdi-manifest.json`:: This file name is reserved for the dataset's manifest file
+which is produced by the VDI Plugin Handler Server itself after the import
+script has completed execution.
++
+If the import script _does_ produce a file named `vdi-manifest.json`, the
+handler server will throw an exception.
 
 `warnings.json`:: This file name is reserved for the dataset's validation
 warning messages file which is produced by the VDI Plugin Handler Server itself
@@ -355,7 +355,7 @@ TODO: Describe me!
 
 The Install-Meta Script will be passed two positional CLI arguments on
 execution, the ID of the dataset, and the path to a
-<<Dataset Metadata,`meta.json`>> file.
+<<Dataset Metadata,metadata JSON>> file.
 
 .Structure
 [source, shell-session]
@@ -366,10 +366,10 @@ $ install-meta {vdi-id} {path-to-meta-json}
 .Example
 [source, shell-session]
 ----
-$ install-meta d002dcac1aff37435c355f8deb16ee17 /some/path/to/meta.json
+$ install-meta d002dcac1aff37435c355f8deb16ee17 /some/path/to/vdi-meta.json
 ----
 
-The `meta.json` file will exist for the duration of the script's execution.
+The `vdi-meta.json` file will exist for the duration of the script's execution.
 
 ===== Environment
 

@@ -9,6 +9,8 @@ import java.nio.file.Path
 import kotlin.io.path.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import org.veupathdb.vdi.lib.common.DatasetManifestFilename
+import org.veupathdb.vdi.lib.common.DatasetMetaFilename
 import vdi.components.io.LineListOutputStream
 import vdi.components.io.LoggingOutputStream
 import vdi.components.metrics.ScriptMetrics
@@ -221,7 +223,7 @@ class InstallDataHandler(
   }
 
   private fun requireMetaFile(installDir: Path): Path {
-    val metaFile = installDir.resolve(FileName.MetaFileName)
+    val metaFile = installDir.resolve(DatasetMetaFilename)
 
     if (!metaFile.exists()) {
       log.error("no meta file was found in the install directory for VDI dataset {}", vdiID)
@@ -232,7 +234,7 @@ class InstallDataHandler(
   }
 
   private fun getManifestFile(installDir: Path): Path {
-    return installDir.resolve(FileName.ManifestFileName)
+    return installDir.resolve(DatasetManifestFilename)
   }
 
   class ValidationError(val warnings: Collection<String>) : RuntimeException()
