@@ -194,6 +194,21 @@ DB_CONNECTION_DATA_SCHEMA_TOXO_DB=someSchema
 ----
 ====
 
+== Publishing Server Updates
+
+Once a change has been made to the VDI plugin handler server and is on the main
+branch, the following steps must be taken to get the change out to the
+individual plugins.
+
+. Git tag the new version of the plugin server.
+. Wait for Jenkins to build and publish the new server version's docker image.
+. Update the Dockerfile in the https://github.com/VEuPathDB/vdi-docker-plugin-base[vdi-docker-plugin-base]
+  repository to pull from the new plugin server docker image version.
+. Push the change and git tag the new plugin-base image.
+. Wait for Jenkins to build and publish the new plugin-base docker image.
+. Iterate through all the VDI plugin projects and update the Dockerfiles to pull
+  from the new plugin-base docker image version.
+
 == Plugin Scripts
 
 image::docs/assets/plugin-scripts-overall.svg[]

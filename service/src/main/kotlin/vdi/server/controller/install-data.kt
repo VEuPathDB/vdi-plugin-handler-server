@@ -18,18 +18,18 @@ suspend fun ApplicationCall.handleInstallDataRequest(appCtx: ApplicationContext)
         // Run the install-data service and collect the returned list of
         // installation warnings.
         val warnings = InstallDataHandler(
-          workspace,
-          details.vdiID,
-          details.projectID,
-          payload,
-          dbDetails,
-          appCtx.executor,
-          appCtx.config.service.customPath,
-          appCtx.pathFactory.makePath(details.projectID, details.vdiID),
-          appCtx.config.service.installMetaScript,
-          appCtx.config.service.installDataScript,
-          appCtx.config.service.checkCompatScript,
-          appCtx.metrics.scriptMetrics,
+          workspace    = workspace,
+          vdiID        = details.vdiID,
+          projectID    = details.projectID,
+          payload      = payload,
+          dbDetails    = dbDetails,
+          executor     = appCtx.executor,
+          customPath   = appCtx.config.service.customPath,
+          installPath  = appCtx.pathFactory.makePath(details.projectID, details.vdiID),
+          metaScript   = appCtx.config.service.installMetaScript,
+          dataScript   = appCtx.config.service.installDataScript,
+          compatScript = appCtx.config.service.checkCompatScript,
+          metrics      = appCtx.metrics.scriptMetrics,
         )
           .run()
 
