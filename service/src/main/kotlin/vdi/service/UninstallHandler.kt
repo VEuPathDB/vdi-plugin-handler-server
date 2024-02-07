@@ -9,6 +9,14 @@ import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
 import vdi.model.DatabaseDetails
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.deleteRecursively
+import kotlin.io.path.exists
+import kotlin.io.path.moveTo
+
+private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
 
 class UninstallHandler(
   workspace: Path,
@@ -23,10 +31,10 @@ class UninstallHandler(
   private val log = LoggerFactory.getLogger(javaClass)
 
   override suspend fun run() {
-    log.trace("run()")
-
     log.info("executing uninstall script for VDI dataset ID {}", vdiID)
+
     val timer = metrics.uninstallScriptDuration.startTimer()
+
     executor.executeScript(script.path, workspace, arrayOf(vdiID), buildScriptEnv()) {
       coroutineScope {
         val logJob = launch { LoggingOutputStream("[uninstall][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
@@ -39,7 +47,8 @@ class UninstallHandler(
 
         when (exitCode()) {
           0 -> {
-            log.debug("uninstall script completed successfully for VDI dataset ID {}", vdiID)
+            log.info("uninstall script completed successfully for VDI dataset ID {}", vdiID)
+            wipeDatasetDir()
           }
 
           else -> {
@@ -56,5 +65,19 @@ class UninstallHandler(
   override fun appendScriptEnv(env: MutableMap<String, String>) {
     super.appendScriptEnv(env)
     env.putAll(dbDetails.toEnvMap())
+  }
+
+  @OptIn(ExperimentalPathApi::class)
+  private fun wipeDatasetDir() {
+    if (!datasetInstallPath.exists())
+      return
+
+    log.debug("attempting to delete dataset directory {}", datasetInstallPath)
+
+    datasetInstallPath
+      .moveTo(datasetInstallPath.parent.resolve("deleting-$vdiID-${LocalDateTime.now().format(dateFormat)}"))
+      .deleteRecursively()
+
+    log.info("deleted dataset directory {}", datasetInstallPath)
   }
 }
