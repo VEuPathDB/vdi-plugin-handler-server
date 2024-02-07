@@ -74,8 +74,6 @@ class UninstallHandler(
 
     log.debug("attempting to delete dataset directory {}", datasetInstallPath)
 
-    // Rename dataset directory to avoid any conflicts in the event of a
-    // reinstall or failed directory deletion.
     datasetInstallPath
       .moveTo(datasetInstallPath.parent.resolve("deleting-$vdiID-${LocalDateTime.now().format(dateFormat)}"))
       .deleteRecursively()
