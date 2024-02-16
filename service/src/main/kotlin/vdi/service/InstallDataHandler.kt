@@ -162,7 +162,7 @@ class InstallDataHandler(
 
         val compatStatus = ExitStatus.CheckCompatibility.fromCode(exitCode())
 
-        metrics.checkCompatCalls.labels(compatStatus.name).inc()
+        metrics.checkCompatCalls.labels(compatStatus.metricFriendlyName).inc()
 
         when (compatStatus) {
           ExitStatus.CheckCompatibility.Success -> {
@@ -204,7 +204,7 @@ class InstallDataHandler(
 
         val installStatus = ExitStatus.InstallData.fromCode(exitCode())
 
-        metrics.installDataCalls.labels(installStatus.name).inc()
+        metrics.installDataCalls.labels(installStatus.metricFriendlyName).inc()
 
         when (installStatus) {
           ExitStatus.InstallData.Success -> {

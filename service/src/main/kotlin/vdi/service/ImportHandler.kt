@@ -125,7 +125,7 @@ class ImportHandler(
 
         val importStatus = ExitStatus.Import.fromCode(exitCode())
 
-        metrics.importScriptCalls.labels(importStatus.name).inc()
+        metrics.importScriptCalls.labels(importStatus.metricFriendlyName).inc()
 
         when (importStatus) {
           ExitStatus.Import.Success
