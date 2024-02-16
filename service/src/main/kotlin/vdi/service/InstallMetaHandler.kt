@@ -14,6 +14,7 @@ import vdi.components.io.LoggingOutputStream
 import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
+import vdi.consts.ExitStatus
 import vdi.consts.FileName
 import vdi.model.DatabaseDetails
 
@@ -47,10 +48,12 @@ class InstallMetaHandler(
 
         logJob.join()
 
-        metrics.installMetaCalls.labels(exitCode().toString()).inc()
+        val installMetaStatus = ExitStatus.InstallMeta.fromCode(exitCode())
 
-        when (exitCode()) {
-          0 -> {
+        metrics.installMetaCalls.labels(installMetaStatus.name).inc()
+
+        when (installMetaStatus) {
+          ExitStatus.InstallMeta.Success -> {
             log.info("install-meta script completed successfully for VDI dataset ID {}", vdiID)
           }
 
