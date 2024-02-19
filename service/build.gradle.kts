@@ -52,8 +52,6 @@ dependencies {
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.14.2")
 
-  implementation("org.apache.commons:commons-compress:1.22")
-
   testImplementation(kotlin("test"))
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")

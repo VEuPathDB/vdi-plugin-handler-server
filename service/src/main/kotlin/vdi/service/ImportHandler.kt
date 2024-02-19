@@ -18,12 +18,11 @@ import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
 import vdi.consts.ExitCode
 import vdi.server.model.ImportDetails
-import vdi.util.packAsTarGZ
 
 private const val INPUT_DIRECTORY_NAME  = "input"
 private const val OUTPUT_DIRECTORY_NAME = "output"
 private const val WARNING_FILE_NAME     = "warnings.json"
-private const val OUTPUT_FILE_NAME      = "output.tar.gz"
+private const val OUTPUT_FILE_NAME      = "output.zip"
 
 class ImportHandler(
   workspace: Path,
@@ -57,7 +56,7 @@ class ImportHandler(
     inputDirectory.deleteRecursively()
 
     return workspace.resolve(OUTPUT_FILE_NAME)
-      .also { outputFiles.packAsTarGZ(it) }
+      .also { Zip.compress(it, outputFiles, Zip.Level(0u)) }
       .also { outputDirectory.deleteRecursively() }
   }
 

@@ -19,7 +19,7 @@ import vdi.conf.ScriptConfiguration
 import vdi.consts.ExitCode
 import vdi.consts.FileName
 import vdi.model.DatabaseDetails
-import vdi.util.unpackAsTarGZ
+import vdi.util.unpackAsZip
 import java.io.IOException
 
 class InstallDataHandler(
@@ -62,8 +62,8 @@ class InstallDataHandler(
     log.debug("creating install data directory {}", installDir)
     installDir.createDirectory()
 
-    log.debug("unpacking {} as a .tar.gz file", payload)
-    payload.unpackAsTarGZ(installDir)
+    log.debug("unpacking {} as a .zip file", payload)
+    payload.unpackAsZip(installDir)
     payload.deleteIfExists()
 
     val metaFile = requireMetaFile(installDir)
