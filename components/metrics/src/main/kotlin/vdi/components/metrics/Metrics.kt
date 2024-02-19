@@ -24,7 +24,7 @@ class ScriptMetrics(registry: CollectorRegistry) {
   val importScriptCalls: Counter = Counter.build()
     .name("import_script_executions")
     .help("Import script executions by exit code.")
-    .labelNames("exit_code")
+    .labelNames("exit_status")
     .register(registry)
 
   val installMetaScriptDuration: Histogram = Histogram.build()
@@ -45,7 +45,7 @@ class ScriptMetrics(registry: CollectorRegistry) {
   val installMetaCalls: Counter = Counter.build()
     .name("install_meta_script_executions")
     .help("Install-Meta script executions by exit code.")
-    .labelNames("exit_code")
+    .labelNames("exit_status")
     .register(registry)
 
   val installDataScriptDuration: Histogram = Histogram.build()
@@ -67,7 +67,7 @@ class ScriptMetrics(registry: CollectorRegistry) {
   val installDataCalls: Counter = Counter.build()
     .name("install_data_script_executions")
     .help("Install-Data script executions by exit code.")
-    .labelNames("exit_code")
+    .labelNames("exit_status")
     .register(registry)
 
   val checkCompatScriptDuration: Histogram = Histogram.build()
@@ -88,7 +88,7 @@ class ScriptMetrics(registry: CollectorRegistry) {
   val checkCompatCalls: Counter = Counter.build()
     .name("check_compat_script_executions")
     .help("Check-Compatibility script executions by exit code.")
-    .labelNames("exit_code")
+    .labelNames("exit_status")
     .register(registry)
 
   val uninstallScriptDuration: Histogram = Histogram.build()
@@ -109,6 +109,6 @@ class ScriptMetrics(registry: CollectorRegistry) {
   val uninstallCalls: Counter = Counter.build()
     .name("uninstall_script_executions")
     .help("Uninstall script excecutions by exit code.")
-    .labelNames("exit_code")
+    .labelNames("exit_status")
     .register(registry)
 }

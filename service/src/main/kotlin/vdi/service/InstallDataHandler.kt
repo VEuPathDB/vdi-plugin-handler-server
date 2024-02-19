@@ -16,7 +16,7 @@ import vdi.components.io.LoggingOutputStream
 import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
-import vdi.consts.ExitCode
+import vdi.consts.ExitStatus
 import vdi.consts.FileName
 import vdi.model.DatabaseDetails
 import vdi.util.unpackAsZip
@@ -160,14 +160,16 @@ class InstallDataHandler(
         logJob.join()
         warnJob.join()
 
-        metrics.checkCompatCalls.labels(exitCode().toString()).inc()
+        val compatStatus = ExitStatus.CheckCompatibility.fromCode(exitCode())
 
-        when (exitCode()) {
-          ExitCode.CompatScriptSuccess -> {
+        metrics.checkCompatCalls.labels(compatStatus.metricFriendlyName).inc()
+
+        when (compatStatus) {
+          ExitStatus.CheckCompatibility.Success -> {
             log.info("check-compatibility script completed successfully for dataset ID {}", vdiID)
           }
 
-          ExitCode.CompatScriptIncompatible -> {
+          ExitStatus.CheckCompatibility.Incompatible -> {
             log.info("check-compatibility script completed with 'incompatible' for dataset ID {}", vdiID)
             throw CompatibilityError(warnings)
           }
@@ -200,14 +202,16 @@ class InstallDataHandler(
         job1.join()
         job2.join()
 
-        metrics.installDataCalls.labels(exitCode().toString()).inc()
+        val installStatus = ExitStatus.InstallData.fromCode(exitCode())
 
-        when (exitCode()) {
-          ExitCode.InstallScriptSuccess -> {
+        metrics.installDataCalls.labels(installStatus.metricFriendlyName).inc()
+
+        when (installStatus) {
+          ExitStatus.InstallData.Success -> {
             log.info("install-data script completed successfully for VDI dataset ID {}", vdiID)
           }
 
-          ExitCode.InstallScriptValidationFailure -> {
+          ExitStatus.InstallData.ValidationFailure -> {
             log.info("install-data script refused to install VDI dataset {} for validation errors", vdiID)
             throw ValidationError(warnings)
           }

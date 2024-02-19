@@ -16,7 +16,7 @@ import vdi.components.io.LoggingOutputStream
 import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
-import vdi.consts.ExitCode
+import vdi.consts.ExitStatus
 import vdi.server.model.ImportDetails
 
 private const val INPUT_DIRECTORY_NAME  = "input"
@@ -89,10 +89,10 @@ class ImportHandler(
    * exception.
    *
    * If the import script returns a status code of
-   * [ExitCode.ImportScriptSuccess], this method returns normally.
+   * [ExitStatus.ImportScriptSuccess], this method returns normally.
    *
    * If the import script returns a status code of
-   * [ExitCode.ImportScriptValidationFailure], this method will throw a
+   * [ExitStatus.ImportScriptValidationFailure], this method will throw a
    * [ValidationError] exception.
    *
    * If the import script returns any other status code, this method will throw
@@ -122,13 +122,15 @@ class ImportHandler(
         j1.join()
         j2.join()
 
-        metrics.importScriptCalls.labels(exitCode().toString()).inc()
+        val importStatus = ExitStatus.Import.fromCode(exitCode())
 
-        when (exitCode()) {
-          ExitCode.ImportScriptSuccess
+        metrics.importScriptCalls.labels(importStatus.metricFriendlyName).inc()
+
+        when (importStatus) {
+          ExitStatus.Import.Success
           -> {}
 
-          ExitCode.ImportScriptValidationFailure
+          ExitStatus.Import.ValidationFailure
           -> throw ValidationError(warnings)
 
           else

@@ -8,6 +8,7 @@ import vdi.components.io.LoggingOutputStream
 import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
+import vdi.consts.ExitStatus
 import vdi.model.DatabaseDetails
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -43,10 +44,12 @@ class UninstallHandler(
 
         logJob.join()
 
-        metrics.uninstallCalls.labels(exitCode().toString()).inc()
+        val installStatus = ExitStatus.UninstallData.fromCode(exitCode())
 
-        when (exitCode()) {
-          0 -> {
+        metrics.uninstallCalls.labels(installStatus.metricFriendlyName).inc()
+
+        when (installStatus) {
+          ExitStatus.UninstallData.Success -> {
             log.info("uninstall script completed successfully for VDI dataset ID {}", vdiID)
             wipeDatasetDir()
           }
