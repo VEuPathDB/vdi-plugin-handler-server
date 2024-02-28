@@ -9,13 +9,12 @@ import kotlin.io.path.createDirectory
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
 
-
 fun makeTempDirectory(): Path {
   var tmpDir: Path
 
   while (true) {
     val uuid = UUID.randomUUID().toString()
-    tmpDir = Path.of("tmp", uuid)
+    tmpDir = Path.of("/tmp", uuid)
 
     if (tmpDir.exists())
       continue
