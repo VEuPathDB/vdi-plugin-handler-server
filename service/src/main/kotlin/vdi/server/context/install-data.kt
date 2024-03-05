@@ -21,7 +21,7 @@ import vdi.consts.FieldName
 import vdi.server.model.InstallDetails
 import vdi.util.withTempDirectory
 
-private const val INSTALL_PAYLOAD_FILE_NAME = "install.tar.gz"
+private const val INSTALL_PAYLOAD_FILE_NAME = "install-ready.zip"
 private const val INSTALL_DETAILS_MAX_SIZE = 1024uL
 
 suspend fun ApplicationCall.withInstallDataContext(fn: suspend (workspace: Path, details: InstallDetails, payload: Path) -> Unit) {
