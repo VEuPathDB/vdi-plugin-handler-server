@@ -20,6 +20,7 @@ import vdi.components.http.errors.UnsupportedMediaTypeException
 import vdi.components.io.BoundedInputStream
 import vdi.consts.FieldName
 import vdi.server.model.ImportDetails
+import vdi.util.parseAsJson
 import vdi.util.withTempDirectory
 
 private const val IMPORT_PAYLOAD_FILE_NAME = "import.tar.gz"
@@ -109,12 +110,7 @@ private suspend fun ApplicationCall.parseMultipartBody(
  * instance parsed from the target `PartData`.
  */
 private fun PartData.parseImportDetails(detailsCB: (ImportDetails) -> Unit) {
-  when (this) {
-    is PartData.BinaryChannelItem -> detailsCB(JSON.readValue(BoundedInputStream(provider().toInputStream(), IMPORT_DETAILS_MAX_SIZE)))
-    is PartData.BinaryItem        -> detailsCB(JSON.readValue(BoundedInputStream(provider().asStream(), IMPORT_DETAILS_MAX_SIZE)))
-    is PartData.FileItem          -> detailsCB(JSON.readValue(BoundedInputStream(streamProvider(), IMPORT_DETAILS_MAX_SIZE)))
-    is PartData.FormItem          -> detailsCB(JSON.readValue(BoundedInputStream(value.byteInputStream(), IMPORT_DETAILS_MAX_SIZE)))
-  }
+  detailsCB(parseAsJson(IMPORT_DETAILS_MAX_SIZE, ImportDetails::class))
 }
 
 /**

@@ -19,6 +19,7 @@ import vdi.components.http.errors.UnsupportedMediaTypeException
 import vdi.components.io.BoundedInputStream
 import vdi.consts.FieldName
 import vdi.server.model.InstallDetails
+import vdi.util.parseAsJson
 import vdi.util.withTempDirectory
 
 private const val INSTALL_PAYLOAD_FILE_NAME = "install-ready.zip"
@@ -92,36 +93,7 @@ private suspend fun ApplicationCall.parseMultipartBody(
 }
 
 private fun PartData.parseInstallDetails(detailsCB: (InstallDetails) -> Unit) {
-  when (this) {
-    is PartData.BinaryChannelItem -> detailsCB(
-      JSON.readValue(
-        BoundedInputStream(
-          provider().toInputStream(),
-          INSTALL_DETAILS_MAX_SIZE
-        )
-      ))
-    is PartData.BinaryItem        -> detailsCB(
-      JSON.readValue(
-        BoundedInputStream(
-          provider().asStream(),
-          INSTALL_DETAILS_MAX_SIZE
-        )
-      ))
-    is PartData.FileItem          -> detailsCB(
-      JSON.readValue(
-        BoundedInputStream(
-          streamProvider(),
-          INSTALL_DETAILS_MAX_SIZE
-        )
-      ))
-    is PartData.FormItem          -> detailsCB(
-      JSON.readValue(
-        BoundedInputStream(
-          value.byteInputStream(),
-          INSTALL_DETAILS_MAX_SIZE
-        )
-      ))
-  }
+  detailsCB(parseAsJson(INSTALL_DETAILS_MAX_SIZE, InstallDetails::class))
 }
 
 private fun PartData.handlePayload(workspace: Path, payloadCB: (Path) -> Unit) {
