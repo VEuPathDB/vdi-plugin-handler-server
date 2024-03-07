@@ -128,7 +128,7 @@ class ImportHandler(
 
         when (importStatus) {
           ExitStatus.Import.Success
-          -> log.info("import script completed successfully for dataset {}", details.vdiIDc)
+          -> log.info("import script completed successfully for dataset {}", details.vdiID)
 
           ExitStatus.Import.ValidationFailure
           -> throw ValidationError(warnings)
