@@ -12,11 +12,11 @@ suspend fun ApplicationCall.handleUninstallRequest(appCtx: ApplicationContext) {
     withDatabaseDetails(appCtx.config.databases, appCtx.ldap, projectID) { dbDetails ->
       UninstallHandler(
         workspace   = workspace,
-        vdiID       = vdiID,
+        datasetID   = vdiID,
         dbDetails   = dbDetails,
         executor    = appCtx.executor,
         customPath  = appCtx.config.service.customPath,
-        installPath = appCtx.pathFactory.makePath(projectID, vdiID),
+        installPath = appCtx.pathFactory.makePath(projectID, vdiID.toString()),
         script      = appCtx.config.service.uninstallScript,
         metrics     = appCtx.metrics.scriptMetrics,
       )

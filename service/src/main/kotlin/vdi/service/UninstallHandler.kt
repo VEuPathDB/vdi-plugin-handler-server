@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory
 import java.nio.file.Path
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import org.veupathdb.vdi.lib.common.field.DatasetID
 import vdi.components.io.LoggingOutputStream
 import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
@@ -21,24 +22,24 @@ private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
 
 class UninstallHandler(
   workspace: Path,
-  private val vdiID: String,
+  datasetID: DatasetID,
   private val dbDetails: DatabaseDetails,
   executor:  ScriptExecutor,
   customPath: String,
   installPath: Path,
   private val script: ScriptConfiguration,
   metrics: ScriptMetrics,
-) : InstallationHandlerBase<Unit>(workspace, executor, customPath, installPath, metrics) {
+) : InstallationHandlerBase<Unit>(datasetID, workspace, executor, customPath, installPath, metrics) {
   private val log = LoggerFactory.getLogger(javaClass)
 
   override suspend fun run() {
-    log.info("executing uninstall script for VDI dataset ID {}", vdiID)
+    log.info("executing uninstall script for VDI dataset ID {}", datasetID)
 
     val timer = metrics.uninstallScriptDuration.startTimer()
 
-    executor.executeScript(script.path, workspace, arrayOf(vdiID), buildScriptEnv()) {
+    executor.executeScript(script.path, workspace, arrayOf(datasetID.toString()), buildScriptEnv()) {
       coroutineScope {
-        val logJob = launch { LoggingOutputStream("[uninstall][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
+        val logJob = launch { LoggingOutputStream("[uninstall][$datasetID]", log).use { scriptStdErr.transferTo(it) } }
 
         waitFor(script.maxSeconds)
 
@@ -50,12 +51,12 @@ class UninstallHandler(
 
         when (installStatus) {
           ExitStatus.UninstallData.Success -> {
-            log.info("uninstall script completed successfully for VDI dataset ID {}", vdiID)
+            log.info("uninstall script completed successfully for VDI dataset ID {}", datasetID)
             wipeDatasetDir()
           }
 
           else -> {
-            log.error("uninstall script failed for VDI dataset ID {}", vdiID)
+            log.error("uninstall script failed for VDI dataset ID {}", datasetID)
             throw IllegalStateException("uninstall script failed with an unexpected exit code ${exitCode()}")
           }
         }
@@ -78,7 +79,7 @@ class UninstallHandler(
     log.debug("attempting to delete dataset directory {}", datasetInstallPath)
 
     datasetInstallPath
-      .moveTo(datasetInstallPath.parent.resolve("deleting-$vdiID-${LocalDateTime.now().format(dateFormat)}"))
+      .moveTo(datasetInstallPath.parent.resolve("deleting-$datasetID-${LocalDateTime.now().format(dateFormat)}"))
       .deleteRecursively()
 
     log.info("deleted dataset directory {}", datasetInstallPath)

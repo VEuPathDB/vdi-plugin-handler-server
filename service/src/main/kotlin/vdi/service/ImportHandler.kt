@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import org.veupathdb.vdi.lib.common.DatasetManifestFilename
 import org.veupathdb.vdi.lib.common.DatasetMetaFilename
 import org.veupathdb.vdi.lib.common.compression.Zip
+import org.veupathdb.vdi.lib.common.field.DatasetID
 import org.veupathdb.vdi.lib.common.model.VDIDatasetFileInfoImpl
 import org.veupathdb.vdi.lib.common.model.VDIDatasetManifestImpl
 import vdi.components.io.LineListOutputStream
@@ -32,7 +33,7 @@ class ImportHandler(
   private val script: ScriptConfiguration,
   customPath: String,
   metrics: ScriptMetrics,
-) : HandlerBase<Path>(workspace, executor, customPath, metrics) {
+) : HandlerBase<Path>(details.vdiID, workspace, executor, customPath, metrics) {
   private val log = LoggerFactory.getLogger(javaClass)
 
   private val inputDirectory: Path = workspace.resolve(INPUT_DIRECTORY_NAME)

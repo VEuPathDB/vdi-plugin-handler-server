@@ -11,6 +11,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.veupathdb.vdi.lib.common.DatasetManifestFilename
 import org.veupathdb.vdi.lib.common.DatasetMetaFilename
+import org.veupathdb.vdi.lib.common.field.DatasetID
 import vdi.components.io.LineListOutputStream
 import vdi.components.io.LoggingOutputStream
 import vdi.components.metrics.ScriptMetrics
@@ -24,7 +25,7 @@ import java.io.IOException
 
 class InstallDataHandler(
   workspace: Path,
-  private val vdiID: String,
+  vdiID: DatasetID,
   private val projectID: String,
   private val payload: Path,
   private val dbDetails: DatabaseDetails,
@@ -35,7 +36,7 @@ class InstallDataHandler(
   private val dataScript: ScriptConfiguration,
   private val compatScript: ScriptConfiguration,
   metrics: ScriptMetrics,
-) : InstallationHandlerBase<List<String>>(workspace, executor, customPath, installPath, metrics) {
+) : InstallationHandlerBase<List<String>>(vdiID, workspace, executor, customPath, installPath, metrics) {
   private val log = LoggerFactory.getLogger(javaClass)
 
   init {
@@ -90,10 +91,10 @@ class InstallDataHandler(
 
   private suspend fun runInstallMeta(metaFile: Path) {
     val timer = metrics.installMetaScriptDuration.startTimer()
-    log.info("executing install-meta (for install-data) script for VDI dataset ID {}", vdiID)
-    executor.executeScript(metaScript.path, workspace, arrayOf(vdiID, metaFile.absolutePathString()), buildScriptEnv()) {
+    log.info("executing install-meta (for install-data) script for VDI dataset ID {}", datasetID)
+    executor.executeScript(metaScript.path, workspace, arrayOf(datasetID.toString(), metaFile.absolutePathString()), buildScriptEnv()) {
       coroutineScope {
-        val logJob = launch { LoggingOutputStream("[install-meta][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
+        val logJob = launch { LoggingOutputStream("[install-meta][$datasetID]", log).use { scriptStdErr.transferTo(it) } }
 
         waitFor(metaScript.maxSeconds)
 
@@ -103,11 +104,11 @@ class InstallDataHandler(
 
         when (exitCode()) {
           0 -> {
-            log.info("install-meta (for install-data) script completed successfully for VDI dataset ID {}", vdiID)
+            log.info("install-meta (for install-data) script completed successfully for VDI dataset ID {}", datasetID)
           }
 
           else -> {
-            log.error("install-meta (for install-data) script failed for VDI dataset ID {}", vdiID)
+            log.error("install-meta (for install-data) script failed for VDI dataset ID {}", datasetID)
             throw IllegalStateException("install-meta (for install-data) script failed with unexpected exit code ${exitCode()}")
           }
         }
@@ -118,7 +119,7 @@ class InstallDataHandler(
   }
 
   private suspend fun runCheckDependencies(metaFile: Path) {
-    log.info("executing check-compatibility script for VDI dataset ID {}", vdiID)
+    log.info("executing check-compatibility script for VDI dataset ID {}", datasetID)
     val timer    = metrics.checkCompatScriptDuration.startTimer()
     val warnings = ArrayList<String>()
     val meta     = JSON.readValue<VDIDatasetMeta>(metaFile.inputStream())
@@ -131,7 +132,7 @@ class InstallDataHandler(
     ) {
       coroutineScope {
 
-        val logJob  = launch { LoggingOutputStream("[check-compatibility][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
+        val logJob  = launch { LoggingOutputStream("[check-compatibility][$datasetID]", log).use { scriptStdErr.transferTo(it) } }
         val warnJob = launch { LineListOutputStream(warnings).use { scriptStdOut.transferTo(it) } }
 
         val osw = OutputStreamWriter(scriptStdIn)
@@ -166,16 +167,16 @@ class InstallDataHandler(
 
         when (compatStatus) {
           ExitStatus.CheckCompatibility.Success -> {
-            log.info("check-compatibility script completed successfully for dataset ID {}", vdiID)
+            log.info("check-compatibility script completed successfully for dataset ID {}", datasetID)
           }
 
           ExitStatus.CheckCompatibility.Incompatible -> {
-            log.info("check-compatibility script completed with 'incompatible' for dataset ID {}", vdiID)
+            log.info("check-compatibility script completed with 'incompatible' for dataset ID {}", datasetID)
             throw CompatibilityError(warnings)
           }
 
           else -> {
-            log.error("check-compatibility script failed for dataset ID {}", vdiID)
+            log.error("check-compatibility script failed for dataset ID {}", datasetID)
             throw IllegalStateException("check-compatibility script failed with exit code ${exitCode()}")
           }
         }
@@ -185,16 +186,16 @@ class InstallDataHandler(
   }
 
   private suspend fun runInstallData(installDir: Path, warnings: MutableList<String>) {
-    log.info("executing install-data script for VDI dataset ID {}", vdiID)
+    log.info("executing install-data script for VDI dataset ID {}", datasetID)
     val timer = metrics.installDataScriptDuration.startTimer()
     executor.executeScript(
       dataScript.path,
       workspace,
-      arrayOf(vdiID, installDir.absolutePathString()),
+      arrayOf(datasetID.toString(), installDir.absolutePathString()),
       buildScriptEnv()
     ) {
       coroutineScope {
-        val job1 = launch { LoggingOutputStream("[install-data][$vdiID]", log).use { scriptStdErr.transferTo(it) } }
+        val job1 = launch { LoggingOutputStream("[install-data][$datasetID]", log).use { scriptStdErr.transferTo(it) } }
         val job2 = launch { LineListOutputStream(warnings).use { scriptStdOut.transferTo(it) } }
 
         waitFor(dataScript.maxSeconds)
@@ -208,16 +209,16 @@ class InstallDataHandler(
 
         when (installStatus) {
           ExitStatus.InstallData.Success -> {
-            log.info("install-data script completed successfully for VDI dataset ID {}", vdiID)
+            log.info("install-data script completed successfully for VDI dataset ID {}", datasetID)
           }
 
           ExitStatus.InstallData.ValidationFailure -> {
-            log.info("install-data script refused to install VDI dataset {} for validation errors", vdiID)
+            log.info("install-data script refused to install VDI dataset {} for validation errors", datasetID)
             throw ValidationError(warnings)
           }
 
           else -> {
-            log.error("install-data script failed for VDI dataset ID {}", vdiID)
+            log.error("install-data script failed for VDI dataset ID {}", datasetID)
             throw IllegalStateException("install-data script failed with unexpected exit code ${exitCode()}")
           }
         }
@@ -230,8 +231,8 @@ class InstallDataHandler(
     val metaFile = installDir.resolve(DatasetMetaFilename)
 
     if (!metaFile.exists()) {
-      log.error("no meta file was found in the install directory for VDI dataset {}", vdiID)
-      throw IllegalStateException("no meta file was found in the install directory for VDI dataset $vdiID")
+      log.error("no meta file was found in the install directory for VDI dataset {}", datasetID)
+      throw IllegalStateException("no meta file was found in the install directory for VDI dataset $datasetID")
     }
 
     return metaFile

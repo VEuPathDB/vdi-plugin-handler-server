@@ -6,6 +6,8 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
+import org.veupathdb.vdi.lib.common.field.DatasetID
+import org.veupathdb.vdi.lib.common.field.ProjectID
 import org.veupathdb.vdi.lib.json.JSON
 import java.nio.file.Path
 import vdi.components.http.errors.BadRequestException
@@ -14,7 +16,7 @@ import vdi.consts.FieldName
 import vdi.util.withTempDirectory
 
 suspend fun ApplicationCall.withUninstallContext(
-  fn: suspend (workspace: Path, vdiID: String, projectID: String) -> Unit
+  fn: suspend (workspace: Path, vdiID: DatasetID, projectID: String) -> Unit
 ) {
   if (!request.contentType().match(ContentType.Application.Json))
     throw UnsupportedMediaTypeException()
@@ -37,8 +39,8 @@ private suspend fun ApplicationCall.parseBody(): UninstallRequestBody {
 @JsonIgnoreProperties(ignoreUnknown = true)
 private data class UninstallRequestBody(
   @JsonProperty(FieldName.VDIID)
-  val vdiID: String,
+  val vdiID: DatasetID,
 
   @JsonProperty(FieldName.ProjectID)
-  val projectID: String,
+  val projectID: ProjectID,
 )

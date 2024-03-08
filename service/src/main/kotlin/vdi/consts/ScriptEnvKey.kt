@@ -9,4 +9,5 @@ object ScriptEnvKey {
   const val DBSchema = "DB_SCHEMA"
   const val DBPlatform = "DB_PLATFORM"
   const val InstallPath = "DATA_FILES"
+  const val DatasetID = "VDI_ID"
 }

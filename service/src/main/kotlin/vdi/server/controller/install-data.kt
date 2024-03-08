@@ -25,7 +25,7 @@ suspend fun ApplicationCall.handleInstallDataRequest(appCtx: ApplicationContext)
           dbDetails    = dbDetails,
           executor     = appCtx.executor,
           customPath   = appCtx.config.service.customPath,
-          installPath  = appCtx.pathFactory.makePath(details.projectID, details.vdiID),
+          installPath  = appCtx.pathFactory.makePath(details.projectID, details.vdiID.toString()),
           metaScript   = appCtx.config.service.installMetaScript,
           dataScript   = appCtx.config.service.installDataScript,
           compatScript = appCtx.config.service.checkCompatScript,
