@@ -19,7 +19,7 @@ class ScriptExecutorImpl : ScriptExecutor {
     }.start()
 
     val out = try {
-      fn(ScriptProcessImpl(rawProcess))
+      fn(ScriptProcessImpl(command, rawProcess))
     } finally {
       rawProcess.waitFor()
     }

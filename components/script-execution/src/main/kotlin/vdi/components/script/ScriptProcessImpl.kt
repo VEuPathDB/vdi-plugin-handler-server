@@ -5,7 +5,7 @@ import java.io.OutputStream
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.seconds
 
-class ScriptProcessImpl(private val raw: Process) : ScriptProcess {
+class ScriptProcessImpl(private val command: String, private val raw: Process) : ScriptProcess {
   override val scriptStdOut: InputStream
     get() = raw.inputStream
 
@@ -20,8 +20,7 @@ class ScriptProcessImpl(private val raw: Process) : ScriptProcess {
       if (!raw.waitFor(timeoutSeconds, TimeUnit.SECONDS)) {
         raw.destroyForcibly()
         throw IllegalStateException(
-          "command " +
-            raw.info().command().get() +
+          "command " + command +
             " exceeded the configured maximum allowed execution time of " +
             timeoutSeconds.seconds
         )
