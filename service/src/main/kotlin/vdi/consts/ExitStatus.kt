@@ -9,7 +9,7 @@ object ExitStatus {
     Unknown(null, "unknown");
 
     companion object {
-      fun fromCode(code: Int) = values().find { it.code == code } ?: Unknown
+      fun fromCode(code: Int) = entries.find { it.code == code } ?: Unknown
     }
   }
 
@@ -19,7 +19,7 @@ object ExitStatus {
     Unknown(null ,"unknown");
 
     companion object {
-      fun fromCode(code: Int) = values().find { it.code == code } ?: Unknown
+      fun fromCode(code: Int) = entries.find { it.code == code } ?: Unknown
     }
   }
 
@@ -28,7 +28,7 @@ object ExitStatus {
     Unknown(null, "unknown");
 
     companion object {
-      fun fromCode(code: Int) = values().find { it.code == code } ?: Unknown
+      fun fromCode(code: Int) = entries.find { it.code == code } ?: Unknown
     }
   }
 
@@ -37,7 +37,7 @@ object ExitStatus {
     Unknown(null, "unknown");
 
     companion object {
-      fun fromCode(code: Int) = values().find { it.code == code } ?: Unknown
+      fun fromCode(code: Int) = entries.find { it.code == code } ?: Unknown
     }
   }
 
@@ -47,7 +47,7 @@ object ExitStatus {
     Unknown(null, "unknown");
 
     companion object {
-      fun fromCode(code: Int) = values().find { it.code == code } ?: Unknown
+      fun fromCode(code: Int) = entries.find { it.code == code } ?: Unknown
     }
   }
 }
