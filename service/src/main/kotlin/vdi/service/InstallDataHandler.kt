@@ -101,7 +101,7 @@ class InstallDataHandler(
 
         logJob.join()
 
-        metrics.installMetaCalls.labels(exitCode().toString()).inc()
+        metrics.installMetaCalls.labels(ExitStatus.InstallMeta.fromCode(exitCode()).metricFriendlyName).inc()
 
         when (exitCode()) {
           0 -> {
