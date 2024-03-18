@@ -30,4 +30,4 @@ RUN apt-get update && apt-get install -y wget tzdata \
 COPY startup.sh startup.sh
 COPY --from=build /project/service/build/libs/service.jar service.jar
 
-CMD chmod +x startup.sh && /startup.sh
+CMD /startup.sh
