@@ -11,6 +11,7 @@ import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
 import vdi.consts.ExitStatus
 import vdi.model.DatabaseDetails
+import vdi.util.DoubleFmt
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.io.path.ExperimentalPathApi
@@ -51,7 +52,8 @@ class UninstallHandler(
 
         when (installStatus) {
           ExitStatus.UninstallData.Success -> {
-            log.info("uninstall script completed successfully for VDI dataset ID {}", datasetID)
+            val dur = timer.observeDuration()
+            log.info("uninstall script completed successfully for VDI dataset ID {} in {} seconds", datasetID, DoubleFmt.format(dur))
             wipeDatasetDir()
           }
 
@@ -62,8 +64,6 @@ class UninstallHandler(
         }
       }
     }
-
-    timer.observeDuration()
   }
 
   override fun appendScriptEnv(env: MutableMap<String, String>) {

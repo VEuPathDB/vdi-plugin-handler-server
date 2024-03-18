@@ -18,6 +18,7 @@ import vdi.conf.ScriptConfiguration
 import vdi.consts.ExitStatus
 import vdi.consts.FileName
 import vdi.model.DatabaseDetails
+import vdi.util.DoubleFmt
 
 class InstallMetaHandler(
   workspace: Path,
@@ -55,7 +56,8 @@ class InstallMetaHandler(
 
         when (installMetaStatus) {
           ExitStatus.InstallMeta.Success -> {
-            log.info("install-meta script completed successfully for VDI dataset ID {}", datasetID)
+            val dur = timer.observeDuration()
+            log.info("install-meta script completed successfully for VDI dataset ID {} in {} seconds", datasetID, DoubleFmt.format(dur))
           }
 
           else -> {
@@ -65,8 +67,6 @@ class InstallMetaHandler(
         }
       }
     }
-
-    timer.observeDuration()
   }
 
   override fun appendScriptEnv(env: MutableMap<String, String>) {

@@ -20,6 +20,7 @@ import vdi.conf.ScriptConfiguration
 import vdi.consts.ExitStatus
 import vdi.consts.FileName
 import vdi.model.DatabaseDetails
+import vdi.util.DoubleFmt
 import vdi.util.unpackAsZip
 import java.io.IOException
 
@@ -104,7 +105,8 @@ class InstallDataHandler(
 
         when (exitCode()) {
           0 -> {
-            log.info("install-meta (for install-data) script completed successfully for VDI dataset ID {}", datasetID)
+            val dur = timer.observeDuration()
+            log.info("install-meta (for install-data) script completed successfully for VDI dataset ID {} in {} seconds", datasetID, DoubleFmt.format(dur))
           }
 
           else -> {
@@ -114,8 +116,6 @@ class InstallDataHandler(
         }
       }
     }
-
-    timer.observeDuration()
   }
 
   private suspend fun runCheckDependencies(metaFile: Path) {
@@ -167,7 +167,8 @@ class InstallDataHandler(
 
         when (compatStatus) {
           ExitStatus.CheckCompatibility.Success -> {
-            log.info("check-compatibility script completed successfully for dataset ID {}", datasetID)
+            val dur = timer.observeDuration()
+            log.info("check-compatibility script completed successfully for dataset ID {} in {} seconds", datasetID, DoubleFmt.format(dur))
           }
 
           ExitStatus.CheckCompatibility.Incompatible -> {
@@ -182,7 +183,6 @@ class InstallDataHandler(
         }
       }
     }
-    timer.observeDuration()
   }
 
   private suspend fun runInstallData(installDir: Path, warnings: MutableList<String>) {
@@ -209,7 +209,8 @@ class InstallDataHandler(
 
         when (installStatus) {
           ExitStatus.InstallData.Success -> {
-            log.info("install-data script completed successfully for VDI dataset ID {}", datasetID)
+            val dur = timer.observeDuration()
+            log.info("install-data script completed successfully for VDI dataset ID {} in {} seconds", datasetID, DoubleFmt.format(dur))
           }
 
           ExitStatus.InstallData.ValidationFailure -> {
@@ -224,7 +225,6 @@ class InstallDataHandler(
         }
       }
     }
-    timer.observeDuration()
   }
 
   private fun requireMetaFile(installDir: Path): Path {

@@ -19,6 +19,7 @@ import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
 import vdi.consts.ExitStatus
 import vdi.server.model.ImportDetails
+import vdi.util.DoubleFmt
 
 private const val INPUT_DIRECTORY_NAME  = "input"
 private const val OUTPUT_DIRECTORY_NAME = "output"
@@ -129,7 +130,10 @@ class ImportHandler(
 
         when (importStatus) {
           ExitStatus.Import.Success
-          -> log.info("import script completed successfully for dataset {}", details.vdiID)
+          -> {
+            val dur = timer.observeDuration()
+            log.info("import script completed successfully for dataset {} in {} seconds", details.vdiID, DoubleFmt.format(dur))
+          }
 
           ExitStatus.Import.ValidationFailure
           -> throw ValidationError(warnings)
@@ -141,8 +145,6 @@ class ImportHandler(
         warnings
       }
     }
-
-    timer.observeDuration()
 
     return warnings
   }
