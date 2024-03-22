@@ -9,7 +9,6 @@ import kotlinx.coroutines.launch
 import org.veupathdb.vdi.lib.common.DatasetManifestFilename
 import org.veupathdb.vdi.lib.common.DatasetMetaFilename
 import org.veupathdb.vdi.lib.common.compression.Zip
-import org.veupathdb.vdi.lib.common.field.DatasetID
 import org.veupathdb.vdi.lib.common.model.VDIDatasetFileInfoImpl
 import org.veupathdb.vdi.lib.common.model.VDIDatasetManifestImpl
 import vdi.components.io.LineListOutputStream
@@ -69,11 +68,12 @@ class ImportHandler(
    * @return A collection of the names of the files that were unpacked into the
    * input directory.
    */
-  private fun unpackInput(): Collection<Path> {
+  private fun unpackInput(): Collection<Pair<Path, Long>> {
     Zip.zipEntries(inputFile).forEach { (entry, inp) ->
       val file = inputDirectory.resolve(entry.name)
       file.outputStream().use { out -> inp.transferTo(out) }
     }
+
     inputFile.deleteExisting()
 
     val inputFiles = inputDirectory.listDirectoryEntries()
@@ -81,7 +81,7 @@ class ImportHandler(
     if (inputFiles.isEmpty())
       throw EmptyInputError()
 
-    return inputFiles
+    return inputFiles.map { it to it.fileSize() }
   }
 
   /**
@@ -161,7 +161,7 @@ class ImportHandler(
     return outputFiles
   }
 
-  private fun writeManifestFile(inputFiles: Collection<Path>, outputFiles: Collection<Path>) =
+  private fun writeManifestFile(inputFiles: Collection<Pair<Path, Long>>, outputFiles: Collection<Path>) =
     outputDirectory.resolve(DatasetManifestFilename)
       .createFile()
       .apply { outputStream().use { JSON.writeValue(it, buildManifest(inputFiles, outputFiles)) } }
@@ -176,17 +176,15 @@ class ImportHandler(
       .createFile()
       .apply { outputStream().use { JSON.writeValue(it, WarningsFile(warnings)) } }
 
-  private fun buildManifest(inputFiles: Collection<Path>, outputFiles: Collection<Path>) =
+  private fun buildManifest(inputFiles: Collection<Pair<Path, Long>>, outputFiles: Collection<Path>) =
     VDIDatasetManifestImpl(
-      inputFiles = inputFiles.map { VDIDatasetFileInfoImpl(it.name, it.fileSize()) },
+      inputFiles = inputFiles.map { VDIDatasetFileInfoImpl(it.first.name, it.second) },
       dataFiles = outputFiles.map { VDIDatasetFileInfoImpl(it.name, it.fileSize()) },
     )
 
   class EmptyInputError : RuntimeException("input archive contained no files")
 
   class ValidationError(val warnings: Collection<String>) : RuntimeException()
-
-  data class Manifest(val inputFiles: Collection<String>, val dataFiles: Collection<String>)
 
   data class WarningsFile(val warnings: Collection<String>)
 }

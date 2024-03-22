@@ -259,9 +259,8 @@ $ import /path/to/inputs /path/to/outputs
 ----
 
 The input directory path will point to a temp directory that is populated with
-the raw input files that will exist for the duration of the execution of the
-import script.  After the import script has exited, the input directory will be
-deleted.
+the raw input files.  After the import script has exited, the input directory
+will be deleted.
 
 [TIP]
 --
