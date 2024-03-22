@@ -65,8 +65,9 @@ class ImportHandler(
    * Unpacks the given input archive into the input directory and ensures that
    * the archive contained at least one input file.
    *
-   * @return A collection of the names of the files that were unpacked into the
-   * input directory.
+   * @return A collection of [Pair]s containing the paths to the files in the
+   * input directory paired with the sizes of those files.  The sizes are used
+   * to build the `vdi-manifest.json` file.
    */
   private fun unpackInput(): Collection<Pair<Path, Long>> {
     Zip.zipEntries(inputFile).forEach { (entry, inp) ->
