@@ -30,27 +30,17 @@ dependencies {
   implementation(project(":components:metrics"))
   implementation(project(":components:script-execution"))
 
-  implementation("org.veupathdb.vdi:vdi-component-json:1.0.0")
-  implementation("org.veupathdb.vdi:vdi-component-common:8.1.0")
+  implementation("org.veupathdb.vdi:vdi-component-json:1.0.2")
+  implementation("org.veupathdb.vdi:vdi-component-common:10.1.0")
 
-  implementation("io.ktor:ktor-server-core-jvm:2.3.5")
-  implementation("io.ktor:ktor-server-netty-jvm:2.3.5")
-  implementation("io.ktor:ktor-server-metrics-micrometer:2.3.5")
+  implementation("io.ktor:ktor-server-core-jvm:2.3.10")
+  implementation("io.ktor:ktor-server-netty-jvm:2.3.10")
+  implementation("io.ktor:ktor-server-metrics-micrometer:2.3.10")
 
   implementation("org.slf4j:slf4j-api:1.7.36")
-  implementation("org.apache.logging.log4j:log4j-core:2.20.0")
-  implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.20.0")
-  implementation("org.apache.logging.log4j:log4j-iostreams:2.20.0")
-
-  implementation("io.micrometer:micrometer-registry-prometheus:1.10.5")
-
-  implementation("com.fasterxml.jackson.core:jackson-core:2.14.2")
-  implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
-  implementation("com.fasterxml.jackson.core:jackson-annotations:2.14.2")
-  implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
-  implementation("com.fasterxml.jackson.module:jackson-module-parameter-names:2.14.2")
-  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2")
-  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.14.2")
+  implementation("org.apache.logging.log4j:log4j-core:2.23.1")
+  implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.23.1")
+  implementation("org.apache.logging.log4j:log4j-iostreams:2.23.1")
 
   testImplementation(kotlin("test"))
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")

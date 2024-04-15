@@ -1,31 +1,29 @@
 package vdi.server.controller
 
 import io.ktor.server.application.*
+import org.veupathdb.vdi.lib.common.intra.WarningResponse
 import vdi.model.ApplicationContext
 import vdi.server.context.withDatabaseDetails
 import vdi.server.context.withInstallDataContext
-import vdi.server.model.InstallDataSuccessResponse
-import vdi.server.model.WarningsListResponse
 import vdi.server.respondJSON200
 import vdi.server.respondJSON418
 import vdi.server.respondJSON420
 import vdi.service.InstallDataHandler
 
 suspend fun ApplicationCall.handleInstallDataRequest(appCtx: ApplicationContext) {
-  withInstallDataContext { workspace, details, payload ->
-    withDatabaseDetails(appCtx.config.databases, appCtx.ldap, details.projectID) { dbDetails ->
+  withInstallDataContext { workspace, request, payload ->
+    withDatabaseDetails(appCtx.config.databases, appCtx.ldap, request.projectID) { dbDetails ->
       try {
         // Run the install-data service and collect the returned list of
         // installation warnings.
         val warnings = InstallDataHandler(
           workspace    = workspace,
-          vdiID        = details.vdiID,
-          projectID    = details.projectID,
+          request      = request,
           payload      = payload,
           dbDetails    = dbDetails,
           executor     = appCtx.executor,
           customPath   = appCtx.config.service.customPath,
-          installPath  = appCtx.pathFactory.makePath(details.projectID, details.vdiID.toString()),
+          installPath  = appCtx.pathFactory.makePath(request.projectID, request.vdiID),
           metaScript   = appCtx.config.service.installMetaScript,
           dataScript   = appCtx.config.service.installDataScript,
           compatScript = appCtx.config.service.checkCompatScript,
@@ -33,11 +31,11 @@ suspend fun ApplicationCall.handleInstallDataRequest(appCtx: ApplicationContext)
         )
           .run()
 
-        respondJSON200(InstallDataSuccessResponse(warnings))
+        respondJSON200(WarningResponse(warnings))
       } catch (e: InstallDataHandler.ValidationError) {
-        respondJSON418(WarningsListResponse(e.warnings))
+        respondJSON418(WarningResponse(e.warnings))
       } catch (e: InstallDataHandler.CompatibilityError) {
-        respondJSON420(WarningsListResponse(e.warnings))
+        respondJSON420(WarningResponse(e.warnings))
       }
     }
   }

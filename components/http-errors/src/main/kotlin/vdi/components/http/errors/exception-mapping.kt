@@ -25,30 +25,12 @@ suspend fun PipelineContext<*, ApplicationCall>.withExceptionMapping(
         )
       }
 
-      is NotFoundException -> {
-        log.debug("Thrown 404 exception.", e)
-        call.respondText(
-          SimpleErrorResponse(e.message ?: "null").toJSONString(),
-          ContentType.Application.Json,
-          HttpStatusCode.NotFound,
-        )
-      }
-
       is UnsupportedMediaTypeException -> {
         log.debug("Thrown 415 exception.", e)
         call.respondText(
           SimpleErrorResponse(e.message ?: "null").toJSONString(),
           ContentType.Application.Json,
           HttpStatusCode.UnsupportedMediaType,
-        )
-      }
-
-      is InternalServerException -> {
-        log.warn("Thrown 500 exception.", e)
-        call.respondText(
-          SimpleErrorResponse(e.message ?: "null").toJSONString(),
-          ContentType.Application.Json,
-          HttpStatusCode.InternalServerError,
         )
       }
 

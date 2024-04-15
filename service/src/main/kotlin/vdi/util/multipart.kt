@@ -30,7 +30,7 @@ fun <T : Any> PartData.parseAsJson(maxInputSize: ULong, type: KClass<T>): T =
       parseStringAsJson(this, type)
   }
 
-private fun <T : Any> PartData.parseStringAsJson(stream: InputStream, type: KClass<T>): T =
+private fun <T : Any> parseStringAsJson(stream: InputStream, type: KClass<T>): T =
   stream.use {
     val body = InputStreamReader(it).readText()
 
@@ -42,7 +42,7 @@ private fun <T : Any> PartData.parseStringAsJson(stream: InputStream, type: KCla
     }
   }
 
-private fun <T : Any> PartData.parseStreamAsJson(stream: InputStream, type: KClass<T>): T =
+private fun <T : Any> parseStreamAsJson(stream: InputStream, type: KClass<T>): T =
   stream.use {
     try {
       JSON.readValue(stream, type.java)

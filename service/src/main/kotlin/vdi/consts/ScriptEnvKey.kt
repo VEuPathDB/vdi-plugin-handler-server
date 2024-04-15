@@ -10,4 +10,8 @@ object ScriptEnvKey {
   const val DBPlatform = "DB_PLATFORM"
   const val InstallPath = "DATA_FILES"
   const val DatasetID = "VDI_ID"
+
+  const val ProjectID = "PROJECT_ID"
+
+  const val JobID = "VDI_JOB_ID"
 }

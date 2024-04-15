@@ -11,7 +11,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.veupathdb.vdi.lib.common.DatasetManifestFilename
 import org.veupathdb.vdi.lib.common.DatasetMetaFilename
-import org.veupathdb.vdi.lib.common.field.DatasetID
+import org.veupathdb.vdi.lib.common.intra.InstallDataRequest
 import vdi.components.io.LineListOutputStream
 import vdi.components.io.LoggingOutputStream
 import vdi.components.metrics.ScriptMetrics
@@ -26,10 +26,9 @@ import java.io.IOException
 
 class InstallDataHandler(
   workspace: Path,
-  vdiID: DatasetID,
-  private val projectID: String,
+  request: InstallDataRequest,
   private val payload: Path,
-  private val dbDetails: DatabaseDetails,
+  dbDetails: DatabaseDetails,
   executor: ScriptExecutor,
   customPath: String,
   installPath: Path,
@@ -37,25 +36,20 @@ class InstallDataHandler(
   private val dataScript: ScriptConfiguration,
   private val compatScript: ScriptConfiguration,
   metrics: ScriptMetrics,
-) : InstallationHandlerBase<List<String>>(vdiID, workspace, executor, customPath, installPath, metrics) {
+) : InstallationHandlerBase<List<String>>(
+  request.vdiID,
+  request.jobID,
+  request.projectID,
+  workspace,
+  executor,
+  customPath,
+  installPath,
+  metrics,
+  dbDetails
+) {
   private val log = LoggerFactory.getLogger(javaClass)
 
-  init {
-    log.trace(
-      "::init(workspace={}, vdiID={}, projectID={}, payload={}, dbDetails={}, executor={}, metaScript={}, dataScript={}, metrics={})",
-      workspace,
-      vdiID,
-      projectID,
-      payload,
-      dbDetails,
-      executor,
-      metaScript,
-      dataScript,
-      metrics,
-    )
-  }
-
-  override suspend fun run() : List<String> {
+  override suspend fun runJob() : List<String> {
     log.trace("processInstall()")
 
     val installDir = workspace.resolve(FileName.InstallDirName)
@@ -84,12 +78,6 @@ class InstallDataHandler(
     return warnings
   }
 
-  override fun appendScriptEnv(env: MutableMap<String, String>) {
-    super.appendScriptEnv(env)
-    env.putAll(dbDetails.toEnvMap())
-    env["PROJECT_ID"] = projectID
-  }
-
   private suspend fun runInstallMeta(metaFile: Path) {
     val timer = metrics.installMetaScriptDuration.startTimer()
     log.info("executing install-meta (for install-data) script for VDI dataset ID {}", datasetID)
@@ -106,12 +94,13 @@ class InstallDataHandler(
         when (exitCode()) {
           0 -> {
             val dur = timer.observeDuration()
-            log.info("install-meta (for install-data) script completed successfully for VDI dataset ID {} in {} seconds", datasetID, DoubleFmt.format(dur))
+            log.info("install-meta (for install-data) script completed successfully for dataset {} in {} seconds", datasetID, DoubleFmt.format(dur))
           }
 
           else -> {
-            log.error("install-meta (for install-data) script failed for VDI dataset ID {}", datasetID)
-            throw IllegalStateException("install-meta (for install-data) script failed with unexpected exit code ${exitCode()}")
+            val err = "install-meta (for install-data) script failed for dataset $datasetID with exit code ${exitCode()}"
+            log.error(err)
+            throw IllegalStateException(err)
           }
         }
       }
@@ -177,8 +166,9 @@ class InstallDataHandler(
           }
 
           else -> {
-            log.error("check-compatibility script failed for dataset ID {}", datasetID)
-            throw IllegalStateException("check-compatibility script failed with exit code ${exitCode()}")
+            val err = "check-compatibility script failed for dataset $datasetID with exit code ${exitCode()}"
+            log.error(err)
+            throw IllegalStateException(err)
           }
         }
       }
@@ -219,8 +209,9 @@ class InstallDataHandler(
           }
 
           else -> {
-            log.error("install-data script failed for VDI dataset ID {}", datasetID)
-            throw IllegalStateException("install-data script failed with unexpected exit code ${exitCode()}")
+            val err = "install-data script failed for dataset $datasetID with exit code ${exitCode()}"
+            log.error(err)
+            throw IllegalStateException(err)
           }
         }
       }

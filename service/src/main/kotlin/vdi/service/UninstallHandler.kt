@@ -4,7 +4,7 @@ import org.slf4j.LoggerFactory
 import java.nio.file.Path
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import org.veupathdb.vdi.lib.common.field.DatasetID
+import org.veupathdb.vdi.lib.common.intra.UninstallRequest
 import vdi.components.io.LoggingOutputStream
 import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
@@ -23,17 +23,27 @@ private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
 
 class UninstallHandler(
   workspace: Path,
-  datasetID: DatasetID,
-  private val dbDetails: DatabaseDetails,
+  request: UninstallRequest,
+  dbDetails: DatabaseDetails,
   executor:  ScriptExecutor,
   customPath: String,
   installPath: Path,
   private val script: ScriptConfiguration,
   metrics: ScriptMetrics,
-) : InstallationHandlerBase<Unit>(datasetID, workspace, executor, customPath, installPath, metrics) {
+) : InstallationHandlerBase<Unit>(
+  request.vdiID,
+  request.jobID,
+  request.projectID,
+  workspace,
+  executor,
+  customPath,
+  installPath,
+  metrics,
+  dbDetails
+) {
   private val log = LoggerFactory.getLogger(javaClass)
 
-  override suspend fun run() {
+  override suspend fun runJob() {
     log.info("executing uninstall script for VDI dataset ID {}", datasetID)
 
     val timer = metrics.uninstallScriptDuration.startTimer()
@@ -53,22 +63,18 @@ class UninstallHandler(
         when (installStatus) {
           ExitStatus.UninstallData.Success -> {
             val dur = timer.observeDuration()
-            log.info("uninstall script completed successfully for VDI dataset ID {} in {} seconds", datasetID, DoubleFmt.format(dur))
+            log.info("uninstall script completed successfully for dataset {} in {} seconds", datasetID, DoubleFmt.format(dur))
             wipeDatasetDir()
           }
 
           else -> {
-            log.error("uninstall script failed for VDI dataset ID {}", datasetID)
-            throw IllegalStateException("uninstall script failed with an unexpected exit code ${exitCode()}")
+            val err = "uninstall script failed for dataset $datasetID with exit code ${exitCode()}"
+            log.error(err)
+            throw IllegalStateException(err)
           }
         }
       }
     }
-  }
-
-  override fun appendScriptEnv(env: MutableMap<String, String>) {
-    super.appendScriptEnv(env)
-    env.putAll(dbDetails.toEnvMap())
   }
 
   @OptIn(ExperimentalPathApi::class)
