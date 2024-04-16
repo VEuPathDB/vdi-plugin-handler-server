@@ -7,21 +7,18 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.veupathdb.vdi.lib.common.intra.InstallMetaRequest
 import org.veupathdb.vdi.lib.json.JSON
-import java.nio.file.Path
 import vdi.components.http.errors.BadRequestException
 import vdi.components.http.errors.UnsupportedMediaTypeException
 import vdi.components.io.BoundedInputStream
-import vdi.consts.FieldName
-import vdi.server.model.InstallMetaRequest
 import vdi.util.withTempDirectory
+import java.nio.file.Path
 
 // Max allowed size of the post body: 32KiB
 private const val MAX_INPUT_BYTES = 32768uL
 
-suspend fun ApplicationCall.withInstallMetaContext(
-  fn: suspend (workspace: Path, request: InstallMetaRequest) -> Unit
-) {
+suspend fun ApplicationCall.withInstallMetaContext(fn: suspend (workspace: Path, request: InstallMetaRequest) -> Unit) {
   if (!request.contentType().match(ContentType.Application.Json))
     throw UnsupportedMediaTypeException()
 

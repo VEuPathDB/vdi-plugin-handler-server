@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import org.veupathdb.vdi.lib.common.DatasetManifestFilename
 import org.veupathdb.vdi.lib.common.DatasetMetaFilename
 import org.veupathdb.vdi.lib.common.compression.Zip
+import org.veupathdb.vdi.lib.common.intra.ImportRequest
 import org.veupathdb.vdi.lib.common.model.VDIDatasetFileInfoImpl
 import org.veupathdb.vdi.lib.common.model.VDIDatasetManifestImpl
 import vdi.components.io.LineListOutputStream
@@ -17,7 +18,6 @@ import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
 import vdi.consts.ExitStatus
-import vdi.server.model.ImportDetails
 import vdi.util.DoubleFmt
 
 private const val INPUT_DIRECTORY_NAME  = "input"
@@ -28,12 +28,12 @@ private const val OUTPUT_FILE_NAME      = "output.zip"
 class ImportHandler(
   workspace: Path,
   private val inputFile: Path,
-  private val details: ImportDetails,
+  private val details: ImportRequest,
   executor:  ScriptExecutor,
   private val script: ScriptConfiguration,
   customPath: String,
   metrics: ScriptMetrics,
-) : HandlerBase<Path>(details.vdiID, workspace, executor, customPath, metrics) {
+) : HandlerBase<Path>(details.vdiID, details.jobID, workspace, executor, customPath, metrics) {
   private val log = LoggerFactory.getLogger(javaClass)
 
   private val inputDirectory: Path = workspace.resolve(INPUT_DIRECTORY_NAME)
@@ -92,10 +92,10 @@ class ImportHandler(
    * exception.
    *
    * If the import script returns a status code of
-   * [ExitStatus.ImportScriptSuccess], this method returns normally.
+   * [ExitStatus.Import.Success], this method returns normally.
    *
    * If the import script returns a status code of
-   * [ExitStatus.ImportScriptValidationFailure], this method will throw a
+   * [ExitStatus.Import.ValidationFailure], this method will throw a
    * [ValidationError] exception.
    *
    * If the import script returns any other status code, this method will throw
@@ -130,17 +130,21 @@ class ImportHandler(
         metrics.importScriptCalls.labels(importStatus.metricFriendlyName).inc()
 
         when (importStatus) {
-          ExitStatus.Import.Success
-          -> {
+          ExitStatus.Import.Success -> {
             val dur = timer.observeDuration()
             log.info("import script completed successfully for dataset {} in {} seconds", details.vdiID, DoubleFmt.format(dur))
           }
 
-          ExitStatus.Import.ValidationFailure
-          -> throw ValidationError(warnings)
+          ExitStatus.Import.ValidationFailure -> {
+            log.info("import script rejected dataset {} for validation error(s)", datasetID)
+            throw ValidationError(warnings)
+          }
 
-          else
-          -> throw IllegalStateException("import script failed with unexpected exit code ${exitCode()}")
+          else -> {
+            val err = "import script failed for dataset $datasetID with exit code ${exitCode()}"
+            log.error(err)
+            throw IllegalStateException(err)
+          }
         }
 
         warnings

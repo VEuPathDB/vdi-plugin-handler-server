@@ -1,37 +1,31 @@
 package vdi.server.context
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.util.*
-import io.ktor.utils.io.jvm.javaio.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.veupathdb.vdi.lib.json.JSON
+import org.veupathdb.vdi.lib.common.intra.ImportRequest
+import vdi.components.http.errors.BadRequestException
+import vdi.components.http.errors.UnsupportedMediaTypeException
+import vdi.consts.FieldName
+import vdi.util.parseAsJson
+import vdi.util.withTempDirectory
 import java.nio.file.Path
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
-import vdi.components.http.errors.BadRequestException
-import vdi.components.http.errors.UnsupportedMediaTypeException
-import vdi.components.io.BoundedInputStream
-import vdi.consts.FieldName
-import vdi.server.model.ImportDetails
-import vdi.util.parseAsJson
-import vdi.util.withTempDirectory
 
-private const val IMPORT_PAYLOAD_FILE_NAME = "import.tar.gz"
+private const val IMPORT_PAYLOAD_FILE_NAME = "import.zip"
 private const val IMPORT_DETAILS_MAX_SIZE  = 16384uL
 
-suspend fun ApplicationCall.withImportContext(fn: suspend (workspace: Path, details: ImportDetails, payload: Path) -> Unit) {
+suspend fun ApplicationCall.withImportContext(fn: suspend (workspace: Path, details: ImportRequest, payload: Path) -> Unit) {
   if (!request.contentType().match(ContentType.MultiPart.FormData))
     throw UnsupportedMediaTypeException()
 
   withTempDirectory { workspace ->
-    val details: ImportDetails
+    val details: ImportRequest
     val payload: Path
 
     // Parse the body.
@@ -61,7 +55,7 @@ suspend fun ApplicationCall.withImportContext(fn: suspend (workspace: Path, deta
 @OptIn(ExperimentalContracts::class)
 private suspend fun ApplicationCall.parseMultipartBody(
   workspace: Path,
-  detailsCB: (ImportDetails) -> Unit,
+  detailsCB: (ImportRequest) -> Unit,
   payloadCB: (Path) -> Unit,
 ) {
   contract {
@@ -109,8 +103,8 @@ private suspend fun ApplicationCall.parseMultipartBody(
  * @param detailsCB Callback that will be called with an `ImportDetails`
  * instance parsed from the target `PartData`.
  */
-private fun PartData.parseImportDetails(detailsCB: (ImportDetails) -> Unit) {
-  detailsCB(parseAsJson(IMPORT_DETAILS_MAX_SIZE, ImportDetails::class))
+private fun PartData.parseImportDetails(detailsCB: (ImportRequest) -> Unit) {
+  detailsCB(parseAsJson(IMPORT_DETAILS_MAX_SIZE, ImportRequest::class))
 }
 
 /**
@@ -131,7 +125,7 @@ private fun PartData.handlePayload(workspace: Path, payloadCB: (Path) -> Unit) {
 /**
  * Validates the posted details about a dataset being import processed.
  */
-private fun ImportDetails.validate() {
+private fun ImportRequest.validate() {
   if (meta.type.name.isBlank())
     throw BadRequestException("type.name cannot be blank")
   if (meta.type.version.isBlank())

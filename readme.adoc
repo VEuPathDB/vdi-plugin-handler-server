@@ -279,8 +279,9 @@ be deleted.
 
 [%header, cols="2m,8"]
 |===
-| Variable | Description
-| VDI_ID   | ID assigned by VDI to the dataset being processed.
+| Variable   | Description
+| VDI_ID     | ID assigned by VDI to the dataset being processed.
+| VDI_JOB_ID | Generated job ID for the target script execution.
 |===
 
 ==== Outputs
@@ -404,6 +405,7 @@ The `vdi-meta.json` file will exist for the duration of the script's execution.
 | PROJECT_ID  | Project ID for the target project the dataset should be installed into.
 | DATA_FILES  | Path to the directory into which the dataset files should be installed.
 | VDI_ID      | ID assigned by VDI to the dataset being processed.
+| VDI_JOB_ID  | Generated job ID for the target script execution.
 |===
 
 [IMPORTANT]
@@ -491,6 +493,7 @@ EOF
 | DB_PLATFORM | Database platform type (`Oracle\|Postgres`)
 | PROJECT_ID  | Project ID for the target project the dataset should be installed into.
 | VDI_ID      | ID assigned by VDI to the dataset being processed.
+| VDI_JOB_ID  | Generated job ID for the target script execution.
 |===
 
 ==== Outputs
@@ -556,6 +559,7 @@ completes its execution.
 | PROJECT_ID  | Project ID for the target project the dataset should be installed into.
 | DATA_FILES  | Path to the directory into which the dataset files should be installed.
 | VDI_ID      | ID assigned by VDI to the dataset being processed.
+| VDI_JOB_ID  | Generated job ID for the target script execution.
 |===
 
 ==== Outputs
@@ -628,6 +632,7 @@ $ uninstall bfcb312a5875ae38536a64e60055c74e
 | DB_PLATFORM | Database platform type (`Oracle\|Postgres`)
 | DATA_FILES  | Path to the directory from which the dataset files should be uninstalled.
 | VDI_ID      | ID assigned by VDI to the dataset being processed.
+| VDI_JOB_ID  | Generated job ID for the target script execution.
 |===
 
 ==== Outputs

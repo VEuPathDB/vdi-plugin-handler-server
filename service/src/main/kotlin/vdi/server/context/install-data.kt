@@ -1,37 +1,32 @@
 package vdi.server.context
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
-import io.ktor.util.*
-import io.ktor.utils.io.jvm.javaio.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.veupathdb.vdi.lib.json.JSON
+import org.veupathdb.vdi.lib.common.intra.InstallDataRequest
+import vdi.components.http.errors.BadRequestException
+import vdi.components.http.errors.UnsupportedMediaTypeException
+import vdi.consts.FieldName
+import vdi.util.parseAsJson
+import vdi.util.withTempDirectory
 import java.nio.file.Path
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
-import vdi.components.http.errors.BadRequestException
-import vdi.components.http.errors.UnsupportedMediaTypeException
-import vdi.components.io.BoundedInputStream
-import vdi.consts.FieldName
-import vdi.server.model.InstallDetails
-import vdi.util.parseAsJson
-import vdi.util.withTempDirectory
 
 private const val INSTALL_PAYLOAD_FILE_NAME = "install-ready.zip"
 private const val INSTALL_DETAILS_MAX_SIZE = 1024uL
 
-suspend fun ApplicationCall.withInstallDataContext(fn: suspend (workspace: Path, details: InstallDetails, payload: Path) -> Unit) {
+suspend fun ApplicationCall.withInstallDataContext(fn: suspend (workspace: Path, details: InstallDataRequest, payload: Path) -> Unit) {
   if (!request.contentType().match(ContentType.MultiPart.FormData))
     throw UnsupportedMediaTypeException()
 
   // Create temp directory
   withTempDirectory { workspace ->
-    val details: InstallDetails
+    val details: InstallDataRequest
     val payload: Path
 
     // Parse the multipart post body
@@ -49,7 +44,7 @@ suspend fun ApplicationCall.withInstallDataContext(fn: suspend (workspace: Path,
 @OptIn(ExperimentalContracts::class)
 private suspend fun ApplicationCall.parseMultipartBody(
   workspace: Path,
-  detailsCB: (InstallDetails) -> Unit,
+  detailsCB: (InstallDataRequest) -> Unit,
   payloadCB: (Path) -> Unit,
 ) {
   contract {
@@ -92,15 +87,15 @@ private suspend fun ApplicationCall.parseMultipartBody(
   payload || throw BadRequestException("missing required part \"${FieldName.Payload}\"")
 }
 
-private fun PartData.parseInstallDetails(detailsCB: (InstallDetails) -> Unit) {
-  detailsCB(parseAsJson(INSTALL_DETAILS_MAX_SIZE, InstallDetails::class))
+private fun PartData.parseInstallDetails(detailsCB: (InstallDataRequest) -> Unit) {
+  detailsCB(parseAsJson(INSTALL_DETAILS_MAX_SIZE, InstallDataRequest::class))
 }
 
 private fun PartData.handlePayload(workspace: Path, payloadCB: (Path) -> Unit) {
   handlePayload(workspace, INSTALL_PAYLOAD_FILE_NAME, payloadCB)
 }
 
-private fun InstallDetails.validate() {
+private fun InstallDataRequest.validate() {
   if (projectID.isBlank()) {
     throw BadRequestException("projectID cannot be a blank value")
   }

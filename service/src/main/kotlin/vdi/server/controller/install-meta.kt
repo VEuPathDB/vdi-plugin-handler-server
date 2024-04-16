@@ -11,16 +11,14 @@ suspend fun ApplicationCall.handleInstallMetaRequest(appCtx: ApplicationContext)
   withInstallMetaContext { workspace, request ->
     withDatabaseDetails(appCtx.config.databases, appCtx.ldap, request.projectID) { dbDetails ->
       InstallMetaHandler(
-        workspace,
-        request.vdiID,
-        request.projectID,
-        request.meta,
-        dbDetails,
-        appCtx.executor,
-        appCtx.config.service.customPath,
-        appCtx.pathFactory.makePath(request.projectID, request.vdiID.toString()),
-        appCtx.config.service.installMetaScript,
-        appCtx.metrics.scriptMetrics,
+        workspace   = workspace,
+        request     = request,
+        dbDetails   = dbDetails,
+        executor    = appCtx.executor,
+        customPath  = appCtx.config.service.customPath,
+        installPath = appCtx.pathFactory.makePath(request.projectID, request.vdiID),
+        script      = appCtx.config.service.installMetaScript,
+        metrics     = appCtx.metrics.scriptMetrics,
       )
         .run()
 

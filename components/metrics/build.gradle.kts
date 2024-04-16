@@ -7,5 +7,5 @@ kotlin {
 }
 
 dependencies {
-  implementation("io.micrometer:micrometer-registry-prometheus:1.10.3")
+  api("io.micrometer:micrometer-registry-prometheus:1.12.5")
 }

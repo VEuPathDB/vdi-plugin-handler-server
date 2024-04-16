@@ -8,7 +8,6 @@ import vdi.components.http.errors.withExceptionMapping
 import vdi.model.ApplicationContext
 import vdi.server.controller.*
 
-
 fun Application.configureServer(appCtx: ApplicationContext) {
 
   install(MicrometerMetrics) { registry = appCtx.metrics.micrometer }

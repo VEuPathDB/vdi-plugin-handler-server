@@ -8,15 +8,15 @@ import vdi.server.respond204
 import vdi.service.UninstallHandler
 
 suspend fun ApplicationCall.handleUninstallRequest(appCtx: ApplicationContext) {
-  withUninstallContext { workspace, vdiID, projectID ->
-    withDatabaseDetails(appCtx.config.databases, appCtx.ldap, projectID) { dbDetails ->
+  withUninstallContext { workspace, request ->
+    withDatabaseDetails(appCtx.config.databases, appCtx.ldap, request.projectID) { dbDetails ->
       UninstallHandler(
         workspace   = workspace,
-        datasetID   = vdiID,
+        request     = request,
         dbDetails   = dbDetails,
         executor    = appCtx.executor,
         customPath  = appCtx.config.service.customPath,
-        installPath = appCtx.pathFactory.makePath(projectID, vdiID.toString()),
+        installPath = appCtx.pathFactory.makePath(request.projectID, request.vdiID),
         script      = appCtx.config.service.uninstallScript,
         metrics     = appCtx.metrics.scriptMetrics,
       )

@@ -19,9 +19,9 @@ kotlin {
 }
 
 dependencies {
-  implementation("org.veupathdb.vdi:vdi-component-json:1.0.0")
-  implementation("com.fasterxml.jackson.core:jackson-annotations:2.14.2")
+  implementation("org.veupathdb.vdi:vdi-component-common:10.2.0")
+  implementation("org.veupathdb.vdi:vdi-component-json:1.0.2")
 
-  implementation("io.ktor:ktor-server-core-jvm:2.3.5")
+  implementation("io.ktor:ktor-server-core-jvm:2.3.10")
   implementation("org.slf4j:slf4j-api:1.7.36")
 }

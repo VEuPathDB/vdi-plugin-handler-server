@@ -6,7 +6,6 @@ import io.ktor.utils.io.jvm.javaio.*
 import java.nio.file.Path
 import kotlin.io.path.createFile
 import kotlin.io.path.outputStream
-import vdi.components.http.errors.BadRequestException
 
 fun PartData.handlePayload(workspace: Path, fileName: String, payloadCB: (Path) -> Unit) {
   val payload = workspace.resolve(fileName)

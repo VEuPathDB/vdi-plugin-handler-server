@@ -5,6 +5,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.util.pipeline.*
 import org.slf4j.LoggerFactory
+import org.veupathdb.vdi.lib.common.intra.SimpleErrorResponse
 import org.veupathdb.vdi.lib.json.toJSONString
 
 private val log = LoggerFactory.getLogger("ExceptionMiddleware")
@@ -25,30 +26,12 @@ suspend fun PipelineContext<*, ApplicationCall>.withExceptionMapping(
         )
       }
 
-      is NotFoundException -> {
-        log.debug("Thrown 404 exception.", e)
-        call.respondText(
-          SimpleErrorResponse(e.message ?: "null").toJSONString(),
-          ContentType.Application.Json,
-          HttpStatusCode.NotFound,
-        )
-      }
-
       is UnsupportedMediaTypeException -> {
         log.debug("Thrown 415 exception.", e)
         call.respondText(
           SimpleErrorResponse(e.message ?: "null").toJSONString(),
           ContentType.Application.Json,
           HttpStatusCode.UnsupportedMediaType,
-        )
-      }
-
-      is InternalServerException -> {
-        log.warn("Thrown 500 exception.", e)
-        call.respondText(
-          SimpleErrorResponse(e.message ?: "null").toJSONString(),
-          ContentType.Application.Json,
-          HttpStatusCode.InternalServerError,
         )
       }
 

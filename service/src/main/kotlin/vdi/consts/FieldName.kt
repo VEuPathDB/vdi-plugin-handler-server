@@ -6,6 +6,7 @@ object FieldName {
   const val Description = "description"
   const val Details = "details"
   const val InputFiles = "inputFiles"
+  const val JobID = "jobID"
   const val Message = "message"
   const val Meta = "meta"
   const val Name = "name"

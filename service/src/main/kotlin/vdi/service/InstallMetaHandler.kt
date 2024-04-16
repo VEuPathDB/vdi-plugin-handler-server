@@ -1,7 +1,6 @@
 package vdi.service
 
 import org.slf4j.LoggerFactory
-import org.veupathdb.vdi.lib.common.model.VDIDatasetMeta
 import org.veupathdb.vdi.lib.json.JSON
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
@@ -10,31 +9,30 @@ import kotlin.io.path.outputStream
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.veupathdb.vdi.lib.common.DatasetMetaFilename
-import org.veupathdb.vdi.lib.common.field.DatasetID
+import org.veupathdb.vdi.lib.common.intra.InstallMetaRequest
 import vdi.components.io.LoggingOutputStream
 import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
 import vdi.consts.ExitStatus
-import vdi.consts.FileName
 import vdi.model.DatabaseDetails
 import vdi.util.DoubleFmt
 
 class InstallMetaHandler(
   workspace: Path,
-  vdiID: DatasetID,
-  private val projectID: String,
-  private val meta: VDIDatasetMeta,
-  private val dbDetails: DatabaseDetails,
+  request: InstallMetaRequest,
+  dbDetails: DatabaseDetails,
   executor:  ScriptExecutor,
   customPath: String,
   installPath: Path,
   private val script: ScriptConfiguration,
   metrics: ScriptMetrics,
-) : InstallationHandlerBase<Unit>(vdiID, workspace, executor, customPath, installPath, metrics) {
+) : InstallationHandlerBase<Unit>(request.vdiID, request.jobID, request.projectID, workspace, executor, customPath, installPath, metrics, dbDetails) {
   private val log = LoggerFactory.getLogger(javaClass)
 
-  override suspend fun run() {
+  private val meta = request.meta
+
+  override suspend fun runJob() {
 
     val metaFile = workspace.resolve(DatasetMetaFilename)
       .createFile()
@@ -57,21 +55,16 @@ class InstallMetaHandler(
         when (installMetaStatus) {
           ExitStatus.InstallMeta.Success -> {
             val dur = timer.observeDuration()
-            log.info("install-meta script completed successfully for VDI dataset ID {} in {} seconds", datasetID, DoubleFmt.format(dur))
+            log.info("install-meta script completed successfully for dataset {} in {} seconds", datasetID, DoubleFmt.format(dur))
           }
 
           else -> {
-            log.error("install-meta script failed for VDI dataset ID {}", datasetID)
-            throw IllegalStateException("install-meta script failed with unexpected exit code ${exitCode()}")
+            val err = "install-meta script failed for dataset $datasetID with exit code ${exitCode()}"
+            log.error(err)
+            throw IllegalStateException(err)
           }
         }
       }
     }
-  }
-
-  override fun appendScriptEnv(env: MutableMap<String, String>) {
-    super.appendScriptEnv(env)
-    env.putAll(dbDetails.toEnvMap())
-    env["PROJECT_ID"] = projectID
   }
 }
