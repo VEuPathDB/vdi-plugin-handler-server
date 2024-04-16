@@ -5,6 +5,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.util.pipeline.*
 import org.slf4j.LoggerFactory
+import org.veupathdb.vdi.lib.common.intra.SimpleErrorResponse
 import org.veupathdb.vdi.lib.json.toJSONString
 
 private val log = LoggerFactory.getLogger("ExceptionMiddleware")
