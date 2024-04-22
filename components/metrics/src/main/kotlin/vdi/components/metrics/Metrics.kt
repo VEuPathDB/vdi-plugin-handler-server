@@ -108,7 +108,7 @@ class ScriptMetrics(registry: CollectorRegistry) {
 
   val uninstallCalls: Counter = Counter.build()
     .name("uninstall_script_executions")
-    .help("Uninstall script excecutions by exit code.")
+    .help("Uninstall script executions by exit code.")
     .labelNames("exit_status")
     .register(registry)
 }
