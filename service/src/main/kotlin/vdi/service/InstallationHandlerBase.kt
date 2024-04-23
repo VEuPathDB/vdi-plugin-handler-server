@@ -8,7 +8,6 @@ import vdi.components.script.ScriptExecutor
 import vdi.consts.ScriptEnvKey
 import vdi.model.DatabaseDetails
 import java.nio.file.Path
-import kotlin.io.path.exists
 
 sealed class InstallationHandlerBase<T>(
   datasetID: DatasetID,
