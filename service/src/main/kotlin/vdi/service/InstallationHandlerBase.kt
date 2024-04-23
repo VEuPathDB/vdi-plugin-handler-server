@@ -32,11 +32,7 @@ sealed class InstallationHandlerBase<T>(
   private val logger = LoggerFactory.getLogger(javaClass)
 
   final override suspend fun run(): T {
-    if (datasetInstallPath.exists()) {
-      val errMsg = "install directory already exists for dataset $datasetID before install script has been run"
-      logger.error(errMsg)
-      throw IllegalStateException(errMsg)
-    }
+    logger.info("handling (un)install request for dataset {} targeting project {}", datasetID, projectID)
 
     return runJob()
   }
