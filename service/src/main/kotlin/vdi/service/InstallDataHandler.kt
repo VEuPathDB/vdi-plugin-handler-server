@@ -31,7 +31,7 @@ class InstallDataHandler(
   dbDetails: DatabaseDetails,
   executor: ScriptExecutor,
   customPath: String,
-  installPath: Path,
+  datasetInstallPath: Path,
   private val metaScript: ScriptConfiguration,
   private val dataScript: ScriptConfiguration,
   private val compatScript: ScriptConfiguration,
@@ -43,26 +43,34 @@ class InstallDataHandler(
   workspace,
   executor,
   customPath,
-  installPath,
+  datasetInstallPath,
   metrics,
   dbDetails
 ) {
   private val log = LoggerFactory.getLogger(javaClass)
 
+  init {
+    if (datasetInstallPath.exists()) {
+      val msg = "dataset install directory already exists: ${datasetInstallPath.relativeTo(datasetInstallPath.parent.parent.parent)}"
+      log.error(msg)
+      throw InstallDirConflictError(msg)
+    }
+  }
+
   override suspend fun runJob() : List<String> {
     log.trace("processInstall()")
 
-    val installDir = workspace.resolve(FileName.InstallDirName)
+    val installWorkspace = workspace.resolve(FileName.InstallDirName)
     val warnings   = ArrayList<String>(4)
 
-    log.debug("creating install data directory {}", installDir)
-    installDir.createDirectory()
+    log.debug("creating install data directory {}", installWorkspace)
+    installWorkspace.createDirectory()
 
     log.debug("unpacking {} as a .zip file", payload)
-    payload.unpackAsZip(installDir)
+    payload.unpackAsZip(installWorkspace)
     payload.deleteIfExists()
 
-    val metaFile = requireMetaFile(installDir)
+    val metaFile = requireMetaFile(installWorkspace)
     val metaData = JSON.readValue<VDIDatasetMeta>(metaFile.toFile())
 
     runInstallMeta(metaFile)
@@ -71,9 +79,9 @@ class InstallDataHandler(
       runCheckDependencies(metaFile)
 
     metaFile.deleteIfExists()
-    getManifestFile(installDir).deleteIfExists()
+    getManifestFile(installWorkspace).deleteIfExists()
 
-    runInstallData(installDir, warnings)
+    runInstallData(installWorkspace, warnings)
 
     return warnings
   }
@@ -236,4 +244,6 @@ class InstallDataHandler(
   class ValidationError(val warnings: Collection<String>) : RuntimeException()
 
   class CompatibilityError(val warnings: Collection<String>) : RuntimeException()
+
+  class InstallDirConflictError(msg: String) : RuntimeException(msg)
 }
