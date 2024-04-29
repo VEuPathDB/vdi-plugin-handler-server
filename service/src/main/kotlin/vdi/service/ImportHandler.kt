@@ -73,7 +73,8 @@ class ImportHandler(
 
   @Suppress("NOTHING_TO_INLINE")
   private inline fun generateImportID() =
-    Base36.encodeToString(OriginTimestamp.until(OffsetDateTime.now(), ChronoUnit.SECONDS).toULong()) + details.importIndex
+    Base36.encodeToString(OriginTimestamp.until(OffsetDateTime.now(), ChronoUnit.SECONDS).toULong()) +
+      Base36.encodeToString(details.importIndex.toULong())
 
 
   /**
