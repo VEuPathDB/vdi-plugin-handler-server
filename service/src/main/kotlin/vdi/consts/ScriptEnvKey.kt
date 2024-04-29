@@ -13,5 +13,5 @@ object ScriptEnvKey {
 
   const val ProjectID = "PROJECT_ID"
 
-  const val JobID = "VDI_JOB_ID"
+  const val ImportID = "VDI_IMPORT_ID"
 }

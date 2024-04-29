@@ -31,7 +31,7 @@ dependencies {
   implementation(project(":components:script-execution"))
 
   implementation("org.veupathdb.vdi:vdi-component-json:1.0.2")
-  implementation("org.veupathdb.vdi:vdi-component-common:10.1.0")
+  implementation("org.veupathdb.vdi:vdi-component-common:11.0.0")
 
   implementation("io.ktor:ktor-server-core-jvm:2.3.10")
   implementation("io.ktor:ktor-server-netty-jvm:2.3.10")

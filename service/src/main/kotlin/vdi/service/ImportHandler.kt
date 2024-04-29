@@ -8,6 +8,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.veupathdb.vdi.lib.common.DatasetManifestFilename
 import org.veupathdb.vdi.lib.common.DatasetMetaFilename
+import org.veupathdb.vdi.lib.common.OriginTimestamp
 import org.veupathdb.vdi.lib.common.compression.Zip
 import org.veupathdb.vdi.lib.common.intra.ImportRequest
 import org.veupathdb.vdi.lib.common.model.VDIDatasetFileInfoImpl
@@ -18,7 +19,11 @@ import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
 import vdi.consts.ExitStatus
+import vdi.consts.ScriptEnvKey
+import vdi.util.Base36
 import vdi.util.DoubleFmt
+import java.time.OffsetDateTime
+import java.time.temporal.ChronoUnit
 
 private const val INPUT_DIRECTORY_NAME  = "input"
 private const val OUTPUT_DIRECTORY_NAME = "output"
@@ -29,11 +34,11 @@ class ImportHandler(
   workspace: Path,
   private val inputFile: Path,
   private val details: ImportRequest,
-  executor:  ScriptExecutor,
+  executor: ScriptExecutor,
   private val script: ScriptConfiguration,
   customPath: String,
   metrics: ScriptMetrics,
-) : HandlerBase<Path>(details.vdiID, details.jobID, workspace, executor, customPath, metrics) {
+) : HandlerBase<Path>(details.vdiID, workspace, executor, customPath, metrics) {
   private val log = LoggerFactory.getLogger(javaClass)
 
   private val inputDirectory: Path = workspace.resolve(INPUT_DIRECTORY_NAME)
@@ -60,6 +65,16 @@ class ImportHandler(
       .also { Zip.compress(it, outputFiles, Zip.Level(0u)) }
       .also { outputDirectory.deleteRecursively() }
   }
+
+  override fun appendScriptEnv(env: MutableMap<String, String>) {
+    super.appendScriptEnv(env)
+    env[ScriptEnvKey.ImportID] = generateImportID()
+  }
+
+  @Suppress("NOTHING_TO_INLINE")
+  private inline fun generateImportID() =
+    Base36.encodeToString(OriginTimestamp.until(OffsetDateTime.now(), ChronoUnit.SECONDS).toULong()) + details.importIndex
+
 
   /**
    * Unpacks the given input archive into the input directory and ensures that

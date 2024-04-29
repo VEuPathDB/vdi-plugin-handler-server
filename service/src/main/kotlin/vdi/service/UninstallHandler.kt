@@ -32,7 +32,6 @@ class UninstallHandler(
   metrics: ScriptMetrics,
 ) : InstallationHandlerBase<Unit>(
   request.vdiID,
-  request.jobID,
   request.projectID,
   workspace,
   executor,

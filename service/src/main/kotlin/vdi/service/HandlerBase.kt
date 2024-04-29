@@ -1,26 +1,17 @@
 package vdi.service
 
-import org.veupathdb.vdi.lib.common.OriginTimestamp
 import org.veupathdb.vdi.lib.common.env.Environment
 import org.veupathdb.vdi.lib.common.field.DatasetID
 import java.nio.file.Path
 import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
 import vdi.consts.ScriptEnvKey
-import vdi.util.Base36
-import java.time.OffsetDateTime
-import java.time.temporal.ChronoUnit
 
 sealed class HandlerBase<T>(
   /**
    * VDI ID of the dataset to which the data being processed belongs.
    */
   protected val datasetID: DatasetID,
-
-  /**
-   * Job ID of the current task, assigned by the calling core VDI service.
-   */
-  protected val jobID: ULong,
 
   /**
    * Path to the workspace for the script execution.
@@ -53,7 +44,6 @@ sealed class HandlerBase<T>(
       out["PATH"] = System.getenv("PATH") + ':' + customPath
 
     out[ScriptEnvKey.DatasetID] = datasetID.toString()
-    out[ScriptEnvKey.JobID] = generateJobID()
 
     appendScriptEnv(out)
 
@@ -61,7 +51,4 @@ sealed class HandlerBase<T>(
   }
 
   protected open fun appendScriptEnv(env: MutableMap<String, String>) {}
-
-  private fun generateJobID() =
-    Base36.encodeToString(OriginTimestamp.until(OffsetDateTime.now(), ChronoUnit.SECONDS).toULong() + jobID)
 }

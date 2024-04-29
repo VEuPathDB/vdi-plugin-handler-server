@@ -11,7 +11,6 @@ import java.nio.file.Path
 
 sealed class InstallationHandlerBase<T>(
   datasetID: DatasetID,
-  jobID: ULong,
 
   protected val projectID: ProjectID,
 
@@ -27,7 +26,7 @@ sealed class InstallationHandlerBase<T>(
   metrics: ScriptMetrics,
 
   private val dbDetails: DatabaseDetails,
-) : HandlerBase<T>(datasetID, jobID, workspace, executor, customPath, metrics) {
+) : HandlerBase<T>(datasetID, workspace, executor, customPath, metrics) {
   private val logger = LoggerFactory.getLogger(javaClass)
 
   final override suspend fun run(): T {

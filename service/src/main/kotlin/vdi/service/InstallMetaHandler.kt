@@ -27,7 +27,16 @@ class InstallMetaHandler(
   installPath: Path,
   private val script: ScriptConfiguration,
   metrics: ScriptMetrics,
-) : InstallationHandlerBase<Unit>(request.vdiID, request.jobID, request.projectID, workspace, executor, customPath, installPath, metrics, dbDetails) {
+) : InstallationHandlerBase<Unit>(
+  request.vdiID,
+  request.projectID,
+  workspace,
+  executor,
+  customPath,
+  installPath,
+  metrics,
+  dbDetails,
+) {
   private val log = LoggerFactory.getLogger(javaClass)
 
   private val meta = request.meta

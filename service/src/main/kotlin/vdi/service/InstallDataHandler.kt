@@ -38,7 +38,6 @@ class InstallDataHandler(
   metrics: ScriptMetrics,
 ) : InstallationHandlerBase<List<String>>(
   request.vdiID,
-  request.jobID,
   request.projectID,
   workspace,
   executor,
