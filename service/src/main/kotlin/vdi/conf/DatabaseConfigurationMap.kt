@@ -103,7 +103,7 @@ private fun Environment.parse(key: String, names: MutableSet<String>, out: Mutab
 
     out[name] = DatabaseConfiguration(
       name       = name,
-      ldap       = require(DB_LDAP_PREFIX + key), // TODO -- should be optional
+      ldap       = optional(DB_LDAP_PREFIX + key),
       // We now use the DB schema as the username.
       user       = require(DB_SCHEMA_PREFIX + key),
       pass       = SecretString(require(DB_PASS_PREFIX + key)),

@@ -11,7 +11,7 @@ import org.veupathdb.vdi.lib.common.field.SecretString
  */
 data class DatabaseConfiguration(
   val name: String,
-  val ldap: String,
+  val ldap: String?,
   val user: String,
   val pass: SecretString,
   val dataSchema: String,
