@@ -15,4 +15,8 @@ data class DatabaseConfiguration(
   val user: String,
   val pass: SecretString,
   val dataSchema: String,
+  val platform: String?,
+  val host: String?,
+  val port: UShort?,
+  val pgName: String?
 )

@@ -14,16 +14,15 @@ suspend fun withDatabaseDetails(
   projectID: String,
   fn:        suspend (dbDetails: DatabaseDetails) -> Unit,
 ) {
-  fn((databases[projectID] ?: throw BadRequestException("unrecognized projectID value"))
-    .let { it to ldap.requireSingularOracleNetDesc(it.ldap) }
-    .toDatabaseDetails())
+  fn((databases[projectID] ?: throw BadRequestException("unrecognized projectID value")).toDatabaseDetails(ldap))
 }
 
-// FIXME:
-//   | Right now the db platform value is hardcoded to oracle.  When we
-//   | (VEuPathDB) figure out how we will handle database connection detail
-//   | lookups for Postgres, we will need to make the determination here or
-//   | upstream of here what db platform we are actually using.
-@Suppress("NOTHING_TO_INLINE")
-private inline fun Pair<DatabaseConfiguration, OracleNetDesc>.toDatabaseDetails() =
-  DatabaseDetails(second.host, second.port, second.serviceName, first.user, first.pass, first.dataSchema, DBPlatform.Oracle)
+private fun DatabaseConfiguration.toDatabaseDetails(ldap: LDAP): DatabaseDetails {
+  return when (val dbPlatform = DBPlatform.fromPlatformString(this.platform)) {
+    DBPlatform.Oracle -> {
+      val lookupDetails = ldap.requireSingularOracleNetDesc(this.ldap)
+      return DatabaseDetails(lookupDetails.host, lookupDetails.port, lookupDetails.serviceName, user, pass, dataSchema, dbPlatform)
+    }
+    DBPlatform.Postgres -> DatabaseDetails(host!!, port!!, pgName!!, user, pass, dataSchema, dbPlatform)
+  }
+}

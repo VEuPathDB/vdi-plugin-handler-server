@@ -1,16 +1,17 @@
 package vdi.conf
 
-import org.veupathdb.vdi.lib.common.env.EnvKey
-import org.veupathdb.vdi.lib.common.env.Environment
-import org.veupathdb.vdi.lib.common.env.reqBool
-import org.veupathdb.vdi.lib.common.env.require
+import org.veupathdb.vdi.lib.common.env.*
 import org.veupathdb.vdi.lib.common.field.SecretString
 
-private const val DB_ENABLED_PREFIX = EnvKey.AppDB.DBEnabledPrefix
-private const val DB_NAME_PREFIX    = EnvKey.AppDB.DBNamePrefix
-private const val DB_LDAP_PREFIX    = EnvKey.AppDB.DBLDAPPrefix
-private const val DB_PASS_PREFIX    = EnvKey.AppDB.DBPassPrefix
-private const val DB_SCHEMA_PREFIX  = EnvKey.AppDB.DBDataSchemaPrefix
+private const val DB_ENABLED_PREFIX   = EnvKey.AppDB.DBEnabledPrefix
+private const val DB_NAME_PREFIX      = EnvKey.AppDB.DBNamePrefix
+private const val DB_LDAP_PREFIX      = EnvKey.AppDB.DBLDAPPrefix
+private const val DB_PASS_PREFIX      = EnvKey.AppDB.DBPassPrefix
+private const val DB_SCHEMA_PREFIX    = EnvKey.AppDB.DBDataSchemaPrefix
+private const val DB_PGNAME_PREFIX    = EnvKey.AppDB.DBPGNamePrefix
+private const val DB_HOST_PREFIX      = EnvKey.AppDB.DBHostPrefix
+private const val DB_PORT_PREFIX      = EnvKey.AppDB.DBPortPrefix
+private const val DB_PLATFORM_PREFIX  = EnvKey.AppDB.DBPlatformPrefix
 
 private const val DB_ENV_VAR_INIT_CAPACITY = 12
 
@@ -68,11 +69,15 @@ private fun Environment.parse(): Map<String, DatabaseConfiguration> {
   // processing the same config set multiple times.
   forEach { (key, _) ->
     when {
-      key.startsWith(DB_ENABLED_PREFIX) -> parse(key.substring(DB_ENABLED_PREFIX.length), seen, out)
-      key.startsWith(DB_SCHEMA_PREFIX)  -> parse(key.substring(DB_SCHEMA_PREFIX.length), seen, out)
-      key.startsWith(DB_NAME_PREFIX)    -> parse(key.substring(DB_NAME_PREFIX.length), seen, out)
-      key.startsWith(DB_LDAP_PREFIX)    -> parse(key.substring(DB_LDAP_PREFIX.length), seen, out)
-      key.startsWith(DB_PASS_PREFIX)    -> parse(key.substring(DB_PASS_PREFIX.length), seen, out)
+      key.startsWith(DB_ENABLED_PREFIX)   -> parse(key.substring(DB_ENABLED_PREFIX.length), seen, out)
+      key.startsWith(DB_SCHEMA_PREFIX)    -> parse(key.substring(DB_SCHEMA_PREFIX.length), seen, out)
+      key.startsWith(DB_NAME_PREFIX)      -> parse(key.substring(DB_NAME_PREFIX.length), seen, out)
+      key.startsWith(DB_LDAP_PREFIX)      -> parse(key.substring(DB_LDAP_PREFIX.length), seen, out)
+      key.startsWith(DB_PASS_PREFIX)      -> parse(key.substring(DB_PASS_PREFIX.length), seen, out)
+      key.startsWith(DB_HOST_PREFIX)      -> parse(key.substring(DB_HOST_PREFIX.length), seen, out)
+      key.startsWith(DB_PORT_PREFIX)      -> parse(key.substring(DB_PORT_PREFIX.length), seen, out)
+      key.startsWith(DB_PGNAME_PREFIX)    -> parse(key.substring(DB_PGNAME_PREFIX.length), seen, out)
+      key.startsWith(DB_PLATFORM_PREFIX)  -> parse(key.substring(DB_PLATFORM_PREFIX.length), seen, out)
     }
   }
 
@@ -98,11 +103,15 @@ private fun Environment.parse(key: String, names: MutableSet<String>, out: Mutab
 
     out[name] = DatabaseConfiguration(
       name       = name,
-      ldap       = require(DB_LDAP_PREFIX + key),
+      ldap       = require(DB_LDAP_PREFIX + key), // TODO -- should be optional
       // We now use the DB schema as the username.
       user       = require(DB_SCHEMA_PREFIX + key),
       pass       = SecretString(require(DB_PASS_PREFIX + key)),
       dataSchema = require(DB_SCHEMA_PREFIX + key),
+      platform   = optional(DB_PLATFORM_PREFIX + key),
+      port       = optUShort(DB_PORT_PREFIX + key),
+      host       = optional(DB_HOST_PREFIX + key),
+      pgName     = optional(DB_PGNAME_PREFIX + key)
     )
   }
 }
