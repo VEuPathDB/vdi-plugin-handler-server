@@ -17,10 +17,10 @@ suspend fun withDatabaseDetails(
   fn((databases[projectID] ?: throw BadRequestException("unrecognized projectID value")).toDatabaseDetails(ldap))
 }
 
-private fun DatabaseConfiguration.toDatabaseDetails(ldap: LDAP): DatabaseDetails {
-  return when (val dbPlatform = DBPlatform.fromPlatformString(this.platform)) {
+private fun DatabaseConfiguration.toDatabaseDetails(ldap: LDAP?): DatabaseDetails {
+  return when (val dbPlatform = DBPlatform.fromPlatformString(platform)) {
     DBPlatform.Oracle -> {
-      val lookupDetails = ldap.requireSingularOracleNetDesc(this.ldap)
+      val lookupDetails = ldap!!.requireSingularOracleNetDesc(this.ldap!!)
       return DatabaseDetails(lookupDetails.host, lookupDetails.port, lookupDetails.serviceName, user, pass, dataSchema, dbPlatform)
     }
     DBPlatform.Postgres -> DatabaseDetails(host!!, port!!, pgName!!, user, pass, dataSchema, dbPlatform)
