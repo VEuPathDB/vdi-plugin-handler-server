@@ -40,7 +40,7 @@ sealed class InstallationHandlerBase<T>(
   override fun appendScriptEnv(env: MutableMap<String, String>) {
     env[ScriptEnvKey.InstallPath] = datasetInstallPath.toString()
     env[ScriptEnvKey.ProjectID] = projectID
-
+    logger.info("Putting database platform: {}", dbDetails.dbPlatform.value)
     env.putAll(dbDetails.toEnvMap())
   }
 }

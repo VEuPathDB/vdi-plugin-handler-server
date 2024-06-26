@@ -32,7 +32,7 @@ class LDAP(private val config: LDAPConfig) {
     var err: LDAPSearchException? = null
 
     // To handle network hiccups, try this 5x before giving up.
-    for (i in 0 ..< 5) {
+    for (i in 0..< 5) {
       try {
         return getConnection()
           .search(
