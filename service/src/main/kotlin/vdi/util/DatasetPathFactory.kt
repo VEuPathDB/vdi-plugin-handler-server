@@ -2,6 +2,7 @@ package vdi.util
 
 import org.veupathdb.vdi.lib.common.field.DatasetID
 import org.veupathdb.vdi.lib.common.field.ProjectID
+import java.nio.file.FileAlreadyExistsException
 import java.nio.file.Path
 import kotlin.io.path.createDirectory
 import kotlin.io.path.notExists
@@ -24,7 +25,7 @@ class DatasetPathFactory(rootDirectory: String, siteBuild: String) {
     // If this is the first time we're seeing a path for a given target project,
     // create the project directory.
     if (siteDir.notExists())
-      siteDir.createDirectory()
+      try { siteDir.createDirectory() } catch (e: FileAlreadyExistsException) { /* Ignore race condition mkdir */ }
 
     return siteDir.resolve(datasetID.toString())
   }
