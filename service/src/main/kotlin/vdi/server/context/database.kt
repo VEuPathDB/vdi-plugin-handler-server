@@ -2,7 +2,6 @@ package vdi.server.context
 
 import vdi.components.http.errors.BadRequestException
 import vdi.components.ldap.LDAP
-import vdi.components.ldap.OracleNetDesc
 import vdi.conf.DatabaseConfiguration
 import vdi.conf.DatabaseConfigurationMap
 import vdi.model.DBPlatform
@@ -17,12 +16,10 @@ suspend fun withDatabaseDetails(
   fn((databases[projectID] ?: throw BadRequestException("unrecognized projectID value")).toDatabaseDetails(ldap))
 }
 
-private fun DatabaseConfiguration.toDatabaseDetails(ldap: LDAP?): DatabaseDetails {
-  return when (val dbPlatform = DBPlatform.fromPlatformString(platform)) {
-    DBPlatform.Oracle -> {
-      val lookupDetails = ldap!!.requireSingularOracleNetDesc(this.ldap!!)
-      return DatabaseDetails(lookupDetails.host, lookupDetails.port, lookupDetails.serviceName, user, pass, dataSchema, dbPlatform)
-    }
-    DBPlatform.Postgres -> DatabaseDetails(host!!, port!!, pgName!!, user, pass, dataSchema, dbPlatform)
+private fun DatabaseConfiguration.toDatabaseDetails(ldap: LDAP?) =
+  when (platform) {
+    DBPlatform.Oracle -> this.ldap?.let { ldap!!.requireSingularOracleNetDesc(it) }
+      ?.let { DatabaseDetails(it.host, it.port, it.serviceName, user, pass, dataSchema, platform) }
+      ?: DatabaseDetails(host!!, port!!, dbName!!, user, pass, dataSchema, platform)
+    DBPlatform.Postgres -> DatabaseDetails(host!!, port!!, dbName!!, user, pass, dataSchema, platform)
   }
-}

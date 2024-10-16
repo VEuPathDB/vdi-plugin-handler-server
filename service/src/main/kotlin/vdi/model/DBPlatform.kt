@@ -6,9 +6,12 @@ enum class DBPlatform(val value: String) {
   Postgres("Postgresql");
 
   companion object {
-    fun fromPlatformString(platformString: String?): DBPlatform {
-      return DBPlatform.entries
-        .find { platformString.equals(other = it.value, ignoreCase = true) } ?: Oracle // Default to Oracle
-    }
+    @JvmStatic
+    fun fromPlatformString(value: String) =
+      when (value.lowercase()) {
+        "oracle"                 -> Oracle
+        "postgres", "postgresql" -> Postgres
+        else                     -> throw IllegalArgumentException("unrecognized DBPlatform value: $value")
+      }
   }
 }

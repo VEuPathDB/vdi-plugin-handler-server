@@ -1,6 +1,7 @@
 package vdi.conf
 
 import org.veupathdb.vdi.lib.common.field.SecretString
+import vdi.model.DBPlatform
 
 
 /**
@@ -10,13 +11,13 @@ import org.veupathdb.vdi.lib.common.field.SecretString
  * @since 1.0.0
  */
 data class DatabaseConfiguration(
-  val name: String,
+  val connectionName: String,
   val ldap: String?,
   val user: String,
   val pass: SecretString,
   val dataSchema: String,
-  val platform: String?,
+  val platform: DBPlatform,
   val host: String?,
   val port: UShort?,
-  val pgName: String?
+  val dbName: String?
 )

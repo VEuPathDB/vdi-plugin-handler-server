@@ -57,10 +57,8 @@ class InstallDataHandler(
   }
 
   override suspend fun runJob() : List<String> {
-    log.trace("processInstall()")
-
     val installWorkspace = workspace.resolve(FileName.InstallDirName)
-    val warnings   = ArrayList<String>(4)
+    val warnings = ArrayList<String>(4)
 
     log.debug("creating install data directory {}", installWorkspace)
     installWorkspace.createDirectory()

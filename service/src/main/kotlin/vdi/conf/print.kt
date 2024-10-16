@@ -6,32 +6,38 @@ import kotlin.time.Duration.Companion.seconds
 fun HandlerConfig.printToLogs(log: Logger) {
   val sb = StringBuilder(4096)
 
-  sb.append("Configuration:\n")
-    .append("  HTTP Server:\n")
+  sb.appendLine("Configuration:")
+    .appendLine("  HTTP Server:")
     .append("    Port: ").appendLine(server.port)
     .append("    Host: ").appendLine(server.host)
-    .append("  Service:\n")
-    .append("    Import Script:\n")
+    .appendLine("  Service:")
+    .appendLine("    Import Script:")
     .append("      Path: ").appendLine(service.importScript.path)
     .append("      Timeout: ").appendLine(service.importScript.maxSeconds.seconds)
-    .append("    Install Meta Script:\n")
+    .appendLine("    Install Meta Script:")
     .append("      Path: ").appendLine(service.installMetaScript.path)
     .append("      Timeout: ").appendLine(service.installMetaScript.maxSeconds.seconds)
-    .append("    Install Data Script:\n")
+    .appendLine("    Install Data Script:")
     .append("      Path: ").appendLine(service.installDataScript.path)
     .append("      Timeout: ").appendLine(service.installDataScript.maxSeconds.seconds)
-    .append("    Uninstall Script:\n")
+    .appendLine("    Uninstall Script:")
     .append("      Path: ").appendLine(service.uninstallScript.path)
     .append("      Timeout: ").appendLine(service.uninstallScript.maxSeconds.seconds)
-    .append("  Databases:\n")
+    .appendLine("  Databases:")
 
   databases.forEach { (key, value) ->
-    sb.append("    ").append(key).append(":\n")
-      .append("      Name: ").appendLine(value.name)
-      .append("      LDAP Query: ").appendLine(value.ldap)
-      .append("      Username: ").appendLine(value.user)
-      .append("      Password: ").appendLine(value.pass)
+    sb.append("    ").append(key).appendLine(":")
+      .append("      Connection: ").appendLine(value.connectionName)
       .append("      Data Schema: ").appendLine(value.dataSchema)
+      .append("      Platform: ").appendLine(value.platform)
+
+    if (value.ldap == null) {
+      sb.append("      Host: ").appendLine(value.host)
+        .append("      Port: ").appendLine(value.port)
+        .append("      DB Name: ").appendLine(value.dbName)
+    } else {
+      sb.append("      LDAP: ").appendLine(value.ldap)
+    }
   }
 
   log.info(sb.toString())

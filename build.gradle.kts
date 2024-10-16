@@ -8,7 +8,6 @@ allprojects {
   }
 }
 
-
 tasks.create("docker-build") {
   doLast {
     with(

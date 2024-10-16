@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 plugins {
   id("com.github.johnrengelman.shadow") version "7.1.2"
   kotlin("jvm")
@@ -31,11 +33,11 @@ dependencies {
   implementation(project(":components:script-execution"))
 
   implementation("org.veupathdb.vdi:vdi-component-json:1.0.2")
-  implementation("org.veupathdb.vdi:vdi-component-common:11.1.0")
+  implementation("org.veupathdb.vdi:vdi-component-common:12.0.2")
 
-  implementation("io.ktor:ktor-server-core-jvm:2.3.10")
-  implementation("io.ktor:ktor-server-netty-jvm:2.3.10")
-  implementation("io.ktor:ktor-server-metrics-micrometer:2.3.10")
+  implementation("io.ktor:ktor-server-core-jvm:2.3.12")
+  implementation("io.ktor:ktor-server-netty-jvm:2.3.12")
+  implementation("io.ktor:ktor-server-metrics-micrometer:2.3.12")
 
   implementation("org.slf4j:slf4j-api:1.7.36")
   implementation("org.apache.logging.log4j:log4j-core:2.23.1")
@@ -43,13 +45,22 @@ dependencies {
   implementation("org.apache.logging.log4j:log4j-iostreams:2.23.1")
 
   testImplementation(kotlin("test"))
-  testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
-  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
-  testImplementation("org.mockito:mockito-core:5.2.0")
+  testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.2")
+  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.2")
+  testImplementation("org.mockito:mockito-core:5.14.2")
+  testImplementation("org.mockito:mockito-junit-jupiter:5.14.2")
 }
 
 tasks.test {
   useJUnitPlatform()
+
+  testLogging {
+    events = setOf(
+      TestLogEvent.SKIPPED,
+      TestLogEvent.PASSED,
+      TestLogEvent.FAILED,
+    )
+  }
 }
 
 tasks.jar {

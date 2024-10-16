@@ -3,7 +3,6 @@ package vdi.conf
 import java.io.File
 
 fun HandlerConfig.validate() {
-
   validateScript(service.importScript.path)
   validateScript(service.installDataScript.path)
   validateScript(service.installMetaScript.path)
