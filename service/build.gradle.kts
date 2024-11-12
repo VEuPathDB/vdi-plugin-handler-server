@@ -18,7 +18,10 @@ repositories {
 }
 
 kotlin {
-  jvmToolchain(18)
+  jvmToolchain {
+    languageVersion = JavaLanguageVersion.of(21)
+    vendor = JvmVendorSpec.AMAZON
+  }
 }
 
 configurations.all {
