@@ -17,7 +17,7 @@ COPY gradle/libs.versions.toml gradle/libs.versions.toml
 
 RUN gradle test shadowJar --info
 
-FROM veupathdb/gus-apidb-base:1.2.5
+FROM veupathdb/gus-apidb-base:1.2.7
 
 ENV JVM_MEM_ARGS="-Xms16m -Xmx64m" \
     JVM_ARGS="" \

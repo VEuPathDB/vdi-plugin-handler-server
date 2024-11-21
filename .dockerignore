@@ -1,7 +1,7 @@
 build/
 .idea/
 .gradle/
-gradle/
+gradle/wrapper/
 
 example.env
 api.raml
