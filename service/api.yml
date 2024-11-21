@@ -168,6 +168,20 @@ paths:
         500:
           $ref: "#/components/responses/500"
 
+  /metrics:
+    get:
+      operationId: get-metrics
+      summary: Prometheus Metrics
+      tags:
+      - Management
+      responses:
+        200:
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: string
+
 components:
   responses:
     400:
