@@ -1,0 +1,3 @@
+service/api.yml:
+  no-empty-servers:
+    - '#/servers'

@@ -13,19 +13,17 @@ import vdi.server.respondJSON500
 import vdi.service.InstallDataHandler
 
 suspend fun ApplicationCall.handleInstallDataRequest(appCtx: ApplicationContext) {
-  withInstallDataContext { workspace, request, payload ->
+  withInstallDataContext { installCtx ->
     withDatabaseDetails(appCtx.config.databases, appCtx.ldap, request.projectID) { dbDetails ->
       try {
         // Run the install-data service and collect the returned list of
         // installation warnings.
         val warnings = InstallDataHandler(
-          workspace          = workspace,
-          request            = request,
-          payload            = payload,
+          installCtx         = installCtx,
           dbDetails          = dbDetails,
           executor           = appCtx.executor,
           customPath         = appCtx.config.service.customPath,
-          datasetInstallPath = appCtx.pathFactory.makePath(request.projectID, request.vdiID),
+          datasetInstallPath = appCtx.pathFactory.makePath(installCtx.request.projectID, installCtx.request.vdiID),
           metaScript         = appCtx.config.service.installMetaScript,
           dataScript         = appCtx.config.service.installDataScript,
           compatScript       = appCtx.config.service.checkCompatScript,

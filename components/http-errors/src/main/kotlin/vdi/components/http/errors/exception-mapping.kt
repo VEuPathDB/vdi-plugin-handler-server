@@ -1,17 +1,16 @@
 package vdi.components.http.errors
 
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.response.*
-import io.ktor.util.pipeline.*
+import io.ktor.server.routing.RoutingContext
 import org.slf4j.LoggerFactory
 import org.veupathdb.vdi.lib.common.intra.SimpleErrorResponse
 import org.veupathdb.vdi.lib.json.toJSONString
 
 private val log = LoggerFactory.getLogger("ExceptionMiddleware")
 
-suspend fun PipelineContext<*, ApplicationCall>.withExceptionMapping(
-  fn: suspend PipelineContext<*, ApplicationCall>.() -> Unit
+suspend fun RoutingContext.withExceptionMapping(
+  fn: suspend RoutingContext.() -> Unit
 ) {
   try {
     fn()

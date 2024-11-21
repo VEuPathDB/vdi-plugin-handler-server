@@ -16,12 +16,10 @@ import vdi.service.ImportHandler
 private val log = LoggerFactory.getLogger("import-controller")
 
 suspend fun ApplicationCall.handleImportRequest(appCtx: ApplicationContext) {
-  withImportContext { workspace, request, payload ->
+  withImportContext { importCtx ->
     try {
       val outFile = ImportHandler(
-        workspace,
-        payload,
-        request,
+        importCtx,
         appCtx.executor,
         appCtx.config.service.importScript,
         appCtx.config.service.customPath,
@@ -29,7 +27,7 @@ suspend fun ApplicationCall.handleImportRequest(appCtx: ApplicationContext) {
       )
         .run()
 
-      log.debug("sending import response body for dataset {}", request.vdiID)
+      log.debug("sending import response body for dataset {}", importCtx.request.vdiID)
       respondOutputStream(ContentType.Application.OctetStream, HttpStatusCode.OK) {
         outFile.inputStream().use { it.transferTo(this) }
       }

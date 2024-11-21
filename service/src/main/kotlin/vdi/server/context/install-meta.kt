@@ -40,7 +40,7 @@ private fun InstallMetaRequest.validate() {
   if (projectID.isBlank())
     throw BadRequestException("projectID cannot be blank")
 
-  if (meta.type.name.isBlank())
+  if (meta.type.name.toString().isBlank())
     throw BadRequestException("type.name cannot be blank")
   if (meta.type.version.isBlank())
     throw BadRequestException("type.version cannot be blank")

@@ -1,20 +1,16 @@
 package vdi.conf
 
 import org.veupathdb.vdi.lib.common.env.*
+import org.veupathdb.vdi.lib.common.field.DataType
+import org.veupathdb.vdi.lib.common.field.ProjectID
 import org.veupathdb.vdi.lib.common.field.SecretString
 import vdi.model.DBPlatform
 
-private const val DB_ENABLED_PREFIX   = EnvKey.AppDB.DBEnabledPrefix
-private const val DB_CONN_NAME_PREFIX = EnvKey.AppDB.DBConnectionNamePrefix
-private const val DB_LDAP_PREFIX      = EnvKey.AppDB.DBLDAPPrefix
-private const val DB_PASS_PREFIX      = EnvKey.AppDB.DBPassPrefix
-private const val DB_SCHEMA_PREFIX    = EnvKey.AppDB.DBDataSchemaPrefix
-private const val DB_NAME_PREFIX      = EnvKey.AppDB.DBNamePrefix
-private const val DB_HOST_PREFIX      = EnvKey.AppDB.DBHostPrefix
-private const val DB_PORT_PREFIX      = EnvKey.AppDB.DBPortPrefix
-private const val DB_PLATFORM_PREFIX  = EnvKey.AppDB.DBPlatformPrefix
-
 private const val DB_ENV_VAR_INIT_CAPACITY = 12
+
+private val Wildcard = DataType.of("*")
+
+private typealias DBKey = Pair<ProjectID, DataType>
 
 /**
  * Database Configuration Map
@@ -25,15 +21,14 @@ private const val DB_ENV_VAR_INIT_CAPACITY = 12
  * @author Elizabeth Paige Harper - https://github.com/foxcapades
  * @since 1.0.0
  */
-class DatabaseConfigurationMap(environment: Environment)
-: Map<String, DatabaseConfiguration>
+class DatabaseConfigurationMap(environment: Environment) : Map<DBKey, DatabaseConfiguration>
 {
-  private val raw: Map<String, DatabaseConfiguration> = parseDatabaseConfigs(environment)
+  private val raw: Map<DBKey, DatabaseConfiguration> = parseDatabaseConfigs(environment)
 
-  override val entries: Set<Map.Entry<String, DatabaseConfiguration>>
+  override val entries: Set<Map.Entry<DBKey, DatabaseConfiguration>>
     get() = raw.entries
 
-  override val keys: Set<String>
+  override val keys: Set<DBKey>
     get() = raw.keys
 
   override val size: Int
@@ -44,18 +39,26 @@ class DatabaseConfigurationMap(environment: Environment)
 
   override fun isEmpty() = raw.isEmpty()
 
-  override fun get(key: String) = raw[key]
+  override fun get(key: DBKey): DatabaseConfiguration? =
+    raw[key] ?: if (key.second != Wildcard) get(key.first) else null
+
+  operator fun get(key: ProjectID) = get(key to Wildcard)
 
   override fun containsValue(value: DatabaseConfiguration) = raw.containsValue(value)
 
-  override fun containsKey(key: String) = raw.containsKey(key)
+  override fun containsKey(key: DBKey): Boolean =
+    raw.containsKey(key) || (key.second != Wildcard && containsKey(key.first))
+
+  fun containsKey(key: ProjectID) = containsKey(key to Wildcard)
+
+  operator fun contains(key: ProjectID) = containsKey(key)
 }
 
 private fun parseDatabaseConfigs(environment: Environment) =
   environment.parse()
 
-private fun Environment.parse(): Map<String, DatabaseConfiguration> {
-  val out  = HashMap<String, DatabaseConfiguration>(DB_ENV_VAR_INIT_CAPACITY)
+private fun Environment.parse(): Map<DBKey, DatabaseConfiguration> {
+  val out  = HashMap<DBKey, DatabaseConfiguration>(DB_ENV_VAR_INIT_CAPACITY)
 
   val seen = HashSet<String>(12)
 
@@ -71,15 +74,16 @@ private fun Environment.parse(): Map<String, DatabaseConfiguration> {
   // processing the same config set multiple times.
   forEach { (key, _) ->
     when {
-      key.startsWith(DB_ENABLED_PREFIX)   -> parse(key.substring(DB_ENABLED_PREFIX.length), seen, out)
-      key.startsWith(DB_CONN_NAME_PREFIX) -> parse(key.substring(DB_CONN_NAME_PREFIX.length), seen, out)
-      key.startsWith(DB_LDAP_PREFIX)      -> parse(key.substring(DB_LDAP_PREFIX.length), seen, out)
-      key.startsWith(DB_PASS_PREFIX)      -> parse(key.substring(DB_PASS_PREFIX.length), seen, out)
-      key.startsWith(DB_SCHEMA_PREFIX)    -> parse(key.substring(DB_SCHEMA_PREFIX.length), seen, out)
-      key.startsWith(DB_NAME_PREFIX)      -> parse(key.substring(DB_NAME_PREFIX.length), seen, out)
-      key.startsWith(DB_HOST_PREFIX)      -> parse(key.substring(DB_HOST_PREFIX.length), seen, out)
-      key.startsWith(DB_PORT_PREFIX)      -> parse(key.substring(DB_PORT_PREFIX.length), seen, out)
-      key.startsWith(DB_PLATFORM_PREFIX)  -> parse(key.substring(DB_PLATFORM_PREFIX.length), seen, out)
+      key.startsWith(EnvKey.AppDB.DBEnabledPrefix)        -> parse(key.substring(EnvKey.AppDB.DBEnabledPrefix.length), seen, out)
+      key.startsWith(EnvKey.AppDB.DBConnectionNamePrefix) -> parse(key.substring(EnvKey.AppDB.DBConnectionNamePrefix.length), seen, out)
+      key.startsWith(EnvKey.AppDB.DBLDAPPrefix)           -> parse(key.substring(EnvKey.AppDB.DBLDAPPrefix.length), seen, out)
+      key.startsWith(EnvKey.AppDB.DBPassPrefix)           -> parse(key.substring(EnvKey.AppDB.DBPassPrefix.length), seen, out)
+      key.startsWith(EnvKey.AppDB.DBDataSchemaPrefix)     -> parse(key.substring(EnvKey.AppDB.DBDataSchemaPrefix.length), seen, out)
+      key.startsWith(EnvKey.AppDB.DBNamePrefix)           -> parse(key.substring(EnvKey.AppDB.DBNamePrefix.length), seen, out)
+      key.startsWith(EnvKey.AppDB.DBHostPrefix)           -> parse(key.substring(EnvKey.AppDB.DBHostPrefix.length), seen, out)
+      key.startsWith(EnvKey.AppDB.DBPortPrefix)           -> parse(key.substring(EnvKey.AppDB.DBPortPrefix.length), seen, out)
+      key.startsWith(EnvKey.AppDB.DBPlatformPrefix)       -> parse(key.substring(EnvKey.AppDB.DBPlatformPrefix.length), seen, out)
+      key.startsWith(EnvKey.AppDB.DBConnectionDataTypes)  -> parse(key.substring(EnvKey.AppDB.DBConnectionDataTypes.length), seen, out)
     }
   }
 
@@ -90,7 +94,7 @@ private fun Environment.parse(): Map<String, DatabaseConfiguration> {
 }
 
 
-private fun Environment.parse(key: String, names: MutableSet<String>, out: MutableMap<String, DatabaseConfiguration>) {
+private fun Environment.parse(key: String, names: MutableSet<String>, out: MutableMap<DBKey, DatabaseConfiguration>) {
   // If a database config set with the given key has already been seen (present
   // in the names set) then skip it because we've already processed this config
   // set.
@@ -104,39 +108,43 @@ private fun Environment.parse(key: String, names: MutableSet<String>, out: Mutab
   //
   // If the enabled flag for the database config set is `false`, then skip the
   // config set.
-  if (reqBool(DB_ENABLED_PREFIX + key)) {
-    val name = require(DB_CONN_NAME_PREFIX + key)
-    val ldap = optional(DB_LDAP_PREFIX + key)
+  if (reqBool(EnvKey.AppDB.DBEnabledPrefix + key)) {
+    val name  = require(EnvKey.AppDB.DBConnectionNamePrefix + key)
+    val ldap  = optional(EnvKey.AppDB.DBLDAPPrefix + key)
+    val types = optList(EnvKey.AppDB.DBConnectionDataTypes)?.map(DataType::of) ?: listOf(Wildcard)
 
-    if (ldap == null) {
-      out[name] = DatabaseConfiguration(
+    val tmp = if (ldap == null) {
+      DatabaseConfiguration(
         connectionName = name,
         // We use the DB schema as the username.
-        user       = require(DB_SCHEMA_PREFIX + key),
-        pass       = SecretString(require(DB_PASS_PREFIX + key)),
-        dataSchema = require(DB_SCHEMA_PREFIX + key),
-        platform   = optional(DB_PLATFORM_PREFIX + key)?.let(DBPlatform::fromPlatformString) ?: DBPlatform.Oracle,
-        port       = reqUShort(DB_PORT_PREFIX + key),
-        host       = require(DB_HOST_PREFIX + key),
-        dbName     = require(DB_NAME_PREFIX + key),
+        user       = require(EnvKey.AppDB.DBDataSchemaPrefix + key),
+        pass       = SecretString(require(EnvKey.AppDB.DBPassPrefix + key)),
+        dataSchema = require(EnvKey.AppDB.DBDataSchemaPrefix + key),
+        platform   = optional(EnvKey.AppDB.DBPlatformPrefix + key)?.let(DBPlatform::fromPlatformString) ?: DBPlatform.Oracle,
+        port       = reqUShort(EnvKey.AppDB.DBPortPrefix + key),
+        host       = require(EnvKey.AppDB.DBHostPrefix + key),
+        dbName     = require(EnvKey.AppDB.DBNamePrefix + key),
         ldap       = null,
       )
     } else {
-      if (optional(DB_PORT_PREFIX + key) != null || optional(DB_HOST_PREFIX + key) != null || optional(DB_NAME_PREFIX + key) != null)
+      if (optional(EnvKey.AppDB.DBPortPrefix + key) != null || optional(EnvKey.AppDB.DBHostPrefix + key) != null || optional(EnvKey.AppDB.DBNamePrefix + key) != null)
         throw IllegalStateException("environment specifies both LDAP and direct database configuration options for env group $key")
 
-      out[name] = DatabaseConfiguration(
+      DatabaseConfiguration(
         connectionName = name,
         // We use the DB schema as the username.
         ldap       = ldap,
-        user       = require(DB_SCHEMA_PREFIX + key),
-        pass       = SecretString(require(DB_PASS_PREFIX + key)),
-        dataSchema = require(DB_SCHEMA_PREFIX + key),
-        platform   = optional(DB_PLATFORM_PREFIX + key)?.let(DBPlatform::fromPlatformString) ?: DBPlatform.Oracle,
+        user       = require(EnvKey.AppDB.DBDataSchemaPrefix + key),
+        pass       = SecretString(require(EnvKey.AppDB.DBPassPrefix + key)),
+        dataSchema = require(EnvKey.AppDB.DBDataSchemaPrefix + key),
+        platform   = optional(EnvKey.AppDB.DBPlatformPrefix + key)?.let(DBPlatform::fromPlatformString) ?: DBPlatform.Oracle,
         port       = null,
         host       = null,
         dbName     = null,
       )
     }
+
+    for (dt in types)
+      out[name to dt] = tmp
   }
 }

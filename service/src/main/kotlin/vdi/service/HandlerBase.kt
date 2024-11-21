@@ -1,5 +1,6 @@
 package vdi.service
 
+import org.veupathdb.vdi.lib.common.env.EnvKey
 import org.veupathdb.vdi.lib.common.env.Environment
 import org.veupathdb.vdi.lib.common.field.DatasetID
 import java.nio.file.Path
@@ -36,12 +37,13 @@ sealed class HandlerBase<T>(
   abstract suspend fun run(): T
 
   protected fun buildScriptEnv(): Environment {
-    val out = System.getenv().toMutableMap() // Copy the environment before appending script env.
+    val out = System.getenv()
+      .asSequence()
+      .filter { (k, _) -> !k.startsWith(EnvKey.AppDB.CommonPrefix) }
+      .associateByTo(HashMap<String, String>(), Map.Entry<String, String>::key, Map.Entry<String, String>::value)
 
-    if (customPath.isBlank())
-      out["PATH"] = System.getenv("PATH")
-    else
-      out["PATH"] = System.getenv("PATH") + ':' + customPath
+    if (customPath.isNotBlank())
+      out["PATH"] = out["PATH"] + ':' + customPath
 
     out[ScriptEnvKey.DatasetID] = datasetID.toString()
 

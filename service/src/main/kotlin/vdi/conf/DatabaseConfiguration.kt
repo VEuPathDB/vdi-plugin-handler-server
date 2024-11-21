@@ -3,7 +3,6 @@ package vdi.conf
 import org.veupathdb.vdi.lib.common.field.SecretString
 import vdi.model.DBPlatform
 
-
 /**
  * Database Configuration
  *

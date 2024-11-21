@@ -59,7 +59,7 @@ class InstallMetaHandler(
 
         val installMetaStatus = ExitStatus.InstallMeta.fromCode(exitCode())
 
-        metrics.installMetaCalls.labels(installMetaStatus.metricFriendlyName).inc()
+        metrics.installMetaCalls.labelValues(installMetaStatus.metricFriendlyName).inc()
 
         when (installMetaStatus) {
           ExitStatus.InstallMeta.Success -> {

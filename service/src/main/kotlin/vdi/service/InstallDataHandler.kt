@@ -9,9 +9,7 @@ import java.nio.file.Path
 import kotlin.io.path.*
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import org.veupathdb.vdi.lib.common.DatasetManifestFilename
 import org.veupathdb.vdi.lib.common.DatasetMetaFilename
-import org.veupathdb.vdi.lib.common.intra.InstallDataRequest
 import vdi.components.io.LineListOutputStream
 import vdi.components.io.LoggingOutputStream
 import vdi.components.metrics.ScriptMetrics
@@ -20,14 +18,13 @@ import vdi.conf.ScriptConfiguration
 import vdi.consts.ExitStatus
 import vdi.consts.FileName
 import vdi.model.DatabaseDetails
+import vdi.server.context.InstallDataContext
 import vdi.util.DoubleFmt
 import vdi.util.unpackAsZip
 import java.io.IOException
 
 class InstallDataHandler(
-  workspace: Path,
-  request: InstallDataRequest,
-  private val payload: Path,
+  private val installCtx: InstallDataContext,
   dbDetails: DatabaseDetails,
   executor: ScriptExecutor,
   customPath: String,
@@ -37,9 +34,9 @@ class InstallDataHandler(
   private val compatScript: ScriptConfiguration,
   metrics: ScriptMetrics,
 ) : InstallationHandlerBase<List<String>>(
-  request.vdiID,
-  request.projectID,
-  workspace,
+  installCtx.request.vdiID,
+  installCtx.request.projectID,
+  installCtx.workspace,
   executor,
   customPath,
   datasetInstallPath,
@@ -63,20 +60,17 @@ class InstallDataHandler(
     log.debug("creating install data directory {}", installWorkspace)
     installWorkspace.createDirectory()
 
-    log.debug("unpacking {} as a .zip file", payload)
-    payload.unpackAsZip(installWorkspace)
-    payload.deleteIfExists()
+    log.debug("unpacking {} as a .zip file", installCtx.payload)
+    installCtx.payload.unpackAsZip(installWorkspace)
+    installCtx.payload.deleteIfExists()
 
-    val metaFile = requireMetaFile(installWorkspace)
-    val metaData = JSON.readValue<VDIDatasetMeta>(metaFile.toFile())
-
+    val metaFile = writeMetaFile(installWorkspace, installCtx.meta)
     runInstallMeta(metaFile)
 
-    if (metaData.dependencies.isNotEmpty())
+    if (installCtx.meta.dependencies.isNotEmpty())
       runCheckDependencies(metaFile)
 
     metaFile.deleteIfExists()
-    getManifestFile(installWorkspace).deleteIfExists()
 
     runInstallData(installWorkspace, warnings)
 
@@ -94,7 +88,7 @@ class InstallDataHandler(
 
         logJob.join()
 
-        metrics.installMetaCalls.labels(ExitStatus.InstallMeta.fromCode(exitCode()).metricFriendlyName).inc()
+        metrics.installMetaCalls.labelValues(ExitStatus.InstallMeta.fromCode(exitCode()).metricFriendlyName).inc()
 
         when (exitCode()) {
           0 -> {
@@ -157,7 +151,7 @@ class InstallDataHandler(
 
         val compatStatus = ExitStatus.CheckCompatibility.fromCode(exitCode())
 
-        metrics.checkCompatCalls.labels(compatStatus.metricFriendlyName).inc()
+        metrics.checkCompatCalls.labelValues(compatStatus.metricFriendlyName).inc()
 
         when (compatStatus) {
           ExitStatus.CheckCompatibility.Success -> {
@@ -200,7 +194,7 @@ class InstallDataHandler(
 
         val installStatus = ExitStatus.InstallData.fromCode(exitCode())
 
-        metrics.installDataCalls.labels(installStatus.metricFriendlyName).inc()
+        metrics.installDataCalls.labelValues(installStatus.metricFriendlyName).inc()
 
         when (installStatus) {
           ExitStatus.InstallData.Success -> {
@@ -234,13 +228,16 @@ class InstallDataHandler(
     return metaFile
   }
 
-  private fun getManifestFile(installDir: Path): Path {
-    return installDir.resolve(DatasetManifestFilename)
-  }
-
   class ValidationError(val warnings: Collection<String>) : RuntimeException()
 
   class CompatibilityError(val warnings: Collection<String>) : RuntimeException()
 
   class InstallDirConflictError(msg: String) : RuntimeException(msg)
+}
+
+private fun writeMetaFile(installDir: Path, meta: VDIDatasetMeta): Path {
+  val metaFile = installDir.resolve(DatasetMetaFilename)
+  metaFile.createFile()
+  metaFile.outputStream().buffered().use { JSON.writeValue(it, meta) }
+  return metaFile
 }

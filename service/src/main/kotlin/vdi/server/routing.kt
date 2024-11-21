@@ -4,13 +4,14 @@ import io.ktor.server.application.*
 import io.ktor.server.metrics.micrometer.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.micrometer.core.instrument.Metrics
 import vdi.components.http.errors.withExceptionMapping
 import vdi.model.ApplicationContext
 import vdi.server.controller.*
 
 fun Application.configureServer(appCtx: ApplicationContext) {
 
-  install(MicrometerMetrics) { registry = appCtx.metrics.micrometer }
+  install(MicrometerMetrics) { registry = Metrics.globalRegistry }
 
   routing {
     post("/import") { withExceptionMapping { call.handleImportRequest(appCtx) } }
@@ -22,6 +23,6 @@ fun Application.configureServer(appCtx: ApplicationContext) {
 
     post("/uninstall") { withExceptionMapping { call.handleUninstallRequest(appCtx) } }
 
-    get("/metrics") { call.respond(appCtx.metrics.micrometer.scrape()) }
+    get("/metrics") { call.respond(appCtx.metrics.prometheus.scrape()) }
   }
 }

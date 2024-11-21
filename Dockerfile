@@ -1,4 +1,4 @@
-FROM veupathdb/alpine-dev-base:jdk-18-gradle-7.5.1 AS build
+FROM veupathdb/alpine-dev-base:jdk23-gradle8.11 AS build
 
 ARG GITHUB_USERNAME
 ARG GITHUB_TOKEN
@@ -13,6 +13,7 @@ COPY [ \
 
 COPY components/ components/
 COPY service/ service/
+COPY gradle/libs.versions.toml gradle/libs.versions.toml
 
 RUN gradle test shadowJar --info
 

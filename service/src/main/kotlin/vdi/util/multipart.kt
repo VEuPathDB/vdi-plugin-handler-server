@@ -15,6 +15,8 @@ private const val MaxSizeToLoadInMemory = 16384uL
 
 private val logger = LoggerFactory.getLogger("multipart-util")
 
+inline fun <reified T : Any> PartData.parseAsJson(maxInputSize: ULong): T = parseAsJson(maxInputSize, T::class)
+
 fun <T : Any> PartData.parseAsJson(maxInputSize: ULong, type: KClass<T>): T =
   with(
     when (this) {

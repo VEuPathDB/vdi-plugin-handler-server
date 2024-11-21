@@ -1,19 +1,12 @@
-plugins {
-  kotlin("jvm")
-}
-
-kotlin {
-  jvmToolchain {
-    languageVersion = JavaLanguageVersion.of(21)
-    vendor = JvmVendorSpec.AMAZON
-  }
-}
-
 dependencies {
-  implementation("org.slf4j:slf4j-api:1.7.36")
+  implementation(libs.slf4j.api)
 
   testImplementation(kotlin("test"))
-  testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
-  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
-  testImplementation("org.mockito:mockito-core:5.2.0")
+  testImplementation(libs.junit.api)
+  testRuntimeOnly(libs.junit.engine)
+  testImplementation(libs.mockito.core)
+}
+
+tasks.test {
+  useJUnitPlatform()
 }

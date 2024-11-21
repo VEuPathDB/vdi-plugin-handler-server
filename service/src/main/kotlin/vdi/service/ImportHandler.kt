@@ -10,7 +10,6 @@ import org.veupathdb.vdi.lib.common.DatasetManifestFilename
 import org.veupathdb.vdi.lib.common.DatasetMetaFilename
 import org.veupathdb.vdi.lib.common.OriginTimestamp
 import org.veupathdb.vdi.lib.common.compression.Zip
-import org.veupathdb.vdi.lib.common.intra.ImportRequest
 import org.veupathdb.vdi.lib.common.model.VDIDatasetFileInfoImpl
 import org.veupathdb.vdi.lib.common.model.VDIDatasetManifestImpl
 import vdi.components.io.LineListOutputStream
@@ -20,6 +19,7 @@ import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
 import vdi.consts.ExitStatus
 import vdi.consts.ScriptEnvKey
+import vdi.server.context.ImportContext
 import vdi.util.Base36
 import vdi.util.DoubleFmt
 import java.time.OffsetDateTime
@@ -31,14 +31,12 @@ private const val WARNING_FILE_NAME     = "warnings.json"
 private const val OUTPUT_FILE_NAME      = "output.zip"
 
 class ImportHandler(
-  workspace: Path,
-  private val inputFile: Path,
-  private val details: ImportRequest,
+  private val importCtx: ImportContext,
   executor: ScriptExecutor,
   private val script: ScriptConfiguration,
   customPath: String,
   metrics: ScriptMetrics,
-) : HandlerBase<Path>(details.vdiID, workspace, executor, customPath, metrics) {
+) : HandlerBase<Path>(importCtx.request.vdiID, importCtx.workspace, executor, customPath, metrics) {
   private val log = LoggerFactory.getLogger(javaClass)
 
   private val inputDirectory: Path = workspace.resolve(INPUT_DIRECTORY_NAME)
@@ -74,7 +72,7 @@ class ImportHandler(
   @Suppress("NOTHING_TO_INLINE")
   private inline fun generateImportID() =
     Base36.encodeToString(OriginTimestamp.until(OffsetDateTime.now(), ChronoUnit.SECONDS).toULong()) +
-      Base36.encodeToString(details.importIndex.toULong())
+      Base36.encodeToString(importCtx.request.importIndex.toULong())
 
 
   /**
@@ -86,12 +84,12 @@ class ImportHandler(
    * to build the `vdi-manifest.json` file.
    */
   private fun unpackInput(): Collection<Pair<Path, Long>> {
-    Zip.zipEntries(inputFile).forEach { (entry, inp) ->
+    Zip.zipEntries(importCtx.payload).forEach { (entry, inp) ->
       val file = inputDirectory.resolve(entry.name)
       file.outputStream().use { out -> inp.transferTo(out) }
     }
 
-    inputFile.deleteExisting()
+    importCtx.payload.deleteExisting()
 
     val inputFiles = inputDirectory.listDirectoryEntries()
 
@@ -123,7 +121,7 @@ class ImportHandler(
   private suspend fun executeScript(): Collection<String> {
     val timer = metrics.importScriptDuration.startTimer()
 
-    log.info("executing import script for VDI dataset ID {}", details.vdiID)
+    log.info("executing import script for VDI dataset ID {}", importCtx.request.vdiID)
     val warnings = executor.executeScript(
       script.path,
       workspace,
@@ -134,7 +132,7 @@ class ImportHandler(
         val warnings = ArrayList<String>(8)
 
         val j1 = launch { LineListOutputStream(warnings).use { scriptStdOut.transferTo(it) } }
-        val j2 = launch { LoggingOutputStream("[import][${details.vdiID}]", log).use { scriptStdErr.transferTo(it) } }
+        val j2 = launch { LoggingOutputStream("[import][${importCtx.request.vdiID}]", log).use { scriptStdErr.transferTo(it) } }
 
         waitFor(script.maxSeconds)
 
@@ -143,12 +141,12 @@ class ImportHandler(
 
         val importStatus = ExitStatus.Import.fromCode(exitCode())
 
-        metrics.importScriptCalls.labels(importStatus.metricFriendlyName).inc()
+        metrics.importScriptCalls.labelValues(importStatus.metricFriendlyName).inc()
 
         when (importStatus) {
           ExitStatus.Import.Success -> {
             val dur = timer.observeDuration()
-            log.info("import script completed successfully for dataset {} in {} seconds", details.vdiID, DoubleFmt.format(dur))
+            log.info("import script completed successfully for dataset {} in {} seconds", importCtx.request.vdiID, DoubleFmt.format(dur))
           }
 
           ExitStatus.Import.ValidationFailure -> {
@@ -190,7 +188,7 @@ class ImportHandler(
   private fun writeMetaFile() =
     outputDirectory.resolve(DatasetMetaFilename)
       .createFile()
-      .apply { outputStream().use { JSON.writeValue(it, details.meta) } }
+      .apply { outputStream().use { JSON.writeValue(it, importCtx.request.meta) } }
 
   private fun writeWarningFile(warnings: Collection<String>) =
     outputDirectory.resolve(WARNING_FILE_NAME)

@@ -2,8 +2,11 @@ package vdi
 
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import io.micrometer.prometheus.PrometheusConfig
-import io.micrometer.prometheus.PrometheusMeterRegistry
+import io.micrometer.core.instrument.Clock
+import io.micrometer.core.instrument.Metrics
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
+import io.micrometer.prometheusmetrics.PrometheusConfig
+import io.prometheus.metrics.model.registry.PrometheusRegistry
 import org.slf4j.LoggerFactory
 import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutorImpl
@@ -30,7 +33,9 @@ fun main() {
     config,
     setupLDAP(config.service),
     ScriptExecutorImpl(),
-    PrometheusMeterRegistry(PrometheusConfig.DEFAULT).let { MetricsBundle(it, ScriptMetrics(it.prometheusRegistry)) },
+    PrometheusRegistry.defaultRegistry
+      .also { Metrics.globalRegistry.add(PrometheusMeterRegistry(PrometheusConfig.DEFAULT, it, Clock.SYSTEM)) }
+      .let { MetricsBundle(it, ScriptMetrics(it)) },
     DatasetPathFactory(config.service.datasetRoot, config.service.siteBuild)
   )
 

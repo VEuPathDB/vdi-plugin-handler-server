@@ -57,7 +57,7 @@ class UninstallHandler(
 
         val installStatus = ExitStatus.UninstallData.fromCode(exitCode())
 
-        metrics.uninstallCalls.labels(installStatus.metricFriendlyName).inc()
+        metrics.uninstallCalls.labelValues(installStatus.metricFriendlyName).inc()
 
         when (installStatus) {
           ExitStatus.UninstallData.Success -> {

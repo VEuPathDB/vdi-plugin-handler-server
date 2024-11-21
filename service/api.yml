@@ -1,0 +1,252 @@
+openapi: "3.0.4"
+servers: []
+
+info:
+  title: VDI Plugin Server
+  version: 7.0.0
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+
+security: []
+
+paths:
+  /import:
+    post:
+      operationId: import-dataset
+      summary: Import Processing
+      tags:
+      - Import
+      description: |
+        Perform dataset validation and any pre-installation transformation that
+        needs to be done.
+        
+        The output of this endpoint is a tarball containing the processing result
+        files that are ready to be imported into the VDI Dataset Store (MinIO at
+        the time of this writing)
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                details:
+                  $ref: '#/components/schemas/ImportRequestDetails'
+                payload:
+                  type: string
+                  format: binary
+              required:
+              - details
+              - payload
+      responses:
+        200:
+          description: Success
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        400:
+          $ref: "#/components/responses/400"
+        418:
+          $ref: '#/components/responses/418'
+        500:
+          $ref: '#/components/responses/500'
+
+  /install/meta:
+    post:
+      operationId: install-meta
+      summary: Install Metadata
+      tags:
+      - Install
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InstallMetaRequest"
+      responses:
+        204:
+          description: Success
+        400:
+          $ref: "#/components/responses/400"
+        500:
+          $ref: '#/components/responses/500'
+
+  /install/data:
+    post:
+      operationId: install-data
+      summary: Install Data
+      tags:
+      - Install
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                details:
+                  type: object
+                  additionalProperties: false
+                  properties:
+                    vdiID:
+                      $ref: "#/components/schemas/VDI-ID"
+                    projectID:
+                      $ref: "#/components/schemas/ProjectID"
+                  required:
+                  - vdiID
+                  - projectID
+                meta:
+                  $ref: "#/components/schemas/DatasetMeta"
+                manifest:
+                  $ref: "#/components/schemas/DatasetManifest"
+                payload:
+                  type: string
+                  format: binary
+              required:
+              - details
+              - meta
+              - manifest
+              - payload
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  warnings:
+                    type: array
+                    items:
+                      type: string
+                    default: []
+        400:
+          $ref: "#/components/responses/400"
+        418:
+          $ref: '#/components/responses/418'
+        420:
+          description: |
+            Incompatible data
+
+            The posted dataset depends on one or more resources that are not
+            available in the versions specified, if at all.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+        500:
+          $ref: "#/components/responses/500"
+
+  /uninstall:
+    post:
+      operationId: uninstall-dataset
+      summary: Uninstall
+      tags:
+      - Uninstall
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                vdiID:
+                  $ref: "#/components/schemas/VDI-ID"
+                projectID:
+                  $ref: "#/components/schemas/ProjectID"
+              required:
+              - vdiID
+              - projectID
+      responses:
+        204:
+          description: Success
+        400:
+          $ref: "#/components/responses/400"
+        500:
+          $ref: "#/components/responses/500"
+
+components:
+  responses:
+    400:
+      description: Malformed request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SimpleError'
+    418:
+      description: Validation error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'
+    500:
+      description: Internal server error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SimpleError'
+  schemas:
+    DatasetManifest:
+      $ref: https://raw.githubusercontent.com/VEuPathDB/vdi-component-common/refs/tags/v13.3.2/schemata/json/vdi-dataset-manifest.json
+
+    DatasetMeta:
+      $ref: https://raw.githubusercontent.com/VEuPathDB/vdi-component-common/refs/tags/v13.3.2/schemata/json/vdi-dataset-meta.json
+
+    ImportRequestDetails:
+      type: object
+      additionalProperties: false
+      properties:
+        vdiID:
+          $ref: '#/components/schemas/VDI-ID'
+          required: true
+        meta:
+          $ref: '#/components/schemas/DatasetMeta'
+          required: true
+      required:
+      - vdiID
+      - meta
+
+    InstallMetaRequest:
+      type: object
+      properties:
+        vdiID:
+          $ref: '#/components/schemas/VDI-ID'
+        projectID:
+          $ref: '#/components/schemas/ProjectID'
+        meta:
+          $ref: '#/components/schemas/DatasetMeta'
+      required:
+      - vdiID
+      - projectID
+      - meta
+
+    ProjectID:
+      $ref: https://raw.githubusercontent.com/VEuPathDB/vdi-component-common/refs/tags/v13.3.2/schemata/json/project-id.json
+
+    SimpleError:
+      type: object
+      additionalProperties: false
+      properties:
+        message:
+          type: string
+      required:
+      - message
+
+    ValidationError:
+      type: object
+      additionalProperties: false
+      properties:
+        warnings:
+          type: array
+          items:
+            type: string
+          minItems: 1
+      required:
+      - warnings
+
+    VDI-ID:
+      $ref: https://raw.githubusercontent.com/VEuPathDB/vdi-component-common/refs/tags/v13.3.2/schemata/json/vdi-dataset-id.json
+
