@@ -14,7 +14,7 @@ import vdi.service.InstallDataHandler
 
 suspend fun ApplicationCall.handleInstallDataRequest(appCtx: ApplicationContext) {
   withInstallDataContext { installCtx ->
-    withDatabaseDetails(appCtx.config.databases, appCtx.ldap, request.projectID) { dbDetails ->
+    withDatabaseDetails(appCtx.config.databases, appCtx.ldap, installCtx.request.projectID) { dbDetails ->
       try {
         // Run the install-data service and collect the returned list of
         // installation warnings.
