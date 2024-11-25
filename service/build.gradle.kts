@@ -1,7 +1,7 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-  id("com.github.johnrengelman.shadow") version "7.1.2"
+  id("com.github.johnrengelman.shadow") version "8.1.1"
   kotlin("jvm")
 }
 
@@ -56,7 +56,9 @@ tasks.jar {
 }
 
 tasks.shadowJar {
-  exclude("**/Log4j2Plugins.dat")
+  exclude(
+    "**/Log4j2Plugins.dat"
+  )
   archiveFileName.set("service.jar")
 }
 
