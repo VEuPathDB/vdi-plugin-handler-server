@@ -8,11 +8,11 @@ ktor-metrics = { group = "io.ktor", name = "ktor-server-metrics-micrometer", ver
 
 kt-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.9.0" }
 
-slf4j-api = { group = "org.slf4j", name = "slf4j-api", version = "1.7.36" }
+slf4j-api = { group = "org.slf4j", name = "slf4j-api", version = "2.0.16" }
 
-log4j-core      = { group = "org.apache.logging.log4j", name = "log4j-core",       version = "2.24.1" }
-log4j-slf4j     = { group = "org.apache.logging.log4j", name = "log4j-slf4j-impl", version = "2.24.1" }
-log4j-iostreams = { group = "org.apache.logging.log4j", name = "log4j-iostreams",  version = "2.24.1" }
+log4j-core      = { group = "org.apache.logging.log4j", name = "log4j-core",       version = "2.24.2" }
+log4j-slf4j     = { group = "org.apache.logging.log4j", name = "log4j-slf4j-impl", version = "2.24.2" }
+log4j-iostreams = { group = "org.apache.logging.log4j", name = "log4j-iostreams",  version = "2.24.2" }
 
 junit-api    = { group = "org.junit.jupiter", name = "junit-jupiter-api",    version = "5.11.3" }
 junit-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.11.3" }
