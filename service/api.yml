@@ -3,7 +3,7 @@ servers: []
 
 info:
   title: VDI Plugin Server
-  version: 7.0.0
+  version: 8.0.0
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
@@ -21,9 +21,17 @@ paths:
         Perform dataset validation and any pre-installation transformation that
         needs to be done.
         
-        The output of this endpoint is a tarball containing the processing result
+        The output of this endpoint is a zip containing the processing result
         files that are ready to be imported into the VDI Dataset Store (MinIO at
         the time of this writing)
+        
+        The structure of the returned zip is as follows:
+        ```yaml
+        result.zip:
+        - warnings.json     # Import warnings
+        - vdi-manifest.json # File manifest
+        - data.zip          # Install-ready data
+        ```
       requestBody:
         content:
           multipart/form-data:
