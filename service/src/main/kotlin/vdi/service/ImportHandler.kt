@@ -74,9 +74,9 @@ class ImportHandler(
     inputDirectory.deleteRecursively()
 
     return workspace.resolve(OUTPUT_FILE_NAME)
-      .also { Zip.compress(it, listOf(
-        writeManifestFile(inputFiles, outputFiles),
-        writeWarningFile(warnings), dataFilesZip),
+      .also { Zip.compress(
+        it,
+        listOf(writeManifestFile(inputFiles, outputFiles), writeWarningFile(warnings), dataFilesZip),
         Zip.Level(0u)
       ) }
       .also { outputDirectory.deleteRecursively() }
