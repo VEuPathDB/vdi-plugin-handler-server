@@ -10,7 +10,7 @@ private const val DB_ENV_VAR_INIT_CAPACITY = 12
 
 private val Wildcard = DataType.of("*")
 
-private typealias DBKey = Pair<ProjectID, DataType>
+typealias DBKey = Pair<ProjectID, DataType>
 
 /**
  * Database Configuration Map
@@ -40,18 +40,12 @@ class DatabaseConfigurationMap(environment: Environment) : Map<DBKey, DatabaseCo
   override fun isEmpty() = raw.isEmpty()
 
   override fun get(key: DBKey): DatabaseConfiguration? =
-    raw[key] ?: if (key.second != Wildcard) get(key.first) else null
-
-  operator fun get(key: ProjectID) = get(key to Wildcard)
+    raw[key] ?: if (key.second != Wildcard) raw[key.first to Wildcard] else null
 
   override fun containsValue(value: DatabaseConfiguration) = raw.containsValue(value)
 
   override fun containsKey(key: DBKey): Boolean =
-    raw.containsKey(key) || (key.second != Wildcard && containsKey(key.first))
-
-  fun containsKey(key: ProjectID) = containsKey(key to Wildcard)
-
-  operator fun contains(key: ProjectID) = containsKey(key)
+    raw.containsKey(key) || (key.second != Wildcard && raw.containsKey(key.first to Wildcard))
 }
 
 private fun parseDatabaseConfigs(environment: Environment) =

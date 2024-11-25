@@ -40,7 +40,7 @@ sealed class HandlerBase<T>(
     val out = System.getenv()
       .asSequence()
       .filter { (k, _) -> !k.startsWith(EnvKey.AppDB.CommonPrefix) }
-      .associateByTo(HashMap<String, String>(), Map.Entry<String, String>::key, Map.Entry<String, String>::value)
+      .associateByTo(HashMap(), Map.Entry<String, String>::key, Map.Entry<String, String>::value)
 
     if (customPath.isNotBlank())
       out["PATH"] = out["PATH"] + ':' + customPath

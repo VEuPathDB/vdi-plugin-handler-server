@@ -9,7 +9,7 @@ import vdi.service.UninstallHandler
 
 suspend fun ApplicationCall.handleUninstallRequest(appCtx: ApplicationContext) {
   withUninstallContext { workspace, request ->
-    withDatabaseDetails(appCtx.config.databases, appCtx.ldap, request.projectID) { dbDetails ->
+    withDatabaseDetails(appCtx.config.databases, appCtx.ldap, request.projectID, request.type) { dbDetails ->
       UninstallHandler(
         workspace   = workspace,
         request     = request,

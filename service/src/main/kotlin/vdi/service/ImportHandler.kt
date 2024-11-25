@@ -10,8 +10,8 @@ import org.veupathdb.vdi.lib.common.DatasetManifestFilename
 import org.veupathdb.vdi.lib.common.DatasetMetaFilename
 import org.veupathdb.vdi.lib.common.OriginTimestamp
 import org.veupathdb.vdi.lib.common.compression.Zip
-import org.veupathdb.vdi.lib.common.model.VDIDatasetFileInfoImpl
-import org.veupathdb.vdi.lib.common.model.VDIDatasetManifestImpl
+import org.veupathdb.vdi.lib.common.model.VDIDatasetFileInfo
+import org.veupathdb.vdi.lib.common.model.VDIDatasetManifest
 import vdi.components.io.LineListOutputStream
 import vdi.components.io.LoggingOutputStream
 import vdi.components.metrics.ScriptMetrics
@@ -29,7 +29,13 @@ private const val INPUT_DIRECTORY_NAME  = "input"
 private const val OUTPUT_DIRECTORY_NAME = "output"
 private const val WARNING_FILE_NAME     = "warnings.json"
 private const val OUTPUT_FILE_NAME      = "output.zip"
+private const val DATA_ZIP_NAME         = "data.zip"
 
+/**
+ * Executes 'import' dataset preprocessing and validation.
+ *
+ * @see [run] for more details.
+ */
 class ImportHandler(
   private val importCtx: ImportContext,
   executor: ScriptExecutor,
@@ -45,22 +51,34 @@ class ImportHandler(
   private val outputDirectory: Path = workspace.resolve(OUTPUT_DIRECTORY_NAME)
     .createDirectory()
 
+  /**
+   * Performs the import preprocessing steps for a target dataset.
+   *
+   * The steps involved are:
+   * 1. Unpack the posted input zip.
+   * 2. Execute the plugin 'import' script on the input files.
+   * 3. Zip the outputs from the plugin 'import' script.
+   * 4. Write a manifest of the import inputs and outputs.
+   * 5. Write a list of import warnings.
+   * 6. Return an uncompressed zip stream containing the manifest, warnings, and
+   *    compressed results.
+   */
   @OptIn(ExperimentalPathApi::class)
   override suspend fun run(): Path {
-    val inputFiles = unpackInput()
-    val warnings   = executeScript()
-
-    val outputFiles = collectOutputFiles()
-      .apply {
-        add(writeManifestFile(inputFiles, this))
-        add(writeMetaFile())
-        add(writeWarningFile(warnings))
-      }
+    val inputFiles   = unpackInput()
+    val warnings     = executeScript()
+    val outputFiles  = collectOutputFiles()
+    val dataFilesZip = workspace.resolve(DATA_ZIP_NAME)
+      .also { Zip.compress(it, outputFiles) }
 
     inputDirectory.deleteRecursively()
 
     return workspace.resolve(OUTPUT_FILE_NAME)
-      .also { Zip.compress(it, outputFiles, Zip.Level(0u)) }
+      .also { Zip.compress(it, listOf(
+        writeManifestFile(inputFiles, outputFiles),
+        writeWarningFile(warnings), dataFilesZip),
+        Zip.Level(0u)
+      ) }
       .also { outputDirectory.deleteRecursively() }
   }
 
@@ -196,9 +214,9 @@ class ImportHandler(
       .apply { outputStream().use { JSON.writeValue(it, WarningsFile(warnings)) } }
 
   private fun buildManifest(inputFiles: Collection<Pair<Path, Long>>, outputFiles: Collection<Path>) =
-    VDIDatasetManifestImpl(
-      inputFiles = inputFiles.map { VDIDatasetFileInfoImpl(it.first.name, it.second) },
-      dataFiles = outputFiles.map { VDIDatasetFileInfoImpl(it.name, it.fileSize()) },
+    VDIDatasetManifest(
+      inputFiles = inputFiles.map { VDIDatasetFileInfo(it.first.name, it.second.toULong()) },
+      dataFiles = outputFiles.map { VDIDatasetFileInfo(it.name, it.fileSize().toULong()) },
     )
 
   class EmptyInputError : RuntimeException("input archive contained no files")

@@ -9,7 +9,7 @@ import vdi.service.InstallMetaHandler
 
 suspend fun ApplicationCall.handleInstallMetaRequest(appCtx: ApplicationContext) {
   withInstallMetaContext { workspace, request ->
-    withDatabaseDetails(appCtx.config.databases, appCtx.ldap, request.projectID) { dbDetails ->
+    withDatabaseDetails(appCtx.config.databases, appCtx.ldap, request.projectID, request.meta.type) { dbDetails ->
       InstallMetaHandler(
         workspace   = workspace,
         request     = request,

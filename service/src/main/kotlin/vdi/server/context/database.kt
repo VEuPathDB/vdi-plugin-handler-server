@@ -1,5 +1,7 @@
 package vdi.server.context
 
+import org.veupathdb.vdi.lib.common.field.ProjectID
+import org.veupathdb.vdi.lib.common.model.VDIDatasetType
 import vdi.components.http.errors.BadRequestException
 import vdi.components.ldap.LDAP
 import vdi.conf.DatabaseConfiguration
@@ -10,11 +12,12 @@ import vdi.model.DatabaseDetails
 suspend fun withDatabaseDetails(
   databases: DatabaseConfigurationMap,
   ldap:      LDAP,
-  projectID: String,
+  projectID: ProjectID,
+  type:      VDIDatasetType,
   fn:        suspend (dbDetails: DatabaseDetails) -> Unit,
-) {
-  fn((databases[projectID] ?: throw BadRequestException("unrecognized projectID value")).toDatabaseDetails(ldap))
-}
+) =
+  fn((databases[projectID to type.name]
+    ?: throw BadRequestException("unrecognized projectID value")).toDatabaseDetails(ldap))
 
 private fun DatabaseConfiguration.toDatabaseDetails(ldap: LDAP?) =
   when (platform) {
