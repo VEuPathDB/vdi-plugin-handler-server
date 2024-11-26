@@ -6,6 +6,7 @@ import org.veupathdb.vdi.lib.common.field.DatasetID
 import java.nio.file.Path
 import vdi.components.metrics.ScriptMetrics
 import vdi.components.script.ScriptExecutor
+import vdi.components.script.cloneEnvironment
 import vdi.consts.ScriptEnvKey
 
 sealed class HandlerBase<T>(
@@ -37,10 +38,7 @@ sealed class HandlerBase<T>(
   abstract suspend fun run(): T
 
   protected fun buildScriptEnv(): Environment {
-    val out = System.getenv()
-      .asSequence()
-      .filter { (k, _) -> !k.startsWith(EnvKey.AppDB.CommonPrefix) }
-      .associateByTo(HashMap(), Map.Entry<String, String>::key, Map.Entry<String, String>::value)
+    val out = cloneEnvironment()
 
     if (customPath.isNotBlank())
       out["PATH"] = out["PATH"] + ':' + customPath
