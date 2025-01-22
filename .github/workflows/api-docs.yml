@@ -1,0 +1,30 @@
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - 'docs/**'
+
+jobs:
+  build:
+    name: Build Dokka Docs
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+    - name: Upload
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: docs/
+  deploy:
+    name: Deploy API Docs
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+    - name: Deploy
+      uses: actions/deploy-pages@v4
