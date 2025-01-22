@@ -1,0 +1,18 @@
+version: 2
+updates:
+- package-ecosystem: gradle
+  directory: "/"
+  registries:
+  - github-packages
+  schedule:
+    interval: weekly
+- package-ecosystem: docker
+  directory: "/"
+  schedule:
+    interval: monthly
+registries:
+  github-packages:
+    type: maven-repository
+    url: https://maven.pkg.github.com/veupathdb/maven-packages
+    username: ${{ secrets.PACKAGES_USER }}
+    password: ${{ secrets.PACKAGES_KEY }}
