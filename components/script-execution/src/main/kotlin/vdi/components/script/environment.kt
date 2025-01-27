@@ -16,9 +16,11 @@ private val SafeKeys = arrayOf(
   "LD_LIBRARY_PATH",
   "ORACLE_HOME",
   "PATH",
+  "PROJECT_HOME",
   "SITE_BUILD",
   "TEMPLATE_DB_NAME",
   "TEMPLATE_DB_USER",
+  "TEMPLATE_DB_PASS",
   "TZ",
 )
 
