@@ -10,7 +10,7 @@ kt-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-co
 
 slf4j-api = { group = "org.slf4j", name = "slf4j-api", version = "2.0.16" }
 
-log4j-core      = { group = "org.apache.logging.log4j", name = "log4j-core",       version = "2.24.2" }
+log4j-core      = { group = "org.apache.logging.log4j", name = "log4j-core",       version = "2.24.3" }
 log4j-slf4j     = { group = "org.apache.logging.log4j", name = "log4j-slf4j2-impl", version = "2.24.2" }
 log4j-iostreams = { group = "org.apache.logging.log4j", name = "log4j-iostreams",  version = "2.24.2" }
 
