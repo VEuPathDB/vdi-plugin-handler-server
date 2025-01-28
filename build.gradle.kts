@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-  kotlin("jvm") version "2.0.21"
+  kotlin("jvm") version "2.1.10"
 }
 
 allprojects {
@@ -34,7 +34,6 @@ allprojects {
     }
   }
 }
-
 
 tasks.create("docker-build") {
   doLast {

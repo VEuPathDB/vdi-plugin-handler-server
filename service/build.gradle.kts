@@ -62,7 +62,7 @@ tasks.shadowJar {
   archiveFileName.set("service.jar")
 }
 
-tasks.create("generate-raml-docs") {
+tasks.register("generate-raml-docs") {
   doLast {
     val outputFile = rootDir.resolve("docs/http-api.html")
     outputFile.delete()

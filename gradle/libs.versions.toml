@@ -1,5 +1,5 @@
 [libraries]
-vdi-component-common = { group = "org.veupathdb.vdi", name = "vdi-component-common", version = "14.2.1" }
+vdi-component-common = { group = "org.veupathdb.vdi", name = "vdi-component-common", version = "15.0.0" }
 vdi-component-json   = { group = "org.veupathdb.vdi", name = "vdi-component-json",   version = "1.0.2" }
 
 ktor-core    = { group = "io.ktor", name = "ktor-server-core-jvm",           version = "3.0.3" }
