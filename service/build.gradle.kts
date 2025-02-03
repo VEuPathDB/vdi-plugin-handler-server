@@ -91,10 +91,6 @@ tasks.register("generate-raml-docs") {
   }
 }
 
-tasks.publish {
-  dependsOn(":service:jar")
-}
-
 publishing {
   repositories {
     maven {
@@ -110,7 +106,7 @@ publishing {
   publications {
 
     create<MavenPublication>("gpr") {
-      from(components["shadow"])
+      artifact(tasks.shadowJar)
 
       pom {
         name.set("vdi-component-common")
