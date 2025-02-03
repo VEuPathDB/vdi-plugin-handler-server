@@ -57,7 +57,6 @@ tasks.shadowJar {
     "**/Log4j2Plugins.dat"
   )
   archiveFileName.set("service.jar")
-  archiveClassifier.set("")
 
   manifest {
     attributes(mapOf(
@@ -87,56 +86,6 @@ tasks.register("generate-raml-docs") {
 
         if (waitFor() != 0) {
           throw RuntimeException("raml2html process failed")
-        }
-      }
-    }
-  }
-}
-
-val shadowArtifact = artifacts.add("shadow", tasks.shadowJar)
-
-publishing {
-  repositories {
-    maven {
-      name = "GitHub"
-      url = uri("https://maven.pkg.github.com/VEuPathDB/vdi-plugin-handler-server")
-      credentials {
-        username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_USERNAME")
-        password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
-      }
-    }
-  }
-
-  publications {
-
-    create<MavenPublication>("gpr") {
-      from(components["shadow"])
-//      artifact(shadowArtifact)
-
-      pom {
-        name.set("vdi-plugin-handler-server")
-        description.set(project.description)
-        url.set("https://github.com/VEuPathDB/vdi-plugin-handler-server")
-
-        licenses {
-          license {
-            name.set("Apache-2.0")
-          }
-        }
-
-        developers {
-          developer {
-            id.set("epharper")
-            name.set("Elizabeth Paige Harper")
-            email.set("elizabeth.harper@foxcapades.io")
-            url.set("https://github.com/foxcapades")
-          }
-        }
-
-        scm {
-          connection.set("scm:git:git://github.com/VEuPathDB/vdi-plugin-handler-server.git")
-          developerConnection.set("scm:git:ssh://github.com/VEuPathDB/vdi-plugin-handler-server.git")
-          url.set("https://github.com/VEuPathDB/vdi-plugin-handler-server")
         }
       }
     }

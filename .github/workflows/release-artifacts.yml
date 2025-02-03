@@ -15,10 +15,14 @@ jobs:
         java-version: '21'
         distribution: corretto
         cache: gradle
-    - name: Inject Tag
-      run: sed -i "2i version = \"${{ github.ref_name }}\"" service/build.gradle.kts
-    - name: Build & Publish
-      run: ./gradlew --no-daemon clean test publish
+    - name: Build
+      run: ./gradlew --no-daemon clean test shadowJar
       env:
         GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      with:
+        draft: true
+        files: service/build/libs/service.jar
+        generate_release_notes: true
