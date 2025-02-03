@@ -106,9 +106,7 @@ publishing {
   publications {
 
     create<MavenPublication>("gpr") {
-      from(components["java"])
-
-      artifact(tasks.shadowJar)
+      from(components["shadow"])
 
       pom {
         name.set("vdi-component-common")
