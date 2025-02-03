@@ -1,7 +1,7 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-  id("com.github.johnrengelman.shadow") version "8.1.1"
+  id("com.gradleup.shadow") version "8.3.6"
   kotlin("jvm")
   `maven-publish`
 }
@@ -61,6 +61,7 @@ tasks.shadowJar {
     "**/Log4j2Plugins.dat"
   )
   archiveFileName.set("service.jar")
+  archiveClassifier.set("")
 }
 
 tasks.register("generate-raml-docs") {
