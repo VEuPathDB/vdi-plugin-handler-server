@@ -6,7 +6,7 @@ ktor-core    = { group = "io.ktor", name = "ktor-server-core-jvm",           ver
 ktor-netty   = { group = "io.ktor", name = "ktor-server-netty-jvm",          version = "3.0.3" }
 ktor-metrics = { group = "io.ktor", name = "ktor-server-metrics-micrometer", version = "3.0.1" }
 
-kt-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.9.0" }
+kt-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.10.1" }
 
 slf4j-api = { group = "org.slf4j", name = "slf4j-api", version = "2.0.16" }
 
