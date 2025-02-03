@@ -91,6 +91,10 @@ tasks.register("generate-raml-docs") {
   }
 }
 
+tasks.publish {
+  dependsOn(":service:jar")
+}
+
 publishing {
   repositories {
     maven {
