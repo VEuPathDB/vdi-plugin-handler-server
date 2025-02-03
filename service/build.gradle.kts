@@ -49,11 +49,7 @@ tasks.test {
 }
 
 tasks.jar {
-  manifest {
-    attributes(mapOf(
-      "Main-Class" to "vdi.MainKt"
-    ))
-  }
+  enabled = false
 }
 
 tasks.shadowJar {
@@ -62,6 +58,12 @@ tasks.shadowJar {
   )
   archiveFileName.set("service.jar")
   archiveClassifier.set("")
+
+  manifest {
+    attributes(mapOf(
+      "Main-Class" to "vdi.MainKt"
+    ))
+  }
 }
 
 tasks.register("generate-raml-docs") {
@@ -108,7 +110,8 @@ publishing {
   publications {
 
     create<MavenPublication>("gpr") {
-      artifact(shadowArtifact)
+      from(components["shadow"])
+//      artifact(shadowArtifact)
 
       pom {
         name.set("vdi-plugin-handler-server")
