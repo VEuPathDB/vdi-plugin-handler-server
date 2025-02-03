@@ -16,7 +16,7 @@ jobs:
         distribution: corretto
         cache: gradle
     - name: Build & Publish
-      run: ./gradlew clean test publish
+      run: ./gradlew --no-daemon clean test publish
       env:
         GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
