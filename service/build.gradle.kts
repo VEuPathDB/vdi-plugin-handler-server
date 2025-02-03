@@ -3,6 +3,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 plugins {
   id("com.github.johnrengelman.shadow") version "8.1.1"
   kotlin("jvm")
+  `maven-publish`
 }
 
 configurations.all {
@@ -83,6 +84,55 @@ tasks.register("generate-raml-docs") {
 
         if (waitFor() != 0) {
           throw RuntimeException("raml2html process failed")
+        }
+      }
+    }
+  }
+}
+
+publishing {
+  repositories {
+    maven {
+      name = "GitHub"
+      url = uri("https://maven.pkg.github.com/VEuPathDB/vdi-component-common")
+      credentials {
+        username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+        password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+      }
+    }
+  }
+
+  publications {
+
+    create<MavenPublication>("gpr") {
+      from(components["java"])
+
+      artifact(tasks.shadowJar)
+
+      pom {
+        name.set("vdi-component-common")
+        description.set(project.description)
+        url.set("https://github.com/VEuPathDB/vdi-component-common")
+
+        licenses {
+          license {
+            name.set("Apache-2.0")
+          }
+        }
+
+        developers {
+          developer {
+            id.set("epharper")
+            name.set("Elizabeth Paige Harper")
+            email.set("elizabeth.harper@foxcapades.io")
+            url.set("https://github.com/foxcapades")
+          }
+        }
+
+        scm {
+          connection.set("scm:git:git://github.com/VEuPathDB/vdi-component-common.git")
+          developerConnection.set("scm:git:ssh://github.com/VEuPathDB/vdi-component-common.git")
+          url.set("https://github.com/VEuPathDB/vdi-component-common")
         }
       }
     }
