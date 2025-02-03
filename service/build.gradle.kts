@@ -91,11 +91,13 @@ tasks.register("generate-raml-docs") {
   }
 }
 
+val shadowArtifact = artifacts.add("shadow", tasks.shadowJar)
+
 publishing {
   repositories {
     maven {
       name = "GitHub"
-      url = uri("https://maven.pkg.github.com/VEuPathDB/vdi-component-common")
+      url = uri("https://maven.pkg.github.com/VEuPathDB/vdi-plugin-handler-server")
       credentials {
         username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_USERNAME")
         password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
@@ -106,12 +108,12 @@ publishing {
   publications {
 
     create<MavenPublication>("gpr") {
-      artifact(tasks.shadowJar)
+      artifact(shadowArtifact)
 
       pom {
-        name.set("vdi-component-common")
+        name.set("vdi-plugin-handler-server")
         description.set(project.description)
-        url.set("https://github.com/VEuPathDB/vdi-component-common")
+        url.set("https://github.com/VEuPathDB/vdi-plugin-handler-server")
 
         licenses {
           license {
@@ -129,9 +131,9 @@ publishing {
         }
 
         scm {
-          connection.set("scm:git:git://github.com/VEuPathDB/vdi-component-common.git")
-          developerConnection.set("scm:git:ssh://github.com/VEuPathDB/vdi-component-common.git")
-          url.set("https://github.com/VEuPathDB/vdi-component-common")
+          connection.set("scm:git:git://github.com/VEuPathDB/vdi-plugin-handler-server.git")
+          developerConnection.set("scm:git:ssh://github.com/VEuPathDB/vdi-plugin-handler-server.git")
+          url.set("https://github.com/VEuPathDB/vdi-plugin-handler-server")
         }
       }
     }
