@@ -17,6 +17,7 @@ private val SafeKeys = arrayOf(
   "ORACLE_HOME",
   "PATH",
   "PROJECT_HOME",
+  "PYTHONPATH",
   "SITE_BUILD",
   "TEMPLATE_DB_NAME",
   "TEMPLATE_DB_USER",
