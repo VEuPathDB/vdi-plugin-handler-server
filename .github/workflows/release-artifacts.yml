@@ -16,7 +16,11 @@ jobs:
         distribution: corretto
     - uses: gradle/actions/setup-gradle@v4
     - name: Build
-      run: ./gradlew --no-daemon clean test shadowJar
+      run: |
+        ./gradlew --no-daemon clean test shadowJar
+        mv -t . service/build/libs/service.jar
+        sha256sum service.jar | cut -f1 -d' ' > service.jar.sha256
+        md5sum service.jar | cut -f1 -d' ' > service.jar.md5
       env:
         GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -24,5 +28,8 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         draft: false
-        files: service/build/libs/service.jar
+        files: |
+          service.jar
+          service.jar.sha256
+          service.jar.md5
         generate_release_notes: true
