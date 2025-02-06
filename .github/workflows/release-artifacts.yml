@@ -21,8 +21,8 @@ jobs:
       run: |
         ./gradlew --no-daemon clean test shadowJar
         mv -t . service/build/libs/service.jar
-        sha256sum service.jar | cut -b64 > service.jar.sha256
-        md5sum service.jar | cut -b32 > service.jar.md5
+        sha256sum service.jar | cut -f1 -d' ' -z > service.jar.sha256
+        md5sum service.jar | cut -f1 -d' ' -z > service.jar.md5
       env:
         GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
