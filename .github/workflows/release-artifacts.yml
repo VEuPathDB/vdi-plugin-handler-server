@@ -23,6 +23,7 @@ jobs:
         mv -t . service/build/libs/service.jar
         sha256sum service.jar | cut -b1-64 | tr -d '\n' > service.jar.sha256
         md5sum service.jar | cut -b1-32 | tr -d '\n' > service.jar.md5
+        sed "s/##VERSION_TEMPLATE##/${{ github.ref_name }}/" scripts/docker-download.sh > docker-download.sh
       env:
         GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -34,4 +35,5 @@ jobs:
           service.jar
           service.jar.sha256
           service.jar.md5
+          docker-download.sh
         generate_release_notes: true
