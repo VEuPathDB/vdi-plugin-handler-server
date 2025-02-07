@@ -12,6 +12,6 @@ sha256sum service.jar | grep -q "$(cat service.jar.sha256)" \
 rm service.jar.sha256
 
 # Download startup script
-curl -LOsf"https://raw.githubusercontent.com/VEuPathDB/vdi-plugin-handler-server/refs/tags/${TARGET_VERSION}/startup.sh" \
+curl -LOsf "https://raw.githubusercontent.com/VEuPathDB/vdi-plugin-handler-server/refs/tags/${TARGET_VERSION}/startup.sh" \
   || { echo "Failed to download startup script" >&2 ; exit 1 ; }
 chmod +x startup.sh
