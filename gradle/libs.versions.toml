@@ -2,7 +2,7 @@
 vdi-component-common = { group = "org.veupathdb.vdi", name = "vdi-component-common", version = "17.1.4" }
 vdi-component-json   = { group = "org.veupathdb.vdi", name = "vdi-component-json",   version = "1.0.2" }
 
-ktor-core    = { group = "io.ktor", name = "ktor-server-core-jvm",           version = "3.0.3" }
+ktor-core    = { group = "io.ktor", name = "ktor-server-core-jvm",           version = "3.1.0" }
 ktor-netty   = { group = "io.ktor", name = "ktor-server-netty-jvm",          version = "3.1.0" }
 ktor-metrics = { group = "io.ktor", name = "ktor-server-metrics-micrometer", version = "3.1.0" }
 
