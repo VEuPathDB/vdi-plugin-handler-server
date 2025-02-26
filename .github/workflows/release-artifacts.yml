@@ -25,8 +25,8 @@ jobs:
         md5sum service.jar | cut -b1-32 | tr -d '\n' > service.jar.md5
         sed "s/##VERSION_TEMPLATE##/${{ github.ref_name }}/" scripts/docker-download.sh > docker-download.sh
       env:
-        GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_USERNAME: ${{ secrets.GH_USERNAME }}
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
