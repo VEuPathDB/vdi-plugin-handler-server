@@ -111,6 +111,10 @@ class ImportHandler(
 
     val inputFiles = inputDirectory.listDirectoryEntries()
 
+    // Write this out AFTER we gather the input files as this is not a file we
+    // want to track in the manifest.
+    writeInputMetaFile()
+
     if (inputFiles.isEmpty())
       throw EmptyInputError()
 
@@ -203,8 +207,8 @@ class ImportHandler(
       .createFile()
       .apply { outputStream().use { JSON.writeValue(it, buildManifest(inputFiles, outputFiles)) } }
 
-  private fun writeMetaFile() =
-    outputDirectory.resolve(DatasetMetaFilename)
+  private fun writeInputMetaFile() =
+    inputDirectory.resolve(DatasetMetaFilename)
       .createFile()
       .apply { outputStream().use { JSON.writeValue(it, importCtx.request.meta) } }
 
