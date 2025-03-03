@@ -4,7 +4,7 @@ vdi-component-json   = { group = "org.veupathdb.vdi", name = "vdi-component-json
 
 ktor-core    = { group = "io.ktor", name = "ktor-server-core-jvm",           version = "3.1.0" }
 ktor-netty   = { group = "io.ktor", name = "ktor-server-netty-jvm",          version = "3.1.1" }
-ktor-metrics = { group = "io.ktor", name = "ktor-server-metrics-micrometer", version = "3.1.0" }
+ktor-metrics = { group = "io.ktor", name = "ktor-server-metrics-micrometer", version = "3.1.1" }
 
 kt-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.10.1" }
 
