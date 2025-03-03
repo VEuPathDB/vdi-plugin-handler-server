@@ -253,7 +253,7 @@ $ import {path-to-inputs} {path-to-outputs}
 ----
 
 * `{path-to-inputs}` <<import-inputs>>
-* `{path-to-outputs` <<import-outputs>>
+* `{path-to-outputs}` <<import-outputs>>
 
 .Example
 [source, shell-session]
