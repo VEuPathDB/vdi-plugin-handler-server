@@ -1,9 +1,9 @@
 package vdi.model
 
-import io.prometheus.metrics.model.registry.PrometheusRegistry
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
 import vdi.components.metrics.ScriptMetrics
 
 data class MetricsBundle(
-  val prometheus:    PrometheusRegistry,
+  val micrometer:    PrometheusMeterRegistry,
   val scriptMetrics: ScriptMetrics,
 )
