@@ -9,10 +9,9 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 import kotlin.io.path.createFile
 import kotlin.io.path.outputStream
-import kotlin.io.path.Path
 
-internal suspend fun PartData.handlePayload(workspace: Path, fileName: String): Path {
-  val payload = Path("/datasets").resolve(fileName)
+internal fun PartData.handlePayload(workspace: Path, fileName: String): Path {
+  val payload = workspace.resolve(fileName)
 
   payload.createFile()
   payload.outputStream().use {

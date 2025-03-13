@@ -30,7 +30,7 @@ fun main() {
     config,
     setupLDAP(config.service),
     ScriptExecutorImpl(),
-    PrometheusMeterRegistry(PrometheusConfig.DEFAULT).let { MetricsBundle(it, ScriptMetrics(it.prometheusRegistry)) },
+    PrometheusMeterRegistry(PrometheusConfig.DEFAULT).let { MetricsBundle(it, ScriptMetrics(it)) },
     DatasetPathFactory(config.service.datasetRoot, config.service.siteBuild)
   )
 

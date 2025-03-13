@@ -1,4 +1,4 @@
 dependencies {
   api(libs.metrics.micrometer)
-//  runtimeOnly(libs.metrics.prometheus)
+  implementation(libs.metrics.prometheus)
 }
