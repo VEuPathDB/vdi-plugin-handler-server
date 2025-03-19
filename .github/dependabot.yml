@@ -4,6 +4,7 @@ updates:
   directory: "/"
   registries:
   - github-packages
+  open-pull-requests-limit: 20
   schedule:
     interval: weekly
 - package-ecosystem: docker
