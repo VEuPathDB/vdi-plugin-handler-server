@@ -1,5 +1,5 @@
 [versions]
-ktor = "2.3.13"
+ktor = "3.1.2"
 log4j = "2.24.3"
 
 [libraries]
