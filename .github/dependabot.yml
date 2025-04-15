@@ -7,6 +7,14 @@ updates:
   open-pull-requests-limit: 20
   schedule:
     interval: weekly
+  groups:
+    test-dependencies:
+      patterns:
+      - org.junit.*
+      - org.mockito.*
+    log4j:
+      patterns:
+      - org.apache.logging.*
 - package-ecosystem: docker
   directory: "/"
   schedule:
