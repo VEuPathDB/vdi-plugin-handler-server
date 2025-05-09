@@ -3,7 +3,7 @@ ktor = "2.3.13"
 log4j = "2.24.3"
 
 [libraries]
-vdi-component-common = { group = "org.veupathdb.vdi", name = "vdi-component-common", version = "17.1.5" }
+vdi-component-common = { group = "org.veupathdb.vdi", name = "vdi-component-common", version = "18.0.0-SNAPSHOT" }
 vdi-component-json   = { group = "org.veupathdb.vdi", name = "vdi-component-json",   version = "1.0.2" }
 
 ktor-core    = { group = "io.ktor", name = "ktor-server-core-jvm",           version.ref = "ktor" }

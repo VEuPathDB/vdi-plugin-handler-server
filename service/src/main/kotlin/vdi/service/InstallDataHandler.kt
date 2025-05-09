@@ -57,7 +57,7 @@ class InstallDataHandler(
     val installWorkspace = workspace.resolve(FileName.InstallDirName)
     val warnings = ArrayList<String>(4)
 
-    log.debug("creating install data directory {}", installWorkspace)
+    log.debug("creating install data workspace {}", installWorkspace)
     installWorkspace.createDirectory()
 
     log.debug("unpacking {} as a .zip file", installCtx.payload)
