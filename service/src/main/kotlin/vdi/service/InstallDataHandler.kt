@@ -22,6 +22,8 @@ import vdi.server.context.InstallDataContext
 import vdi.util.DoubleFmt
 import vdi.util.unpackAsZip
 import java.io.IOException
+import vdi.components.script.PluginScript
+import vdi.components.script.PluginScriptException
 
 class InstallDataHandler(
   private val installCtx: InstallDataContext,
@@ -99,7 +101,7 @@ class InstallDataHandler(
           else -> {
             val err = "install-meta (for install-data) script failed for dataset $datasetID with exit code ${exitCode()}"
             log.error(err)
-            throw IllegalStateException(err)
+            throw PluginScriptException(PluginScript.InstallMeta, err)
           }
         }
       }
@@ -167,7 +169,7 @@ class InstallDataHandler(
           else -> {
             val err = "check-compatibility script failed for dataset $datasetID with exit code ${exitCode()}"
             log.error(err)
-            throw IllegalStateException(err)
+            throw PluginScriptException(PluginScript.CheckCompatibility, err)
           }
         }
       }
@@ -210,22 +212,11 @@ class InstallDataHandler(
           else -> {
             val err = "install-data script failed for dataset $datasetID with exit code ${exitCode()}"
             log.error(err)
-            throw IllegalStateException(err)
+            throw PluginScriptException(PluginScript.InstallData, err)
           }
         }
       }
     }
-  }
-
-  private fun requireMetaFile(installDir: Path): Path {
-    val metaFile = installDir.resolve(DatasetMetaFilename)
-
-    if (!metaFile.exists()) {
-      log.error("no meta file was found in the install directory for VDI dataset {}", datasetID)
-      throw IllegalStateException("no meta file was found in the install directory for VDI dataset $datasetID")
-    }
-
-    return metaFile
   }
 
   class ValidationError(val warnings: Collection<String>) : RuntimeException()

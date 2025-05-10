@@ -24,6 +24,8 @@ import vdi.util.Base36
 import vdi.util.DoubleFmt
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
+import vdi.components.script.PluginScript
+import vdi.components.script.PluginScriptException
 
 private const val INPUT_DIRECTORY_NAME  = "input"
 private const val OUTPUT_DIRECTORY_NAME = "output"
@@ -135,7 +137,7 @@ class ImportHandler(
    * [ValidationError] exception.
    *
    * If the import script returns any other status code, this method will throw
-   * an [IllegalStateException].
+   * an [PluginScriptException].
    *
    * @return A collection of warnings raised by the import script during its
    * execution.
@@ -179,7 +181,7 @@ class ImportHandler(
           else -> {
             val err = "import script failed for dataset $datasetID with exit code ${exitCode()}"
             log.error(err)
-            throw IllegalStateException(err)
+            throw PluginScriptException(PluginScript.Import, err)
           }
         }
 
@@ -197,7 +199,10 @@ class ImportHandler(
 
     // Ensure that _something_ was produced.
     if (outputFiles.isEmpty())
-      throw IllegalStateException("import script produced no output files")
+      throw PluginScriptException(PluginScript.Import, "script produced no output files")
+
+    if (outputFiles.any { it.name.startsWith("vdi-") })
+      throw PluginScriptException(PluginScript.Import, "script produced 'vdi-' prefixed file(s)")
 
     return outputFiles
   }

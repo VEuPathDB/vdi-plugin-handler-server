@@ -18,6 +18,8 @@ import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
 import kotlin.io.path.moveTo
+import vdi.components.script.PluginScript
+import vdi.components.script.PluginScriptException
 
 private val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
 
@@ -69,7 +71,7 @@ class UninstallHandler(
           else -> {
             val err = "uninstall script failed for dataset $datasetID with exit code ${exitCode()}"
             log.error(err)
-            throw IllegalStateException(err)
+            throw PluginScriptException(PluginScript.Uninstall, err)
           }
         }
       }

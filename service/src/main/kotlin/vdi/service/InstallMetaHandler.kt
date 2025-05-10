@@ -12,6 +12,8 @@ import org.veupathdb.vdi.lib.common.DatasetMetaFilename
 import org.veupathdb.vdi.lib.common.intra.InstallMetaRequest
 import vdi.components.io.LoggingOutputStream
 import vdi.components.metrics.ScriptMetrics
+import vdi.components.script.PluginScript
+import vdi.components.script.PluginScriptException
 import vdi.components.script.ScriptExecutor
 import vdi.conf.ScriptConfiguration
 import vdi.consts.ExitStatus
@@ -70,7 +72,7 @@ class InstallMetaHandler(
           else -> {
             val err = "install-meta script failed for dataset $datasetID with exit code ${exitCode()}"
             log.error(err)
-            throw IllegalStateException(err)
+            throw PluginScriptException(PluginScript.InstallMeta, err)
           }
         }
       }
