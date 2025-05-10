@@ -19,7 +19,7 @@ jobs:
         cache-read-only: false
     - name: Build
       run: |
-        ./gradlew --no-daemon clean test shadowJar --info
+        gradle --no-daemon clean test shadowJar
         mv -t . service/build/libs/service.jar
         sha256sum service.jar | cut -b1-64 | tr -d '\n' > service.jar.sha256
         md5sum service.jar | cut -b1-32 | tr -d '\n' > service.jar.md5
