@@ -86,7 +86,7 @@ class InstallDataHandler(
       coroutineScope {
         val logJob = launch { LoggingOutputStream("[install-meta][$datasetID]", log).use { scriptStdErr.transferTo(it) } }
 
-        waitFor(metaScript.maxSeconds)
+        waitFor(metaScript.maxDuration)
 
         logJob.join()
 
@@ -146,7 +146,7 @@ class InstallDataHandler(
           }
         }
 
-        waitFor(compatScript.maxSeconds)
+        waitFor(compatScript.maxDuration)
 
         logJob.join()
         warnJob.join()
@@ -189,7 +189,7 @@ class InstallDataHandler(
         val job1 = launch { LoggingOutputStream("[install-data][$datasetID]", log).use { scriptStdErr.transferTo(it) } }
         val job2 = launch { LineListOutputStream(warnings).use { scriptStdOut.transferTo(it) } }
 
-        waitFor(dataScript.maxSeconds)
+        waitFor(dataScript.maxDuration)
 
         job1.join()
         job2.join()

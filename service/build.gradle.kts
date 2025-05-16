@@ -13,12 +13,15 @@ configurations.all {
 dependencies {
   implementation(project(":components:http-errors"))
   implementation(project(":components:io-utils"))
-  implementation(project(":components:ldap-lookup"))
   implementation(project(":components:metrics"))
   implementation(project(":components:script-execution"))
 
   implementation(libs.vdi.component.common)
   implementation(libs.vdi.component.json)
+
+  implementation(libs.json.schema.validation)
+  implementation(libs.yaml)
+  implementation(libs.ldap)
 
   implementation(libs.ktor.core)
   implementation(libs.ktor.netty)

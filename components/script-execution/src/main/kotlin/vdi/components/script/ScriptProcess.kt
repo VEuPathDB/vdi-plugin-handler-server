@@ -2,6 +2,7 @@ package vdi.components.script
 
 import java.io.InputStream
 import java.io.OutputStream
+import kotlin.time.Duration
 
 /**
  * Script Process
@@ -33,13 +34,8 @@ interface ScriptProcess {
    *
    * If the script does not complete within the given duration, this method will
    * forcibly kill the script and throw an exception.
-   *
-   * @param timeoutSeconds Number of seconds that the script execution must
-   * complete within.
-   *
-   * This parameter defaults to `-1`, which means if no timeout.
    */
-  fun waitFor(timeoutSeconds: Long = -1)
+  fun waitFor(timeout: Duration)
 
   /**
    * Returns the exit code of the process.

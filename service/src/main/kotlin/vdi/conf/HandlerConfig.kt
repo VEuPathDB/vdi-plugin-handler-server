@@ -12,18 +12,18 @@ package vdi.conf
 data class HandlerConfig(
 
   /**
-   * HTTP server specific configuration values.
-   */
-  val server: ServerConfiguration = ServerConfiguration(System.getenv()),
-
-  /**
    * Handler service functionality configuration values.
    */
-  val service: ServiceConfiguration = ServiceConfiguration(System.getenv()),
+  val service: ServiceConfiguration,
 
   /**
    * Database connection configuration values.
    */
-  val databases: DatabaseConfigurationMap = DatabaseConfigurationMap(System.getenv()),
-)
+  val databases: DatabaseConfigurationMap,
+) {
+  constructor(raw: RawServiceConfiguration): this(
+    service   = ServiceConfiguration(raw),
+    databases = DatabaseConfigurationMap(raw),
+  )
+}
 

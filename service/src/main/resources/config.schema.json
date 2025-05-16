@@ -1,0 +1,403 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://veupathdb.github.io/vdi-service/schema/vdi/plugin.json",
+  "title": "VDI Plugin Config",
+  "type": "object",
+  "properties": {
+    "http": { "$ref": "#/$defs/http" },
+    "ldap": { "$ref": "#/$defs/ldap" },
+    "customPath": {
+      "title": "PATH Extension",
+      "description": "Allows adding additional paths to the PATH environment variable passed to plugin scripts on execution in the typical colon (`:`) divided format.\nLeading or trailing colon characters are not required.",
+      "type": "string",
+      "examples": [ "/opt/something/bin:/opt/other/bin" ]
+    },
+    "installRoot": {
+      "title": "Dataset File Install Root",
+      "description": "The root mount path INSIDE THE CONTAINER which will contain the site build directory hierarchy into which dataset files will be installed.  The build directory itself MUST NOT be part of this path.",
+      "type": "string",
+      "format": "uri-reference",
+      "default": "/datasets",
+      "examples": [
+        "/datasets"
+      ]
+    },
+    "scripts": {
+      "type": "object",
+      "properties": {
+        "checkCompatibility": {
+          "title": "Data Compatibility Test",
+          "$ref": "#/$defs/scriptConfig"
+        },
+        "dataCleaning": {
+          "title": "Data Import/Cleanup",
+          "$ref": "#/$defs/scriptConfig"
+        },
+        "dataInstall": {
+          "title": "Data Installation",
+          "$ref": "#/$defs/scriptConfig"
+        },
+        "metaUpdate": {
+          "title": "Dataset Metadata Upsert",
+          "$ref": "#/$defs/scriptConfig"
+        },
+        "uninstall": {
+          "title": "Dataset Uninstallation",
+          "$ref": "#/$defs/scriptConfig"
+        }
+      },
+      "additionalProperties": false
+    },
+    "siteBuild": {
+      "title": "Site Build Directory Name",
+      "description": "Name of the parent directory containing the per-project dataset files subdirectories.\n\nThis directory name will be used to form paths such as `{siteBuild}/{installTarget}/{datasetId}`.",
+      "type": "string",
+      "examples": [ "build-65" ]
+    },
+    "installTargets": {
+      "title": "Dataset Installation Targets",
+      "type": "array",
+      "items": { "$ref": "#/$defs/installTargetConfig" },
+      "minItems": 1,
+      "unevaluatedItems": false,
+      "uniqueItems": true
+    },
+    "$schema": { "type": "string" },
+    "definitions": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "ldap",
+    "siteBuild",
+    "installTargets"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "addressCsv": {
+      "title": "Comma Separated Address List",
+      "type": "string",
+      "pattern": "^(?:(?=[\\da-zA-Z.-]{1,253}(?::|,|$))([\\da-zA-Z][\\da-zA-Z-]{0,62}(?:\\.[\\da-zA-Z][\\da-zA-Z-]{0,62})*)(?::([1-9]\\d{0,3}|[1-5]\\d{4}|6(?:[0-4]\\d{3}|5(?:[0-4]\\d{2}|5(?:[0-2]\\d|3[0-5])))))?(?:,(?=.+)|$))+$",
+      "examples": [
+        "something:8080,foo.com",
+        "foo.com,apple-service:9001"
+      ]
+    },
+    "addressObject": {
+      "title": "Address Config Object",
+      "type": "object",
+      "properties": {
+        "host": { "$ref": "#/$defs/host" },
+        "port": {
+          "oneOf": [
+            { "$ref": "#/$defs/port" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "unevaluatedProperties": false,
+      "examples": [
+        {
+          "host": "abc.def.com",
+          "port": 1234
+        },
+        {
+          "host": "abc.def.com"
+        }
+      ],
+      "required": [
+        "host"
+      ]
+    },
+    "addressString": {
+      "title": "Host Address String",
+      "type": "string",
+      "pattern": "^(?=[\\da-zA-Z.-]{1,253}(?::|$))([\\da-zA-Z][\\da-zA-Z-]{0,62}(?:\\.[\\da-zA-Z][\\da-zA-Z-]{0,62})*)(?::([1-9]\\d{0,3}|[1-5]\\d{4}|6(?:[0-4]\\d{3}|5(?:[0-4]\\d{2}|5(?:[0-2]\\d|3[0-5])))))?$",
+      "examples": [
+        "something:8080",
+        "foo.com:1234",
+        "portless.host.string"
+      ]
+    },
+    "dataType": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "version": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "number" }
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "version"
+      ]
+    },
+    "database": {
+      "title": "Database Connection Config",
+      "type": "object",
+      "allOf": [
+        {
+          "title": "Basic Options",
+          "properties": {
+            "username": {
+              "type": "string",
+              "minLength": 3
+            },
+            "password": {
+              "type": "string",
+              "minLength": 8
+            },
+            "poolSize": {
+              "type": "integer",
+              "minimum": 5,
+              "maximum": 32,
+              "default": 5
+            }
+          },
+          "required": [
+            "username",
+            "password"
+          ]
+        },
+        {
+          "oneOf": [
+            {
+              "title": "LDAP Common Name",
+              "properties": {
+                "lookupCn": {
+                  "type": "string",
+                  "minLength": 3
+                }
+              },
+              "required": [
+                "lookupCn"
+              ]
+            },
+            {
+              "title": "Direct Connection Config",
+              "properties": {
+                "server": {
+                  "title": "Database Host Details",
+                  "oneOf": [
+                    {
+                      "$ref": "#/$defs/addressString"
+                    },
+                    {
+                      "$ref": "#/$defs/addressObject"
+                    }
+                  ]
+                },
+                "name": {
+                  "title": "Database/Userspace Name",
+                  "type": "string"
+                },
+                "platform": {
+                  "enum": [
+                    "oracle",
+                    "postgres"
+                  ],
+                  "default": null
+                }
+              },
+              "required": [
+                "server",
+                "name",
+                "platform"
+              ]
+            }
+          ]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "duration": {
+      "title": "Duration String",
+      "type": "string",
+      "pattern": "^(?=.{2,})((?:\\d+d)? ?(?:(?<!\\S)\\d+h)? ?(?:(?<!\\S)\\d+m)? ?(?:(?<!\\S)\\d+(?:\\.\\d+s$|s))? ?(?:(?<!\\S)\\d+(?:\\.\\d+ms$|ms))? ?(?:(?<!\\S)\\d+(?:\\.\\d+us$|us))? ?(?:(?<!\\S)\\d+ns)?)$",
+      "examples": [
+        "1d 12h 32m 30.340s",
+        "12s",
+        "1h 22us 5ns"
+      ]
+    },
+    "host": {
+      "title": "Hostname String",
+      "type": "string",
+      "pattern": "^(?=[\\da-zA-Z.-]{1,253}$)([\\da-zA-Z][\\da-zA-Z-]{0,62}(?:\\.[\\da-zA-Z][\\da-zA-Z-]{0,62})*)$",
+      "minLength": 1,
+      "maxLength": 253
+    },
+    "http": {
+      "title": "HTTP Server Config",
+      "type": "object",
+      "properties": {
+        "bindPort": {
+          "title": "HTTP Server Port Binding",
+          "$ref": "#/$defs/port",
+          "default": 80
+        }
+      }
+    },
+    "installTarget": {
+      "title": "Dataset Installation Target",
+      "enum": [
+        "AmoebaDB",
+        "ClinEpiDB",
+        "CryptoDB",
+        "FungiDB",
+        "GiardiaDB",
+        "HostDB",
+        "MicrobiomeDB",
+        "MicrosporidiaDB",
+        "OrthoMCL",
+        "PiroplasmaDB",
+        "PlasmoDB",
+        "ToxoDB",
+        "TrichDB",
+        "TriTrypDB",
+        "VectorBase",
+        "VEuPathDB"
+      ]
+    },
+    "installTargetConfig": {
+      "title": "Dataset Installation Target",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "title": "Enabled",
+          "description": "Whether the install target should be enabled for use in the VDI service.",
+          "type": "boolean",
+          "default": true
+        },
+        "targetName": { "$ref": "#/$defs/installTarget" },
+        "dataTypes": {
+          "title": "Supported Data Types",
+          "description": "Optional list of data types that the install target supports.\n\nDefaults to supporting all data types from any plugins enabled for the install target.",
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 3
+              },
+              "unevaluatedItems": false,
+              "uniqueItems": true
+            },
+            {
+              "type": "array",
+              "items": { "const": "*" },
+              "minItems": 1,
+              "maxItems": 1,
+              "unevaluatedItems": false
+            }
+          ]
+        },
+        "dataDb": {
+          "$comment": "type defined in 'allOf' block below",
+          "title": "Dataset Data Database/Schema"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "oneOf": [
+              {
+                "title": "Explicitly Enabled",
+                "description": "The `enabled` field is explicitly set to `true`.",
+                "properties": {
+                  "enabled": { "const": true }
+                }
+              },
+              {
+                "title": "Enabled by Default",
+                "description": "The `enabled` field is omitted, using the default value of `true`.",
+                "not": {
+                  "properties": {
+                    "enabled": { }
+                  }
+                }
+              }
+            ]
+          },
+          "then": {
+            "properties": {
+              "dataDb": { "$ref": "#/$defs/database" }
+            },
+            "required": [
+              "targetName",
+              "dataDb"
+            ]
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "ldap": {
+      "title": "LDAP Connection Configuration",
+      "type": "object",
+      "properties": {
+        "servers": {
+          "title": "LDAP Server List",
+          "description": "List of servers that container core will use to lookup database details.  Servers will be tried in the order they are defined.",
+          "oneOf": [
+            {
+              "title": "Host Strings",
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/addressString"
+              },
+              "unevaluatedItems": false
+            },
+            {
+              "title": "Host Details",
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/addressObject"
+              },
+              "unevaluatedItems": false
+            },
+            {
+              "$ref": "#/$defs/addressCsv"
+            }
+          ]
+        },
+        "baseDn": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "servers",
+        "baseDn"
+      ],
+      "unevaluatedProperties": false
+    },
+    "port": {
+      "title": "Connection Port",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65535
+    },
+    "scriptConfig": {
+      "type": "object",
+      "properties": {
+        "maxDuration": {
+          "title": "Maximum Script Execution Time",
+          "$ref": "#/$defs/duration"
+        },
+        "pathOverride": {
+          "title": "Script Path Override",
+          "$ref": "#/$defs/scriptPath"
+        }
+      },
+      "additionalProperties": false
+    },
+    "scriptPath": {
+      "type": "string",
+      "format": "uri-reference",
+      "examples": [ "/opt/vpdb/bin/import.sh" ]
+    }
+  }
+}

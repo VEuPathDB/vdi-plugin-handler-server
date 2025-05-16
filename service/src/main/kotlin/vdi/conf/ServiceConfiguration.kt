@@ -1,11 +1,6 @@
 package vdi.conf
 
-import org.veupathdb.vdi.lib.common.env.Environment
-import org.veupathdb.vdi.lib.common.env.optional
-import org.veupathdb.vdi.lib.common.env.require
-import kotlin.time.Duration
 import vdi.consts.ConfigDefault
-import vdi.consts.ConfigEnvKey
 
 /**
  * Service Specific Configuration Options
@@ -14,9 +9,6 @@ import vdi.consts.ConfigEnvKey
  * @since 1.0.0
  */
 data class ServiceConfiguration(
-  val ldapServer: String,
-  val oracleBaseDN: String,
-
   val importScript: ScriptConfiguration,
   val installDataScript: ScriptConfiguration,
   val installMetaScript: ScriptConfiguration,
@@ -27,34 +19,29 @@ data class ServiceConfiguration(
   val datasetRoot: String,
   val siteBuild: String,
 ) {
-  constructor(env: Environment) : this(
-    env.require(ConfigEnvKey.LDAPServer),
-    env.require(ConfigEnvKey.OracleBaseDN),
-    ScriptConfiguration(
-      env.optional(ConfigEnvKey.ImportScriptPath) ?: ConfigDefault.ImportScriptPath,
-      (env.optional(ConfigEnvKey.ImportScriptMaxDuration) ?: ConfigDefault.ImportScriptMaxDuration).toDurSeconds()
-    ),
-    ScriptConfiguration(
-      env.optional(ConfigEnvKey.DataInstallScriptPath) ?: ConfigDefault.DataInstallScriptPath,
-      (env.optional(ConfigEnvKey.DataInstallScriptMaxDuration) ?: ConfigDefault.DataInstallScriptMaxDuration).toDurSeconds(),
-    ),
-    ScriptConfiguration(
-      env.optional(ConfigEnvKey.MetaInstallScriptPath) ?: ConfigDefault.MetaInstallScriptPath,
-      (env.optional(ConfigEnvKey.MetaInstallScriptMaxDuration) ?: ConfigDefault.MetaInstallScriptMaxDuration).toDurSeconds(),
-    ),
-    ScriptConfiguration(
-      env.optional(ConfigEnvKey.UninstallScriptPath) ?: ConfigDefault.UninstallScriptPath,
-      (env.optional(ConfigEnvKey.UninstallScriptMaxDuration) ?: ConfigDefault.UninstallScriptMaxDuration).toDurSeconds(),
-    ),
-    ScriptConfiguration(
-      env.optional(ConfigEnvKey.CheckCompatScriptPath) ?: ConfigDefault.CheckCompatScriptPath,
-      (env.optional(ConfigEnvKey.CheckCompatScriptMaxDuration) ?: ConfigDefault.CheckCompatScriptMaxDuration).toDurSeconds(),
-    ),
-    env.optional(ConfigEnvKey.CustomPath) ?: ConfigDefault.CustomPath,
-    env.require(ConfigEnvKey.DatasetInstallRoot),
-    env.require(ConfigEnvKey.SiteBuild),
+  constructor(raw: RawServiceConfiguration): this(
+    importScript = raw.scripts?.dataCleaning.let { ScriptConfiguration(
+      it?.pathOverride ?: ConfigDefault.ImportScriptPath,
+      it?.maxDuration ?: ConfigDefault.ImportScriptMaxDuration,
+    ) },
+    installDataScript = raw.scripts?.dataInstall.let { ScriptConfiguration(
+      it?.pathOverride ?: ConfigDefault.DataInstallScriptPath,
+      it?.maxDuration ?: ConfigDefault.DataInstallScriptMaxDuration,
+    ) },
+    installMetaScript = raw.scripts?.metaUpdate.let { ScriptConfiguration(
+      it?.pathOverride ?: ConfigDefault.MetaInstallScriptPath,
+      it?.maxDuration ?: ConfigDefault.MetaInstallScriptMaxDuration,
+    ) },
+    uninstallScript = raw.scripts?.uninstall.let { ScriptConfiguration(
+      it?.pathOverride ?: ConfigDefault.UninstallScriptPath,
+      it?.maxDuration ?: ConfigDefault.UninstallScriptMaxDuration
+    ) },
+    checkCompatScript = raw.scripts?.checkCompatibility.let { ScriptConfiguration(
+      it?.pathOverride ?: ConfigDefault.CheckCompatScriptPath,
+      it?.maxDuration ?: ConfigDefault.CheckCompatScriptMaxDuration
+    ) },
+    customPath = raw.customPath ?: ConfigDefault.CustomPath,
+    datasetRoot = raw.installRoot ?: ConfigDefault.InstallRoot,
+    siteBuild = raw.siteBuild,
   )
 }
-
-@Suppress("NOTHING_TO_INLINE")
-private inline fun String.toDurSeconds() = Duration.parse(this).inWholeSeconds

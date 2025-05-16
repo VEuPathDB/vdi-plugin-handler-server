@@ -158,7 +158,7 @@ class ImportHandler(
         val j1 = launch { LineListOutputStream(warnings).use { scriptStdOut.transferTo(it) } }
         val j2 = launch { LoggingOutputStream("[import][${importCtx.request.vdiID}]", log).use { scriptStdErr.transferTo(it) } }
 
-        waitFor(script.maxSeconds)
+        waitFor(script.maxDuration)
 
         j1.join()
         j2.join()

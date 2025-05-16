@@ -1,0 +1,108 @@
+$schema: ../service/src/main/resources/config.schema.json
+
+definitions:
+  vdiSchemaPass: &vdiSchemaPass ${env:VDI_APPDB_SCHEMA_PASS}
+  vdiDataSchema: &vdiDataSchema vdi_datasets_prod_${env:LOCATION_INDICATOR}
+
+ldap:
+  servers: ${env:LDAP_SERVER}
+  baseDn: ${env:DB_LOOKUP_BASE_DN}
+
+siteBuild: ${env:SITE_BUILD}
+
+installTargets:
+- targetName: AmoebaDB
+  dataDb:
+    username: *vdiDataSchema
+    password: *vdiSchemaPass
+    lookupCn: ${env:AMOEBA_LDAP}
+
+- targetName: ClinEpiDB
+  dataDb:
+    username: *vdiDataSchema
+    password: *vdiSchemaPass
+    lookupCn: ${env:CLINEPI_LDAP}
+
+- targetName: CryptoDB
+  dataDb:
+    username: *vdiDataSchema
+    password: *vdiSchemaPass
+    lookupCn: ${env:CRYPTO_LDAP}
+
+- targetName: FungiDB
+  dataDb:
+    username: *vdiDataSchema
+    password: *vdiSchemaPass
+    lookupCn: ${env:FUNGI_LDAP}
+
+- targetName: GiardiaDB
+  dataDb:
+    username: *vdiDataSchema
+    password: *vdiSchemaPass
+    lookupCn: ${env:GIARDIA_LDAP}
+
+- targetName: HostDB
+  dataDb:
+    username: *vdiDataSchema
+    password: *vdiSchemaPass
+    lookupCn: ${env:HOST_LDAP}
+
+- targetName: MicrobiomeDB
+  dataDb:
+    username: *vdiDataSchema
+    password: *vdiSchemaPass
+    lookupCn: ${env:MICROBIOME_LDAP}
+
+- targetName: MicrosporidiaDB
+  dataDb:
+    username: *vdiDataSchema
+    password: *vdiSchemaPass
+    lookupCn: ${env:MICROSPORIDIA_LDAP}
+
+- targetName: OrthoMCL
+  dataDb:
+    username: *vdiDataSchema
+    password: *vdiSchemaPass
+    lookupCn: ${env:ORTHO_LDAP}
+
+- targetName: PiroplasmaDB
+  dataDb:
+    username: *vdiDataSchema
+    password: *vdiSchemaPass
+    lookupCn: ${env:PIROPLASMA_LDAP}
+
+- targetName: PlasmoDB
+  dataDb:
+    username: *vdiDataSchema
+    password: *vdiSchemaPass
+    lookupCn: ${env:PLASMO_LDAP}
+
+- targetName: ToxoDB
+  dataDb:
+    username: *vdiDataSchema
+    password: *vdiSchemaPass
+    lookupCn: ${env:TOXO_LDAP}
+
+- targetName: TrichDB
+  dataDb:
+    username: *vdiDataSchema
+    password: *vdiSchemaPass
+    lookupCn: ${env:TRICH_LDAP}
+
+- targetName: TriTrypDB
+  dataDb:
+    username: *vdiDataSchema
+    password: *vdiSchemaPass
+    lookupCn: ${env:TRITRYP_LDAP}
+
+- targetName: VectorBase
+  dataDb:
+    username: *vdiDataSchema
+    password: *vdiSchemaPass
+    lookupCn: ${env:VECTOR_LDAP}
+
+- targetName: VEuPathDB
+  dataDb:
+    username: *vdiDataSchema
+    password: *vdiSchemaPass
+    lookupCn: ${env:UNIDB_LDAP}

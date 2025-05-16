@@ -1,8 +1,10 @@
 package vdi.consts
 
+import kotlin.time.Duration.Companion.hours
+
 object ConfigDefault {
 
-  const val ServerPort = "80"
+  const val ServerPort: UShort = 80u
   const val ServerHost = "0.0.0.0"
 
   const val ImportScriptPath = "/opt/veupathdb/bin/import"
@@ -12,10 +14,11 @@ object ConfigDefault {
   const val CheckCompatScriptPath = "/opt/veupathdb/bin/check-compatibility"
 
   const val CustomPath = ""
+  const val InstallRoot = "/datasets"
 
-  const val ImportScriptMaxDuration = "1h"
-  const val DataInstallScriptMaxDuration = "1h"
-  const val MetaInstallScriptMaxDuration = "1h"
-  const val UninstallScriptMaxDuration = "1h"
-  const val CheckCompatScriptMaxDuration = "1h"
+  inline val ImportScriptMaxDuration get() = 1.hours
+  inline val DataInstallScriptMaxDuration get() = 1.hours
+  inline val MetaInstallScriptMaxDuration get() = 1.hours
+  inline val UninstallScriptMaxDuration get() = 1.hours
+  inline val CheckCompatScriptMaxDuration get() = 1.hours
 }

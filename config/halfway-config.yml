@@ -1,0 +1,122 @@
+$schema: ../service/src/main/resources/config.schema.json
+
+siteBuild: ${env:SITE_BUILD:-build-68}
+
+ldap:
+  servers: ${env:LDAP_SERVER}
+  baseDn: ${env:ORACLE_BASE_DN}
+
+installTargets:
+- targetName: ${env:DB_CONNECTION_NAME_AMOEBA:-AmoebaDB}
+  dataDb:
+    username: ${env:DB_CONNECTION_DATA_SCHEMA_AMOEBA}
+    password: ${env:DB_CONNECTION_PASS_AMOEBA}
+    lookupCn: ${env:DB_CONNECTION_LDAP_AMOEBA}
+  enabled: ${env:DB_CONNECTION_ENABLED_AMOEBA:-true}
+
+- targetName: ${env:DB_CONNECTION_NAME_CLINEPI:-ClinEpiDB}
+  dataDb:
+    username: ${env:DB_CONNECTION_DATA_SCHEMA_CLINEPI}
+    password: ${env:DB_CONNECTION_PASS_CLINEPI}
+    lookupCn: ${env:DB_CONNECTION_LDAP_CLINEPI}
+  enabled: ${env:DB_CONNECTION_ENABLED_CLINEPI:-true}
+
+- targetName: ${env:DB_CONNECTION_NAME_CRYPTO:-CryptoDB}
+  dataDb:
+    username: ${env:DB_CONNECTION_DATA_SCHEMA_CRYPTO}
+    password: ${env:DB_CONNECTION_PASS_CRYPTO}
+    lookupCn: ${env:DB_CONNECTION_LDAP_CRYPTO}
+  enabled: ${env:DB_CONNECTION_ENABLED_CRYPTO:-true}
+
+- targetName: ${env:DB_CONNECTION_NAME_FUNGI:-FungiDB}
+  dataDb:
+    username: ${env:DB_CONNECTION_DATA_SCHEMA_FUNGI}
+    password: ${env:DB_CONNECTION_PASS_FUNGI}
+    lookupCn: ${env:DB_CONNECTION_LDAP_FUNGI}
+  enabled: ${env:DB_CONNECTION_ENABLED_FUNGI:-true}
+
+- targetName: ${env:DB_CONNECTION_NAME_GIARDIA:-GiardiaDB}
+  dataDb:
+    username: ${env:DB_CONNECTION_DATA_SCHEMA_GIARDIA}
+    password: ${env:DB_CONNECTION_PASS_GIARDIA}
+    lookupCn: ${env:DB_CONNECTION_LDAP_GIARDIA}
+  enabled: ${env:DB_CONNECTION_ENABLED_GIARDIA:-true}
+
+- targetName: ${env:DB_CONNECTION_NAME_HOST:-HostDB}
+  dataDb:
+    username: ${env:DB_CONNECTION_DATA_SCHEMA_HOST}
+    password: ${env:DB_CONNECTION_PASS_HOST}
+    lookupCn: ${env:DB_CONNECTION_LDAP_HOST}
+  enabled: ${env:DB_CONNECTION_ENABLED_HOST:-true}
+
+- targetName: ${env:DB_CONNECTION_NAME_MICROBIOME:-MicrobiomeDB}
+  dataDb:
+    username: ${env:DB_CONNECTION_DATA_SCHEMA_MICROBIOME}
+    password: ${env:DB_CONNECTION_PASS_MICROBIOME}
+    lookupCn: ${env:DB_CONNECTION_LDAP_MICROBIOME}
+  enabled: ${env:DB_CONNECTION_ENABLED_MICROBIOME:-true}
+
+- targetName: ${env:DB_CONNECTION_NAME_MICROSPORIDIA:-MicrosporidiaDB}
+  dataDb:
+    username: ${env:DB_CONNECTION_DATA_SCHEMA_MICROSPORIDIA}
+    password: ${env:DB_CONNECTION_PASS_MICROSPORIDIA}
+    lookupCn: ${env:DB_CONNECTION_LDAP_MICROSPORIDIA}
+  enabled: ${env:DB_CONNECTION_ENABLED_MICROSPORIDIA:-true}
+
+- targetName: ${env:DB_CONNECTION_NAME_ORTHO:-OrthoMCL}
+  dataDb:
+    username: ${env:DB_CONNECTION_DATA_SCHEMA_ORTHO}
+    password: ${env:DB_CONNECTION_PASS_ORTHO}
+    lookupCn: ${env:DB_CONNECTION_LDAP_ORTHO}
+  enabled: ${env:DB_CONNECTION_ENABLED_ORTHO:-true}
+
+- targetName: ${env:DB_CONNECTION_NAME_PIROPLASMA:-PiroplasmaDB}
+  dataDb:
+    username: ${env:DB_CONNECTION_DATA_SCHEMA_PIROPLASMA}
+    password: ${env:DB_CONNECTION_PASS_PIROPLASMA}
+    lookupCn: ${env:DB_CONNECTION_LDAP_PIROPLASMA}
+  enabled: ${env:DB_CONNECTION_ENABLED_PIROPLASMA:-true}
+
+- targetName: ${env:DB_CONNECTION_NAME_PLASMO:-PlasmoDB}
+  dataDb:
+    username: ${env:DB_CONNECTION_DATA_SCHEMA_PLASMO}
+    password: ${env:DB_CONNECTION_PASS_PLASMO}
+    lookupCn: ${env:DB_CONNECTION_LDAP_PLASMO}
+  enabled: ${env:DB_CONNECTION_ENABLED_PLASMO:-true}
+
+- targetName: ${env:DB_CONNECTION_NAME_TOXO:-ToxoDB}
+  dataDb:
+    username: ${env:DB_CONNECTION_DATA_SCHEMA_TOXO}
+    password: ${env:DB_CONNECTION_PASS_TOXO}
+    lookupCn: ${env:DB_CONNECTION_LDAP_TOXO}
+#    enabled: ${env:DB_CONNECTION_ENABLED_TOXO:-true}
+  enabled: false
+
+- targetName: ${env:DB_CONNECTION_NAME_TRICH:-TrichDB}
+  dataDb:
+    username: ${env:DB_CONNECTION_DATA_SCHEMA_TRICH}
+    password: ${env:DB_CONNECTION_PASS_TRICH}
+    lookupCn: ${env:DB_CONNECTION_LDAP_TRICH}
+  enabled: ${env:DB_CONNECTION_ENABLED_TRICH:-true}
+
+- targetName: ${env:DB_CONNECTION_NAME_TRITRYP:-TriTrypDB}
+  dataDb:
+    username: ${env:DB_CONNECTION_DATA_SCHEMA_TRITRYP}
+    password: ${env:DB_CONNECTION_PASS_TRITRYP}
+    lookupCn: ${env:DB_CONNECTION_LDAP_TRITRYP}
+  enabled: ${env:DB_CONNECTION_ENABLED_TRITRYP:-true}
+
+- targetName: ${env:DB_CONNECTION_NAME_VECTOR:-VectorBase}
+  dataDb:
+    username: ${env:DB_CONNECTION_DATA_SCHEMA_VECTOR}
+    password: ${env:DB_CONNECTION_PASS_VECTOR}
+    lookupCn: ${env:DB_CONNECTION_LDAP_VECTOR}
+  enabled: ${env:DB_CONNECTION_ENABLED_VECTOR:-true}
+
+- targetName: ${env:DB_CONNECTION_NAME_UNIDB:-VEuPathDB}
+  dataDb:
+    username: ${env:DB_CONNECTION_DATA_SCHEMA_UNIDB}
+    password: ${env:DB_CONNECTION_PASS_UNIDB}
+    lookupCn: ${env:DB_CONNECTION_LDAP_UNIDB}
+  enabled: ${env:DB_CONNECTION_ENABLED_UNIDB:-false}
+

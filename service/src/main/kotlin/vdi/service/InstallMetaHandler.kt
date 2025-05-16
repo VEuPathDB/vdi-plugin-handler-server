@@ -55,7 +55,7 @@ class InstallMetaHandler(
       coroutineScope {
         val logJob = launch { LoggingOutputStream("[install-meta][$datasetID]", log).use { scriptStdErr.transferTo(it) } }
 
-        waitFor(script.maxSeconds)
+        waitFor(script.maxDuration)
 
         logJob.join()
 

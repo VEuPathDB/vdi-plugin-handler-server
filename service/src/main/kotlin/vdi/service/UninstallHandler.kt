@@ -53,7 +53,7 @@ class UninstallHandler(
       coroutineScope {
         val logJob = launch { LoggingOutputStream("[uninstall][$datasetID]", log).use { scriptStdErr.transferTo(it) } }
 
-        waitFor(script.maxSeconds)
+        waitFor(script.maxDuration)
 
         logJob.join()
 
