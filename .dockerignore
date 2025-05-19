@@ -1,8 +1,0 @@
-build/
-.idea/
-.gradle/
-gradle/wrapper/
-
-example.env
-api.raml
-readme.adoc

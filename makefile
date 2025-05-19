@@ -1,31 +1,20 @@
-IMAGE_NAME = "veupathdb/vdi-plugin-handler-server"
+GRADLE_CMD := $(shell command -v gradle || echo './gradlew') \
+	-q \
+	-Dgpr.user='${GITHUB_USERNAME}' \
+	-Dgpr.key='${GITHUB_TOKEN}'
 
-ifeq '$(shell command -v podman 2>&1 >/dev/null; echo $$?)' '0'
-CONTAINER_CMD := podman
-else
-CONTAINER_CMD := docker
-endif
-
+.PHONY: default
 default:
 	@echo "what are you doing?"
 
 .PHONY: build
 build:
-	@$(CONTAINER_CMD) compose \
-        -f docker-compose.dev.yml \
-        --env-file=.env build \
-		--build-arg GITHUB_USERNAME=${GITHUB_USERNAME} \
-		--build-arg GITHUB_TOKEN=${GITHUB_TOKEN}
+	@$(GRADLE_CMD) build
 
-.PHONY: up
-up:
-	@mkdir -p '.tmp/mount/build-68'
-	@$(CONTAINER_CMD) compose -f docker-compose.dev.yml --env-file=.env up
 
-.PHONY: down
-down:
-	@$(CONTAINER_CMD) compose -f docker-compose.dev.yml --env-file=.env down --remove-orphans -v
-	@rm -rf '.tmp/mount/build-68/*'
+.PHONY: clean
+clean:
+	@$(GRADLE_CMD) clean
 
 docs/http-api.html: service/api.yml node_modules/.bin/redocly
 	@node_modules/.bin/redocly build-docs -o $@ $<
