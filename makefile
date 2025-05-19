@@ -1,7 +1,7 @@
 GRADLE_CMD := $(shell command -v gradle || echo './gradlew') \
 	-q \
-	-Dgpr.user='${GITHUB_USERNAME}' \
-	-Dgpr.key='${GITHUB_TOKEN}'
+	-Pgpr.user='${GITHUB_USERNAME}' \
+	-Pgpr.key='${GITHUB_TOKEN}'
 
 .PHONY: default
 default:
